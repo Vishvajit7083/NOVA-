@@ -1,0 +1,6 @@
+{
+  "name": "NOVA — Flagship Tech Accessories & Gear",
+  "description": "Premium consumer-electronics accessories e-commerce store with flagship audio, GaN chargers, aramid cases, cables, and wearables.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
