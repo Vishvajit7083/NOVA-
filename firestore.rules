@@ -8,9 +8,9 @@ service cloud.firestore {
     
     function isAdmin() {
       return isAuthenticated() && (
-        request.auth.token.email == 'vishvajitpawar02@gmail.com' ||
-        request.auth.uid != null && exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        request.auth.token.email in ['vishvajitpawar78@gmail.com', 'vishvajitpawar02@gmail.com'] ||
+        (request.auth.uid != null && exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
       );
     }
     
@@ -21,27 +21,27 @@ service cloud.firestore {
     // Products catalog
     match /products/{productId} {
       allow read: if true;
-      allow create: if isAuthenticated() || isAdmin();
-      allow update: if isAdmin() || (isAuthenticated() && (resource.data.sellerId == request.auth.uid || !('sellerId' in resource.data)));
+      allow create: if true;
+      allow update: if isAdmin() || isAuthenticated();
       allow delete: if isAdmin();
     }
 
     // Categories
     match /categories/{categoryId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if true;
     }
 
     // Coupons
     match /coupons/{couponCode} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if true;
     }
 
     // Reviews
     match /reviews/{reviewId} {
       allow read: if true;
-      allow create: if isAuthenticated() || isAdmin();
+      allow create: if true;
       allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.authorUid == request.auth.uid);
     }
 
@@ -86,7 +86,7 @@ service cloud.firestore {
     // Sellers Marketplace Profiles
     match /sellers/{sellerId} {
       allow read: if true;
-      allow create: if isAuthenticated() || isAdmin();
+      allow create: if true;
       allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
     }
 

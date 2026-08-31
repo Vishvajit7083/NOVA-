@@ -51,12 +51,17 @@ googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 
-export const ADMIN_EMAIL = 'vishvajitpawar02@gmail.com';
+export const ADMIN_EMAILS = [
+  'vishvajitpawar78@gmail.com',
+  'vishvajitpawar02@gmail.com'
+];
+export const ADMIN_EMAIL = ADMIN_EMAILS[0];
 
 export const isUserAdmin = (userOrEmail: FirebaseUser | string | null | undefined): boolean => {
   if (!userOrEmail) return false;
   const email = typeof userOrEmail === 'string' ? userOrEmail : userOrEmail.email;
-  return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  if (!email) return false;
+  return ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase());
 };
 
 export {
