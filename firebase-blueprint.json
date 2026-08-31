@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Hardware product in the catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tagline": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "inStock": { "type": "boolean" },
+        "stockCount": { "type": "number" },
+        "sellerId": { "type": "string" },
+        "sellerName": { "type": "string" }
+      },
+      "required": ["id", "name", "category", "price"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer hardware order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "userUid": { "type": "string" },
+        "total": { "type": "number" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "total", "status"]
+    },
+    "ReturnRequest": {
+      "title": "ReturnRequest",
+      "description": "Return and refund request submitted by customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "returnNumber": { "type": "string" },
+        "orderId": { "type": "string" },
+        "userUid": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "status": { "type": "string" },
+        "refundAmount": { "type": "number" }
+      },
+      "required": ["id", "returnNumber", "orderId", "status"]
+    },
+    "SellerProfile": {
+      "title": "SellerProfile",
+      "description": "Onboarded merchant profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userUid": { "type": "string" },
+        "storeName": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "userUid", "storeName", "status"]
+    },
+    "AppNotification": {
+      "title": "AppNotification",
+      "description": "Customer in-app notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userUid": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "isRead": { "type": "boolean" }
+      },
+      "required": ["id", "userUid", "title", "message"]
+    },
+    "SupportTicket": {
+      "title": "SupportTicket",
+      "description": "Customer support ticket",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ticketNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "subject": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "ticketNumber", "email", "subject", "status"]
+    },
+    "ProductQuestion": {
+      "title": "ProductQuestion",
+      "description": "Product technical Q&A",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "question": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "productId", "question", "status"]
+    },
+    "PaymentTransaction": {
+      "title": "PaymentTransaction",
+      "description": "Razorpay payment and refund transaction audit records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "gateway": { "type": "string" },
+        "gatewayOrderId": { "type": "string" },
+        "gatewayPaymentId": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "method": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "orderId", "amount", "status"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Flagship tech product catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Store customer orders"
+    },
+    "/payment_transactions/{txnId}": {
+      "schema": "PaymentTransaction",
+      "description": "Payment gateway and refund transaction logs"
+    },
+    "/returns/{returnId}": {
+      "schema": "ReturnRequest",
+      "description": "Customer returns and refund requests"
+    },
+    "/sellers/{sellerId}": {
+      "schema": "SellerProfile",
+      "description": "Seller marketplace profiles"
+    },
+    "/notifications/{notifId}": {
+      "schema": "AppNotification",
+      "description": "User in-app notifications"
+    },
+    "/tickets/{ticketId}": {
+      "schema": "SupportTicket",
+      "description": "Customer service tickets"
+    },
+    "/questions/{questionId}": {
+      "schema": "ProductQuestion",
+      "description": "Community and seller product Q&A"
+    }
+  }
+}

@@ -1,51 +1,61 @@
-import React, { useState } from 'react';
-import { Star, CheckCircle, ThumbsUp, MessageSquare, Plus, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, CheckCircle, ThumbsUp, Plus, X, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Review, Product } from '../../types';
 import { useShop } from '../../context/ShopContext';
+import { getReviewsForProductFromDB } from '../../lib/db';
 
 interface ProductReviewsProps {
   product: Product;
 }
 
 export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
-  const { showToast, currentUser } = useShop();
+  const { showToast, currentUser, setIsAuthModalOpen, submitVerifiedReview, checkIsPurchased } = useShop();
 
-  const [reviewsList, setReviewsList] = useState<Review[]>(() => {
-    return product.reviews.length > 0
-      ? product.reviews
-      : [
-          {
-            id: 'rev-auto-1',
-            author: 'Kunal Singhania',
-            rating: 5,
-            date: '14 Aug 2026',
-            verified: true,
-            title: 'Flawless engineering and premium tactile feel',
-            comment: 'Been using this daily for 2 weeks. The build quality exceeds OEM first-party accessories. Fast charging runs completely cool.',
-            helpfulCount: 18,
-          },
-          {
-            id: 'rev-auto-2',
-            author: 'Meera Nambiar',
-            rating: 5,
-            date: '08 Aug 2026',
-            verified: true,
-            title: 'Worth every rupee. 10/10 recommended',
-            comment: 'Packaging was like opening an expensive luxury watch. Zero issues with compatibility on both my phone and iPad.',
-            helpfulCount: 9,
-          },
-        ];
-  });
-
+  const [reviewsList, setReviewsList] = useState<Review[]>(product.reviews || []);
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [isUserVerifiedBuyer, setIsUserVerifiedBuyer] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form state for writing a review
   const [formRating, setFormRating] = useState(5);
   const [formTitle, setFormTitle] = useState('');
   const [formComment, setFormComment] = useState('');
   const [formName, setFormName] = useState(currentUser?.name || '');
+
+  // Load reviews from Firestore
+  useEffect(() => {
+    let isMounted = true;
+    const fetchReviews = async () => {
+      try {
+        const dbReviews = await getReviewsForProductFromDB(product.id);
+        if (isMounted && dbReviews.length > 0) {
+          setReviewsList(dbReviews);
+        } else if (isMounted && product.reviews && product.reviews.length > 0) {
+          setReviewsList(product.reviews);
+        }
+      } catch (err) {
+        console.warn('Error loading product reviews from Firestore:', err);
+      }
+    };
+    fetchReviews();
+    return () => {
+      isMounted = false;
+    };
+  }, [product.id, product.reviews]);
+
+  // Check verified purchase when opening write modal
+  useEffect(() => {
+    if (currentUser) {
+      setFormName(currentUser.name);
+      checkIsPurchased(product.id).then((purchased) => {
+        setIsUserVerifiedBuyer(purchased);
+      });
+    } else {
+      setIsUserVerifiedBuyer(false);
+    }
+  }, [currentUser, product.id, checkIsPurchased]);
 
   const handleVoteHelpful = (reviewId: string) => {
     setReviewsList((prev) =>
@@ -64,30 +74,45 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
     showToast('Feedback noted', 'Thank you for your feedback!');
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleOpenWriteModal = () => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setIsWriteModalOpen(true);
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formTitle.trim() || !formComment.trim() || !formName.trim()) {
+    if (!formTitle.trim() || !formComment.trim()) {
       showToast('Incomplete Review', 'Please fill in all review fields.', 'error');
       return;
     }
 
-    const newRev: Review = {
-      id: `rev-${Date.now()}`,
-      author: formName.trim(),
-      rating: formRating,
-      date: 'Just now',
-      verified: true,
-      title: formTitle.trim(),
-      comment: formComment.trim(),
-      helpfulCount: 0,
-      userVotedHelpful: false,
-    };
-
-    setReviewsList([newRev, ...reviewsList]);
-    setIsWriteModalOpen(false);
-    setFormTitle('');
-    setFormComment('');
-    showToast('Review Submitted', 'Thank you! Your verified review is published.');
+    setIsSubmitting(true);
+    try {
+      const res = await submitVerifiedReview(product.id, formRating, formTitle.trim(), formComment.trim());
+      if (res.success) {
+        // Append locally
+        const newRev: Review = {
+          id: res.reviewId || `rev-${Date.now()}`,
+          author: formName.trim() || currentUser?.name || 'Flagship Member',
+          rating: formRating,
+          date: 'Just now',
+          verified: res.isVerified,
+          title: formTitle.trim(),
+          comment: formComment.trim(),
+          helpfulCount: 0,
+          userVotedHelpful: false,
+        };
+        setReviewsList((prev) => [newRev, ...prev]);
+        setIsWriteModalOpen(false);
+        setFormTitle('');
+        setFormComment('');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const filteredReviews = reviewsList
@@ -129,7 +154,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
               ))}
             </div>
             <p className="text-xs text-gray-500">
-              Based on <strong>{product.reviewCount}</strong> verified owner reviews
+              Based on <strong>{totalCount}</strong> verified owner reviews
             </p>
             <div className="mt-4 flex items-center justify-center md:justify-start space-x-2 text-xs text-emerald-700 font-bold">
               <CheckCircle className="w-4 h-4 text-emerald-600" />
@@ -175,7 +200,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
               Share your real-world experience and earn 50 NovaCoins reward.
             </p>
             <button
-              onClick={() => setIsWriteModalOpen(true)}
+              onClick={handleOpenWriteModal}
               className="px-6 py-3 rounded-full bg-black hover:bg-[#EB0028] text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md inline-flex items-center space-x-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
@@ -230,62 +255,68 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
 
       {/* Reviews List */}
       <div className="space-y-4">
-        {filteredReviews.map((rev) => (
-          <div
-            key={rev.id}
-            className="p-6 bg-white border border-gray-200 rounded-2xl space-y-3 shadow-xs"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-bold text-black uppercase">
-                  {rev.author.charAt(0)}
-                </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs sm:text-sm font-bold text-black">{rev.author}</span>
-                    {rev.verified && (
-                      <span className="inline-flex items-center text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold uppercase tracking-wider">
-                        <CheckCircle className="w-3 h-3 mr-1 text-emerald-600" />
-                        Verified Owner
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[11px] text-gray-400">{rev.date}</span>
-                </div>
-              </div>
-
-              {/* Star score */}
-              <div className="flex items-center space-x-1 text-amber-500">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
-                    key={s}
-                    className={`w-3.5 h-3.5 ${
-                      s <= rev.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <h5 className="text-sm font-bold text-black">{rev.title}</h5>
-            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal">{rev.comment}</p>
-
-            {/* Helpful voting */}
-            <div className="pt-2 flex items-center space-x-3 text-xs text-gray-500">
-              <button
-                onClick={() => handleVoteHelpful(rev.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-colors cursor-pointer ${
-                  rev.userVotedHelpful
-                    ? 'bg-black text-white border-black'
-                    : 'bg-gray-50 border-gray-200 text-gray-600 hover:text-black'
-                }`}
-              >
-                <ThumbsUp className="w-3.5 h-3.5" />
-                <span>Helpful ({rev.helpfulCount})</span>
-              </button>
-            </div>
+        {filteredReviews.length === 0 ? (
+          <div className="p-8 bg-gray-50 border border-gray-200 rounded-2xl text-center text-xs text-gray-500">
+            No reviews yet for this rating. Be the first to share your experience!
           </div>
-        ))}
+        ) : (
+          filteredReviews.map((rev) => (
+            <div
+              key={rev.id}
+              className="p-6 bg-white border border-gray-200 rounded-2xl space-y-3 shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-bold text-black uppercase">
+                    {rev.author?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs sm:text-sm font-bold text-black">{rev.author}</span>
+                      {rev.verified && (
+                        <span className="inline-flex items-center text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold uppercase tracking-wider">
+                          <CheckCircle className="w-3 h-3 mr-1 text-emerald-600" />
+                          Verified Buyer
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-gray-400">{rev.date}</span>
+                  </div>
+                </div>
+
+                {/* Star score */}
+                <div className="flex items-center space-x-1 text-amber-500">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      className={`w-3.5 h-3.5 ${
+                        s <= rev.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <h5 className="text-sm font-bold text-black">{rev.title}</h5>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal">{rev.comment}</p>
+
+              {/* Helpful voting */}
+              <div className="pt-2 flex items-center space-x-3 text-xs text-gray-500">
+                <button
+                  onClick={() => handleVoteHelpful(rev.id)}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-colors cursor-pointer ${
+                    rev.userVotedHelpful
+                      ? 'bg-black text-white border-black'
+                      : 'bg-gray-50 border-gray-200 text-gray-600 hover:text-black'
+                  }`}
+                >
+                  <ThumbsUp className="w-3.5 h-3.5" />
+                  <span>Helpful ({rev.helpfulCount})</span>
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Write Review Modal */}
@@ -293,7 +324,10 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="w-full max-w-lg bg-white border border-gray-200 rounded-3xl p-8 shadow-2xl relative space-y-5 text-black">
             <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-              <h3 className="text-base font-black uppercase text-black tracking-tight">Write a Verified Review</h3>
+              <div>
+                <h3 className="text-base font-black uppercase text-black tracking-tight">Write a Verified Review</h3>
+                <p className="text-xs text-gray-500 mt-0.5">{product.name}</p>
+              </div>
               <button
                 onClick={() => setIsWriteModalOpen(false)}
                 className="text-gray-400 hover:text-black p-1 cursor-pointer"
@@ -301,6 +335,18 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {isUserVerifiedBuyer ? (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Verified purchase confirmed from your order history. Your review will display the <strong>Verified Buyer</strong> badge.</span>
+              </div>
+            ) : (
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Note: Reviews are checked against order records to verify doorstep delivery.</span>
+              </div>
+            )}
 
             <form onSubmit={handleReviewSubmit} className="space-y-4 text-xs">
               <div>
@@ -339,6 +385,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
                 <label className="block text-black font-bold uppercase tracking-wider text-[11px] mb-1.5">Review Headline</label>
                 <input
                   type="text"
+                  required
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="e.g. Fast charging speed and pristine unboxing!"
@@ -347,9 +394,10 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
               </div>
 
               <div>
-                <label className="block text-black font-bold uppercase tracking-wider text-[11px] mb-1.5">Your Feedback</label>
+                <label className="block text-black font-bold uppercase tracking-wider text-[11px] mb-1.5">Your Experience & Details</label>
                 <textarea
                   rows={4}
+                  required
                   value={formComment}
                   onChange={(e) => setFormComment(e.target.value)}
                   placeholder="How does it feel in hand? What device did you pair it with?"
@@ -367,9 +415,10 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({ product }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-full bg-black hover:bg-[#EB0028] text-white font-bold uppercase tracking-widest text-xs shadow-md cursor-pointer"
+                  disabled={isSubmitting}
+                  className="px-6 py-3 rounded-full bg-black hover:bg-[#EB0028] text-white font-bold uppercase tracking-widest text-xs shadow-md cursor-pointer disabled:opacity-50"
                 >
-                  Submit Verified Review
+                  {isSubmitting ? 'Publishing...' : 'Submit Review'}
                 </button>
               </div>
             </form>

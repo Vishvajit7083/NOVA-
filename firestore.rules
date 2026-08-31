@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'vishvajitpawar02@gmail.com' ||
+        request.auth.uid != null && exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Products catalog
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || isAdmin();
+      allow update: if isAdmin() || (isAuthenticated() && (resource.data.sellerId == request.auth.uid || !('sellerId' in resource.data)));
+      allow delete: if isAdmin();
+    }
+
+    // Categories
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Coupons
+    match /coupons/{couponCode} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Reviews
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || isAdmin();
+      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.authorUid == request.auth.uid);
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow read: if true; // Allows order tracking lookup by order ID
+      allow create: if true; // Allows guest & authenticated order placement
+      allow update: if isAdmin() || isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    // Users profile & addresses
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Carts
+    match /carts/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Wishlists
+    match /wishlists/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Technical Q&A
+    match /questions/{questionId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if isAuthenticated() || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Returns & Refunds
+    match /returns/{returnId} {
+      allow read: if isAuthenticated() || isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
+    }
+
+    // Sellers Marketplace Profiles
+    match /sellers/{sellerId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || isAdmin();
+      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
+    }
+
+    // User Notifications
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() || isAdmin();
+      allow create: if true;
+      allow update, delete: if isAuthenticated() || isAdmin();
+    }
+
+    // Support Tickets
+    match /tickets/{ticketId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Payment Transactions & Gateway Audits
+    match /payment_transactions/{txnId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Audit Logs
+    match /audit_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

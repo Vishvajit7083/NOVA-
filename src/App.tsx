@@ -23,6 +23,9 @@ import { AccountPage } from './pages/AccountPage';
 import { SupportPage } from './pages/SupportPage';
 import { ComparisonPage } from './pages/ComparisonPage';
 import { OffersPage, WishlistPage } from './pages/OffersPage';
+import { AdminPage } from './pages/AdminPage';
+import { SellerPortalPage } from './pages/SellerPortalPage';
+import { AuthModal } from './components/auth/AuthModal';
 
 import {
   SlidersHorizontal,
@@ -117,11 +120,21 @@ const AppContent: React.FC = () => {
             {currentView === 'offers' && <OffersPage onNavigate={handleNavigate} />}
 
             {currentView === 'wishlist' && <WishlistPage onNavigate={handleNavigate} />}
+
+            {currentView === 'seller' && (
+              <SellerPortalPage
+                onNavigate={handleNavigate}
+                onNavigateProduct={(pId) => handleNavigate('product-detail', { productId: pId })}
+              />
+            )}
+
+            {currentView === 'admin' && <AdminPage onNavigate={handleNavigate} />}
           </motion.div>
         </AnimatePresence>
       </main>
 
       {/* Global Modals and Portals */}
+      <AuthModal onNavigate={handleNavigate} />
       <CartDrawer onNavigate={handleNavigate} />
       <SearchModal onNavigate={handleNavigate} />
       <QuickViewModal onNavigate={handleNavigate} />

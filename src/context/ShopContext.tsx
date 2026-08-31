@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   Product,
   CartItem,
@@ -10,9 +10,56 @@ import {
   UserProfile,
   ColorOption,
   ProductVariant,
+  OrderStatus,
+  OrderTrackingEvent,
+  ProductQuestion,
+  ReturnRequest,
+  SellerProfile,
+  AppNotification,
+  SupportTicket,
 } from '../types';
 import { PRODUCTS } from '../data/products';
 import { VALID_COUPONS } from '../data/faqs';
+import {
+  auth,
+  isUserAdmin,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  googleProvider,
+  sendPasswordResetEmail,
+  signOut,
+  updateProfile,
+  onAuthStateChanged,
+} from '../lib/firebase';
+import {
+  seedInitialDatabaseIfEmpty,
+  getProductsFromDB,
+  getProductByIdFromDB,
+  saveOrderToDB,
+  getUserOrdersFromDB,
+  saveUserProfileToDB,
+  getUserProfileFromDB,
+  saveCartToDB,
+  getCartFromDB,
+  saveWishlistToDB,
+  getWishlistFromDB,
+  submitReviewToDB,
+  checkUserPurchasedProduct,
+  getUserNotificationsFromDB,
+  markNotificationReadInDB,
+  markAllNotificationsReadInDB,
+  createNotificationInDB,
+  getUserReturnsFromDB,
+  createReturnRequestInDB,
+  cancelOrderInDB,
+  getSellerProfileFromDB,
+  registerSellerInDB,
+  submitQuestionToDB,
+  upvoteQuestionInDB,
+  createSupportTicketInDB,
+  getUserSupportTicketsFromDB,
+} from '../lib/db';
 
 interface ToastData {
   id: string;
@@ -22,17 +69,24 @@ interface ToastData {
 }
 
 interface ShopContextType {
+  products: Product[];
+  isLoadingProducts: boolean;
+  refreshProducts: () => Promise<void>;
   cart: CartItem[];
   savedForLater: SavedForLaterItem[];
   wishlist: WishlistItem[];
   comparisonItems: Product[];
   currentUser: UserProfile | null;
+  isAdmin: boolean;
+  isAuthLoading: boolean;
   orders: Order[];
   appliedCoupon: Coupon | null;
   recentlyViewed: Product[];
   recentSearches: string[];
   isSearchOpen: boolean;
   isCartOpen: boolean;
+  isAuthModalOpen: boolean;
+  authModalMode: 'signin' | 'signup' | 'forgot';
   quickViewProduct: Product | null;
   imageViewerData: { images: string[]; initialIndex: number } | null;
   viewer360Product: Product | null;
@@ -77,20 +131,68 @@ interface ShopContextType {
   removeCoupon: () => void;
 
   // Orders
-  placeOrder: (orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>) => Order;
+  placeOrder: (orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>) => Promise<Order>;
   getOrderById: (orderIdOrNumber: string) => Order | undefined;
+  refreshOrders: () => Promise<void>;
+
+  // Reviews
+  submitVerifiedReview: (productId: string, rating: number, title: string, comment: string) => Promise<{ success: boolean; isVerified: boolean; message: string }>;
+  checkIsPurchased: (productId: string) => Promise<boolean>;
+
+  // Q&A
+  submitProductQuestion: (productId: string, productName: string, question: string) => Promise<{ success: boolean; message: string }>;
+  upvoteProductQuestion: (questionId: string) => Promise<void>;
+
+  // Returns & Cancellations
+  userReturns: ReturnRequest[];
+  refreshReturns: () => Promise<void>;
+  requestReturn: (payload: {
+    orderId: string;
+    orderNumber: string;
+    productId: string;
+    productName: string;
+    productImage: string;
+    reason: ReturnRequest['reason'];
+    reasonDetails: string;
+    images?: string[];
+    refundAmount: number;
+  }) => Promise<{ success: boolean; returnNumber: string; message: string }>;
+  cancelOrderAction: (orderId: string, reason: string) => Promise<{ success: boolean; message: string }>;
+
+  // Notifications
+  notifications: AppNotification[];
+  unreadNotificationsCount: number;
+  refreshNotifications: () => Promise<void>;
+  markNotificationRead: (id: string) => Promise<void>;
+  markAllNotificationsRead: () => Promise<void>;
+
+  // Seller Hub
+  sellerProfile: SellerProfile | null;
+  isSeller: boolean;
+  registerSellerAccount: (sellerData: Omit<SellerProfile, 'id' | 'createdAt' | 'status' | 'rating' | 'totalSales' | 'earnings' | 'commissionRate'>) => Promise<{ success: boolean; message: string }>;
+  refreshSellerProfile: () => Promise<void>;
+
+  // Support Tickets
+  userTickets: SupportTicket[];
+  refreshTickets: () => Promise<void>;
+  submitSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'ticketNumber' | 'createdAt' | 'status'>) => Promise<{ success: boolean; ticketNumber: string }>;
 
   // User Auth & Profile
-  loginUser: (email: string, name?: string) => void;
-  logoutUser: () => void;
-  updateUserProfile: (profile: Partial<UserProfile>) => void;
-  addAddress: (address: Omit<Address, 'id'>) => void;
-  removeAddress: (id: string) => void;
-  setDefaultAddress: (id: string) => void;
+  loginWithEmail: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  registerWithEmail: (name: string, email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  logoutUser: () => Promise<void>;
+  updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
+  addAddress: (address: Omit<Address, 'id'>) => Promise<void>;
+  removeAddress: (id: string) => Promise<void>;
+  setDefaultAddress: (id: string) => Promise<void>;
 
   // UI state controls
   setIsSearchOpen: (open: boolean) => void;
   setIsCartOpen: (open: boolean) => void;
+  setIsAuthModalOpen: (open: boolean) => void;
+  setAuthModalMode: (mode: 'signin' | 'signup' | 'forgot') => void;
   openQuickView: (product: Product) => void;
   closeQuickView: () => void;
   openImageViewer: (images: string[], initialIndex?: number) => void;
@@ -115,129 +217,14 @@ interface ShopContextType {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
-const INITIAL_DEMO_ADDRESSES: Address[] = [
-  {
-    id: 'addr-1',
-    fullName: 'Aditya Varma',
-    phone: '+91 98765 43210',
-    street: 'Flat 402, Prestige Tech Park, Outer Ring Road, Marathahalli',
-    landmark: 'Near JP Morgan Tower',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560103',
-    isDefault: true,
-    addressType: 'home',
-  },
-  {
-    id: 'addr-2',
-    fullName: 'Aditya Varma',
-    phone: '+91 98765 43210',
-    street: 'Plot 18, Nova Design Studio, Indiranagar 100ft Road',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560038',
-    isDefault: false,
-    addressType: 'work',
-  },
-];
-
-const INITIAL_SAMPLE_ORDER: Order = {
-  id: 'ord-sample-01',
-  orderNumber: 'NV-89241',
-  createdAt: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
-  items: [
-    {
-      id: 'nova-hypercharge-120w-0',
-      productId: PRODUCTS[0].id,
-      product: PRODUCTS[0],
-      selectedColor: PRODUCTS[0].colors[0],
-      quantity: 1,
-      price: PRODUCTS[0].price,
-    },
-    {
-      id: 'nova-warp-armored-240w-cable-0',
-      productId: PRODUCTS[3].id,
-      product: PRODUCTS[3],
-      selectedColor: PRODUCTS[3].colors[0],
-      quantity: 1,
-      price: PRODUCTS[3].price,
-    },
-  ],
-  shippingAddress: INITIAL_DEMO_ADDRESSES[0],
-  contactEmail: 'aditya.v@example.com',
-  contactPhone: '+91 98765 43210',
-  deliveryMethod: 'express_priority',
-  paymentMethod: 'upi',
-  paymentDetails: {
-    methodLabel: 'Google Pay UPI (aditya@okaxis)',
-    transactionId: 'UPI-TXN-99882211',
-    paid: true,
-  },
-  subtotal: 4398,
-  discount: 439,
-  couponCode: 'NOVA10',
-  shippingFee: 0,
-  tax: 0,
-  total: 3959,
-  status: 'shipped',
-  trackingCarrier: 'BlueDart Express Air',
-  trackingNumber: 'BD-84729104IN',
-  estimatedDeliveryDate: 'Delivering Tomorrow by 2:00 PM',
-  trackingHistory: [
-    {
-      status: 'placed',
-      title: 'Order Verified & Approved',
-      location: 'Bengaluru Hub',
-      timestamp: 'Yesterday, 10:14 AM',
-      description: 'Payment successful via Instant UPI. Order assigned to fulfillment line 04.',
-      completed: true,
-    },
-    {
-      status: 'confirmed',
-      title: 'Packaging & QC Certification',
-      location: 'NOVA Central Warehouse, Whitefield',
-      timestamp: 'Yesterday, 02:30 PM',
-      description: 'Serial numbers registered with 2-Year NovaCare warranty activation.',
-      completed: true,
-    },
-    {
-      status: 'packed',
-      title: 'Sealed & Handed to Carrier',
-      location: 'Bengaluru Sort Facility',
-      timestamp: 'Yesterday, 06:45 PM',
-      description: 'Tamper-evident security tape applied. AWB BD-84729104IN generated.',
-      completed: true,
-    },
-    {
-      status: 'shipped',
-      title: 'In Transit via BlueDart Air Cargo',
-      location: 'Kempegowda International Airport Air Hub',
-      timestamp: 'Today, 04:20 AM',
-      description: 'Consignment departed on Flight 6E-284 towards destination delivery hub.',
-      completed: true,
-      current: true,
-    },
-    {
-      status: 'out_for_delivery',
-      title: 'Out for Doorstep Delivery',
-      location: 'Local Delivery Station',
-      timestamp: 'Expected Tomorrow, 09:30 AM',
-      description: 'Delivery associate will contact via OTP verification prior to arrival.',
-      completed: false,
-    },
-    {
-      status: 'delivered',
-      title: 'Delivered to Customer',
-      location: 'Bengaluru',
-      timestamp: 'Expected Tomorrow, 02:00 PM',
-      description: 'Package handed over with contact-free confirmation.',
-      completed: false,
-    },
-  ],
-};
+const FREE_SHIPPING_THRESHOLD = 999;
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Cart & Saved items
+  // Products state from Firestore
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true);
+
+  // Cart & Wishlist
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('nova_cart');
@@ -249,14 +236,13 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [savedForLater, setSavedForLater] = useState<SavedForLaterItem[]>(() => {
     try {
-      const saved = localStorage.getItem('nova_saved_later');
+      const saved = localStorage.getItem('nova_saved_for_later');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
-  // Wishlist
   const [wishlist, setWishlist] = useState<WishlistItem[]>(() => {
     try {
       const saved = localStorage.getItem('nova_wishlist');
@@ -266,182 +252,287 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
-  // Comparison
   const [comparisonItems, setComparisonItems] = useState<Product[]>([]);
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
 
-  // User Profile
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    try {
-      const saved = localStorage.getItem('nova_user');
-      if (saved) return JSON.parse(saved);
-      return {
-        id: 'usr-demo-01',
-        name: 'Aditya Varma',
-        email: 'aditya.v@example.com',
-        phone: '+91 98765 43210',
-        joinedDate: 'Member since Jan 2025',
-        addresses: INITIAL_DEMO_ADDRESSES,
-        membershipTier: 'Nova Prime',
-        novaCoins: 450,
-      };
-    } catch {
-      return null;
-    }
-  });
-
-  // Orders
+  // User & Auth
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [orders, setOrders] = useState<Order[]>(() => {
     try {
       const saved = localStorage.getItem('nova_orders');
-      return saved ? JSON.parse(saved) : [INITIAL_SAMPLE_ORDER];
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return [INITIAL_SAMPLE_ORDER];
+      return [];
     }
   });
 
-  // Coupons
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  // Marketplace states
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [userReturns, setUserReturns] = useState<ReturnRequest[]>([]);
+  const [sellerProfile, setSellerProfile] = useState<SellerProfile | null>(null);
+  const [userTickets, setUserTickets] = useState<SupportTicket[]>([]);
 
-  // Recently Viewed & Search History
-  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>(() => {
-    try {
-      const saved = localStorage.getItem('nova_recently_viewed');
-      return saved ? JSON.parse(saved) : [PRODUCTS[0], PRODUCTS[1], PRODUCTS[2]];
-    } catch {
-      return [PRODUCTS[0], PRODUCTS[1]];
-    }
-  });
-
-  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('nova_recent_searches');
-      return saved ? JSON.parse(saved) : ['120W GaN Charger', 'Aramid Case', '240W Type C', 'AirPulse Earbuds'];
-    } catch {
-      return ['120W GaN Charger', 'Aramid Case', 'AirPulse Earbuds'];
-    }
-  });
-
-  // Modals & Drawers
+  // UI Modals
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [imageViewerData, setImageViewerData] = useState<{ images: string[]; initialIndex: number } | null>(null);
   const [viewer360Product, setViewer360Product] = useState<Product | null>(null);
-
-  // Toast
   const [toast, setToast] = useState<ToastData | null>(null);
+
+  // Discovery History
+  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([
+    '120W GaN Station',
+    'MagSafe Cooling Stand',
+    'Braided 240W Cable',
+  ]);
 
   // Accessibility
   const [reducedMotion, setReducedMotion] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
 
-  // Sync to localStorage
-  useEffect(() => {
+  // 1. Initialize Database & Products
+  const refreshProducts = useCallback(async () => {
     try {
-      localStorage.setItem('nova_cart', JSON.stringify(cart));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [cart]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('nova_wishlist', JSON.stringify(wishlist));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [wishlist]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('nova_saved_later', JSON.stringify(savedForLater));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [savedForLater]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('nova_orders', JSON.stringify(orders));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [orders]);
-
-  useEffect(() => {
-    try {
-      if (currentUser) {
-        localStorage.setItem('nova_user', JSON.stringify(currentUser));
+      setIsLoadingProducts(true);
+      await seedInitialDatabaseIfEmpty();
+      const prods = await getProductsFromDB();
+      if (prods && prods.length > 0) {
+        setProducts(prods);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error('Failed to load products from database:', err);
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshProducts();
+  }, [refreshProducts]);
+
+  // 2. Fetch User Orders
+  const refreshOrders = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const dbOrders = await getUserOrdersFromDB(currentUser.id, currentUser.email);
+      if (dbOrders && dbOrders.length > 0) {
+        setOrders(dbOrders);
+        localStorage.setItem('nova_orders', JSON.stringify(dbOrders));
+      }
+    } catch (err) {
+      console.error('Failed to refresh orders:', err);
     }
   }, [currentUser]);
 
-  // Toast auto-dismiss
+  // 3. Listen to Firebase Auth state
   useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => {
-        setToast(null);
-      }, 3500);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setIsAuthLoading(true);
+      if (fbUser) {
+        const userIsAdmin = isUserAdmin(fbUser);
+        setIsAdmin(userIsAdmin);
 
-  const showToast = (title: string, message: string, type: 'success' | 'info' | 'error' = 'success') => {
-    setToast({
-      id: Math.random().toString(),
-      title,
-      message,
-      type,
+        // Fetch or create profile in Firestore
+        let profile = await getUserProfileFromDB(fbUser.uid);
+        if (!profile) {
+          profile = {
+            id: fbUser.uid,
+            name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Flagship Member',
+            email: fbUser.email || '',
+            phone: fbUser.phoneNumber || '+91 98765 43210',
+            avatarUrl: fbUser.photoURL || undefined,
+            joinedDate: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+            addresses: [
+              {
+                id: 'addr-default-1',
+                fullName: fbUser.displayName || 'Flagship Member',
+                phone: '+91 98765 43210',
+                street: 'Indiranagar 100ft Road, Phase 2',
+                landmark: 'Near Metro Station',
+                city: 'Bengaluru',
+                state: 'Karnataka',
+                pincode: '560038',
+                isDefault: true,
+                addressType: 'home',
+              },
+            ],
+            role: userIsAdmin ? 'admin' : 'customer',
+            membershipTier: userIsAdmin ? 'Nova Prime' : 'Nova Prime',
+            novaCoins: 250,
+          };
+          profile.savedAddresses = profile.addresses;
+          await saveUserProfileToDB(profile);
+        } else {
+          profile.savedAddresses = profile.addresses || [];
+          if (userIsAdmin && profile.role !== 'admin') {
+            profile.role = 'admin';
+            await saveUserProfileToDB(profile);
+          }
+        }
+
+        setCurrentUser(profile);
+
+        // Sync and load cart from Firestore
+        try {
+          const dbCart = await getCartFromDB(fbUser.uid);
+          if (dbCart && dbCart.length > 0) {
+            setCart(dbCart);
+          } else if (cart.length > 0) {
+            await saveCartToDB(fbUser.uid, cart);
+          }
+        } catch (err) {
+          console.warn('Cart sync error:', err);
+        }
+
+        // Sync and load wishlist from Firestore
+        try {
+          const dbWishlist = await getWishlistFromDB(fbUser.uid);
+          if (dbWishlist && dbWishlist.length > 0) {
+            setWishlist(dbWishlist);
+          } else if (wishlist.length > 0) {
+            await saveWishlistToDB(fbUser.uid, wishlist);
+          }
+        } catch (err) {
+          console.warn('Wishlist sync error:', err);
+        }
+
+        // Load orders
+        try {
+          const dbOrders = await getUserOrdersFromDB(fbUser.uid, fbUser.email || '');
+          if (dbOrders && dbOrders.length > 0) {
+            setOrders(dbOrders);
+          }
+        } catch (err) {
+          console.warn('Orders sync error:', err);
+        }
+
+        // Load notifications
+        try {
+          const notifs = await getUserNotificationsFromDB(fbUser.uid);
+          setNotifications(notifs);
+        } catch (err) {
+          console.warn('Notifications sync error:', err);
+        }
+
+        // Load returns
+        try {
+          const returns = await getUserReturnsFromDB(fbUser.uid, fbUser.email || '');
+          setUserReturns(returns);
+        } catch (err) {
+          console.warn('Returns sync error:', err);
+        }
+
+        // Load seller profile
+        try {
+          const seller = await getSellerProfileFromDB(fbUser.uid);
+          setSellerProfile(seller);
+        } catch (err) {
+          console.warn('Seller sync error:', err);
+        }
+
+        // Load user support tickets
+        try {
+          if (fbUser.email) {
+            const tickets = await getUserSupportTicketsFromDB(fbUser.email);
+            setUserTickets(tickets);
+          }
+        } catch (err) {
+          console.warn('Tickets sync error:', err);
+        }
+      } else {
+        setCurrentUser(null);
+        setIsAdmin(false);
+        setNotifications([]);
+        setUserReturns([]);
+        setSellerProfile(null);
+        setUserTickets([]);
+      }
+      setIsAuthLoading(false);
     });
-  };
 
-  const hideToast = () => setToast(null);
+    return () => unsubscribe();
+  }, []);
 
-  // Cart operations
+  // Save cart to local storage and Firestore on changes
+  useEffect(() => {
+    localStorage.setItem('nova_cart', JSON.stringify(cart));
+    if (currentUser?.id) {
+      saveCartToDB(currentUser.id, cart);
+    }
+  }, [cart, currentUser]);
+
+  // Save wishlist to local storage and Firestore
+  useEffect(() => {
+    localStorage.setItem('nova_wishlist', JSON.stringify(wishlist));
+    if (currentUser?.id) {
+      saveWishlistToDB(currentUser.id, wishlist);
+    }
+  }, [wishlist, currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem('nova_saved_for_later', JSON.stringify(savedForLater));
+  }, [savedForLater]);
+
+  // Toast Notification helper
+  const showToast = useCallback((title: string, message: string, type: 'success' | 'info' | 'error' = 'success') => {
+    const id = `toast-${Date.now()}`;
+    setToast({ id, title, message, type });
+  }, []);
+
+  const hideToast = useCallback(() => {
+    setToast(null);
+  }, []);
+
+  // ---------------- CART ACTIONS ----------------
   const addToCart = (
     product: Product,
-    selectedColor: ColorOption = product.colors[0],
+    selectedColor?: ColorOption,
     selectedVariant?: ProductVariant,
     quantity: number = 1
   ) => {
-    const itemPrice = selectedVariant ? selectedVariant.price : product.price;
-    const itemKey = `${product.id}-${selectedColor.name}-${selectedVariant?.id || 'std'}`;
+    const color = selectedColor || product.colors[0] || { name: 'Standard', hex: '#000000', inStock: true };
+    const variant = selectedVariant || (product.variants && product.variants[0]);
+    const price = variant ? variant.price : product.price;
+
+    const itemKey = `${product.id}-${color.name}-${variant ? variant.id : 'base'}`;
 
     setCart((prev) => {
-      const existingIndex = prev.findIndex((item) => item.id === itemKey);
-      if (existingIndex > -1) {
+      const existingIdx = prev.findIndex((item) => item.id === itemKey);
+      if (existingIdx > -1) {
         const updated = [...prev];
-        const newQty = updated[existingIndex].quantity + quantity;
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          quantity: Math.min(newQty, product.stockCount || 10),
+        const newQty = updated[existingIdx].quantity + quantity;
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: Math.min(newQty, product.stockCount || 99),
         };
         return updated;
       } else {
-        return [
-          ...prev,
-          {
-            id: itemKey,
-            productId: product.id,
-            product,
-            selectedColor,
-            selectedVariant,
-            quantity: Math.min(quantity, product.stockCount || 10),
-            price: itemPrice,
-          },
-        ];
+        const newItem: CartItem = {
+          id: itemKey,
+          productId: product.id,
+          product,
+          selectedColor: color,
+          selectedVariant: variant,
+          quantity: Math.min(quantity, product.stockCount || 99),
+          price,
+        };
+        return [newItem, ...prev];
       }
     });
 
-    showToast('Added to Cart', `${product.name} (${selectedColor.name}) has been added to your shopping bag.`);
+    showToast('Added to Bag', `${product.name} has been added to your shopping bag.`);
   };
 
   const removeFromCart = (itemId: string) => {
     setCart((prev) => prev.filter((item) => item.id !== itemId));
-    showToast('Removed', 'Item was removed from your cart.', 'info');
+    showToast('Item Removed', 'The item was removed from your bag.', 'info');
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
@@ -450,77 +541,85 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     setCart((prev) =>
-      prev.map((item) => (item.id === itemId ? { ...item, quantity: Math.min(quantity, item.product.stockCount || 10) } : item))
+      prev.map((item) => {
+        if (item.id === itemId) {
+          const maxStock = item.product.stockCount || 99;
+          return { ...item, quantity: Math.min(quantity, maxStock) };
+        }
+        return item;
+      })
     );
   };
 
   const clearCart = () => {
     setCart([]);
+    if (currentUser?.id) {
+      saveCartToDB(currentUser.id, []);
+    }
   };
 
   const saveForLater = (itemId: string) => {
     const itemToSave = cart.find((i) => i.id === itemId);
     if (!itemToSave) return;
+
     setCart((prev) => prev.filter((i) => i.id !== itemId));
     setSavedForLater((prev) => [
-      ...prev.filter((i) => i.id !== itemId),
       {
-        id: itemId,
+        id: `saved-${Date.now()}`,
         cartItem: itemToSave,
         savedAt: new Date().toISOString(),
       },
+      ...prev,
     ]);
-    showToast('Saved for Later', `${itemToSave.product.name} moved to saved items.`, 'info');
+    showToast('Saved for Later', `${itemToSave.product.name} moved to saved items.`);
   };
 
   const moveToCartFromSaved = (savedId: string) => {
-    const saved = savedForLater.find((i) => i.id === savedId);
+    const saved = savedForLater.find((s) => s.id === savedId);
     if (!saved) return;
-    setSavedForLater((prev) => prev.filter((i) => i.id !== savedId));
-    setCart((prev) => [...prev, saved.cartItem]);
-    showToast('Moved to Cart', `${saved.cartItem.product.name} returned to your cart.`);
+
+    setSavedForLater((prev) => prev.filter((s) => s.id !== savedId));
+    addToCart(
+      saved.cartItem.product,
+      saved.cartItem.selectedColor,
+      saved.cartItem.selectedVariant,
+      saved.cartItem.quantity
+    );
   };
 
   const removeSavedForLater = (savedId: string) => {
-    setSavedForLater((prev) => prev.filter((i) => i.id !== savedId));
+    setSavedForLater((prev) => prev.filter((s) => s.id !== savedId));
+    showToast('Removed', 'Item removed from saved list.', 'info');
   };
 
-  // Calculations
+  // ---------------- CART CALCULATIONS ----------------
   const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const freeShippingThreshold = 999;
-  const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
-  const cartShippingFee = cartSubtotal >= freeShippingThreshold || cartSubtotal === 0 ? 0 : 99;
 
-  let couponDiscountAmount = 0;
-  if (appliedCoupon && cartSubtotal >= appliedCoupon.minOrder) {
+  let cartDiscount = 0;
+  if (appliedCoupon) {
     if (appliedCoupon.discountType === 'percent') {
-      couponDiscountAmount = Math.round((cartSubtotal * appliedCoupon.value) / 100);
+      cartDiscount = Math.round((cartSubtotal * appliedCoupon.value) / 100);
     } else {
-      couponDiscountAmount = appliedCoupon.value;
+      cartDiscount = Math.min(appliedCoupon.value, cartSubtotal);
     }
   }
 
-  const cartDiscount = couponDiscountAmount;
-  const cartTax = 0; // GST is already inclusive in Indian retail electronics pricing
+  const freeShippingThreshold = FREE_SHIPPING_THRESHOLD;
+  const cartShippingFee = cartSubtotal >= freeShippingThreshold || cart.length === 0 ? 0 : 99;
+  const cartTax = 0; // Inclusive GST
   const cartTotal = Math.max(0, cartSubtotal - cartDiscount + cartShippingFee);
-  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+  const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
 
-  // Wishlist
+  // ---------------- WISHLIST ACTIONS ----------------
   const toggleWishlist = (product: Product) => {
     const exists = wishlist.some((item) => item.productId === product.id);
     if (exists) {
       setWishlist((prev) => prev.filter((item) => item.productId !== product.id));
-      showToast('Removed from Wishlist', `${product.name} was removed from your wishlist.`, 'info');
+      showToast('Removed from Wishlist', `${product.name} removed from your saved list.`, 'info');
     } else {
-      setWishlist((prev) => [
-        ...prev,
-        {
-          productId: product.id,
-          product,
-          addedAt: new Date().toISOString(),
-        },
-      ]);
-      showToast('Saved to Wishlist', `${product.name} added to your personal wishlist.`);
+      setWishlist((prev) => [{ productId: product.id, product, addedAt: new Date().toISOString() }, ...prev]);
+      showToast('Added to Wishlist', `${product.name} saved to your wishlist.`);
     }
   };
 
@@ -530,215 +629,499 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeFromWishlist = (productId: string) => {
     setWishlist((prev) => prev.filter((item) => item.productId !== productId));
+    showToast('Removed', 'Product removed from wishlist.', 'info');
   };
 
   const moveAllWishlistToCart = () => {
     wishlist.forEach((item) => {
-      addToCart(item.product, item.product.colors[0], undefined, 1);
+      addToCart(item.product);
     });
     setWishlist([]);
-    showToast('Wishlist Moved', 'All wishlist products added to your bag!');
+    showToast('Wishlist Moved', 'All wishlist items added to your shopping bag.');
   };
 
-  // Comparison
+  // ---------------- COMPARISON ACTIONS ----------------
   const toggleComparison = (product: Product) => {
-    const exists = comparisonItems.some((p) => p.id === product.id);
+    const exists = comparisonItems.some((item) => item.id === product.id);
     if (exists) {
-      setComparisonItems((prev) => prev.filter((p) => p.id !== product.id));
-      showToast('Comparison', `${product.name} removed from spec comparison.`, 'info');
+      setComparisonItems((prev) => prev.filter((item) => item.id !== product.id));
+      showToast('Removed from Comparison', `${product.name} removed from comparison matrix.`, 'info');
     } else {
       if (comparisonItems.length >= 4) {
-        showToast('Max Comparison Limit', 'You can compare up to 4 accessories at a time.', 'error');
+        showToast('Limit Reached', 'You can compare up to 4 accessories simultaneously.', 'error');
         return;
       }
       setComparisonItems((prev) => [...prev, product]);
-      showToast('Added to Compare', `${product.name} added to spec comparison matrix.`);
+      showToast('Added to Comparison', `${product.name} added to hardware comparison.`);
     }
   };
 
   const isInComparison = (productId: string) => {
-    return comparisonItems.some((p) => p.id === productId);
+    return comparisonItems.some((item) => item.id === productId);
   };
 
   const removeFromComparison = (productId: string) => {
-    setComparisonItems((prev) => prev.filter((p) => p.id !== productId));
+    setComparisonItems((prev) => prev.filter((item) => item.id !== productId));
   };
 
   const clearComparison = () => {
     setComparisonItems([]);
   };
 
-  // Coupons
+  // ---------------- COUPONS ----------------
   const applyCoupon = (code: string) => {
     const cleanCode = code.trim().toUpperCase();
-    const found = VALID_COUPONS.find((c) => c.code === cleanCode);
+    const found = VALID_COUPONS.find((c) => c.code.toUpperCase() === cleanCode);
+
     if (!found) {
-      return { success: false, message: 'Invalid coupon code. Try NOVA10 or SUPERCHARGE.' };
+      return { success: false, message: 'Invalid promo code. Please verify and try again.' };
     }
+
     if (cartSubtotal < found.minOrder) {
       return {
         success: false,
-        message: `Coupon requires a minimum cart value of ₹${found.minOrder.toLocaleString('en-IN')}`,
+        message: `Minimum bag value of ₹${found.minOrder.toLocaleString('en-IN')} required for code "${found.code}".`,
       };
     }
+
     setAppliedCoupon(found);
-    showToast('Promo Code Applied!', `Success! ${found.description}`);
-    return { success: true, message: `Applied coupon ${cleanCode}` };
+    showToast('Discount Applied!', `Promo code ${found.code} applied successfully.`);
+    return { success: true, message: `Promo code ${found.code} applied!` };
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
-    showToast('Coupon Removed', 'Promotional discount removed.', 'info');
+    showToast('Promo Removed', 'Coupon removed from your bag.', 'info');
   };
 
-  // Place Order
-  const placeOrder = (orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>): Order => {
-    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
-    const orderNumber = `NV-${randomSuffix}`;
+  // ---------------- ORDERS ----------------
+  const placeOrder = async (
+    orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>
+  ): Promise<Order> => {
+    const timestamp = Date.now();
+    const orderId = `NV-${timestamp.toString().slice(-6)}`;
+    const trackingNumber = `BLRDART${Math.floor(100000000 + Math.random() * 900000000)}`;
+
+    const initialTracking: OrderTrackingEvent[] = [
+      {
+        status: 'placed',
+        title: 'Order Placed & Verified',
+        location: 'NOVA Bengaluru Hub',
+        timestamp: 'Just now',
+        description: 'Payment authorized. Order queued for high-speed automated packaging.',
+        completed: true,
+        current: true,
+      },
+      {
+        status: 'confirmed',
+        title: 'Quality Check & Firmware Test',
+        location: 'Central Vault QC Line 4',
+        timestamp: 'Pending',
+        description: 'Hardware authentication and tamper-evident serial seal verification.',
+        completed: false,
+      },
+      {
+        status: 'packed',
+        title: 'Anti-Static Shock-Proof Packaging',
+        location: 'Fulfillment Station A',
+        timestamp: 'Pending',
+        description: 'Enclosed with 24-Month official warranty passport and invoice.',
+        completed: false,
+      },
+      {
+        status: 'shipped',
+        title: 'Dispatched with BlueDart Priority Air',
+        location: 'Air Cargo Transit Hub',
+        timestamp: 'Pending',
+        description: `AWB Tracking Number: ${trackingNumber}`,
+        completed: false,
+      },
+      {
+        status: 'out_for_delivery',
+        title: 'Out for Doorstep Delivery',
+        location: `${orderPayload.shippingAddress.city} Express Facility`,
+        timestamp: 'Pending',
+        description: 'Driver assigned with secure OTP verification.',
+        completed: false,
+      },
+      {
+        status: 'delivered',
+        title: 'Delivered',
+        location: `${orderPayload.shippingAddress.street}, ${orderPayload.shippingAddress.city}`,
+        timestamp: 'Pending',
+        description: 'Delivered with tamper-proof seal intact.',
+        completed: false,
+      },
+    ];
+
     const newOrder: Order = {
       ...orderPayload,
-      id: `ord-${Date.now()}`,
-      orderNumber,
+      id: orderId,
+      orderNumber: orderId,
       createdAt: new Date().toISOString(),
       status: 'placed',
-      trackingCarrier: 'BlueDart Express Air',
-      trackingNumber: `BD-${Math.floor(10000000 + Math.random() * 90000000)}IN`,
-      estimatedDeliveryDate: 'Delivered in 2-3 Business Days',
-      trackingHistory: [
-        {
-          status: 'placed',
-          title: 'Order Placed & Verified',
-          location: 'NOVA Express Server',
-          timestamp: 'Just now',
-          description: `Order ${orderNumber} placed successfully with ${orderPayload.paymentDetails.methodLabel}.`,
-          completed: true,
-          current: true,
-        },
-        {
-          status: 'confirmed',
-          title: 'Order Confirmed & QC Assigned',
-          location: 'NOVA Central Warehouse',
-          timestamp: 'Pending Processing',
-          description: 'Awaiting barcode scanning and warranty seal.',
-          completed: false,
-        },
-        {
-          status: 'packed',
-          title: 'Package Sealed with Security Tape',
-          location: 'Fulfillment Center',
-          timestamp: 'Estimated within 24 hours',
-          description: 'Package packaged in shock-absorbent eco-friendly packaging.',
-          completed: false,
-        },
-        {
-          status: 'shipped',
-          title: 'Handed over to Courier Hub',
-          location: 'Air Cargo Facility',
-          timestamp: 'Estimated in 24-48 hours',
-          description: 'Airway bill registered.',
-          completed: false,
-        },
-        {
-          status: 'out_for_delivery',
-          title: 'Out for Doorstep Delivery',
-          location: 'Destination Station',
-          timestamp: 'Estimated Day 3',
-          description: 'Courier agent assigned for OTP delivery.',
-          completed: false,
-        },
-        {
-          status: 'delivered',
-          title: 'Delivered Successfully',
-          location: orderPayload.shippingAddress.city,
-          timestamp: 'Estimated Day 3',
-          description: 'Delivery completed.',
-          completed: false,
-        },
-      ],
+      trackingCarrier: 'BlueDart Express Air Priority',
+      trackingNumber,
+      estimatedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      }),
+      trackingHistory: initialTracking,
     };
 
+    // Save order to Firestore
+    await saveOrderToDB(newOrder, currentUser?.id);
+
+    // Update local state
     setOrders((prev) => [newOrder, ...prev]);
+    localStorage.setItem('nova_orders', JSON.stringify([newOrder, ...orders]));
+
+    // Clear cart
     clearCart();
     setAppliedCoupon(null);
-    showToast('Order Confirmed!', `Your order ${orderNumber} has been placed successfully.`);
+
+    // Award NovaCoins
+    if (currentUser) {
+      const coinsEarned = Math.floor(newOrder.total * 0.05);
+      const updatedProfile: UserProfile = {
+        ...currentUser,
+        novaCoins: (currentUser.novaCoins || 0) + coinsEarned,
+      };
+      await saveUserProfileToDB(updatedProfile);
+      setCurrentUser(updatedProfile);
+    }
+
+    showToast('Order Confirmed!', `Order ${newOrder.orderNumber} successfully placed.`);
     return newOrder;
   };
 
-  const getOrderById = (orderIdOrNumber: string) => {
-    const clean = orderIdOrNumber.trim().toUpperCase();
+  const getOrderById = (orderIdOrNumber: string): Order | undefined => {
     return orders.find(
-      (o) => o.id === orderIdOrNumber || o.orderNumber.toUpperCase() === clean || o.trackingNumber.toUpperCase() === clean
+      (o) =>
+        o.id.toLowerCase() === orderIdOrNumber.toLowerCase() ||
+        o.orderNumber.toLowerCase() === orderIdOrNumber.toLowerCase() ||
+        o.trackingNumber.toLowerCase() === orderIdOrNumber.toLowerCase()
     );
   };
 
-  // Auth / User
-  const loginUser = (email: string, name: string = 'Nova Member') => {
-    const user: UserProfile = {
-      id: `usr-${Date.now()}`,
-      name,
-      email,
-      phone: '+91 98765 43210',
-      joinedDate: 'Member since 2026',
-      addresses: INITIAL_DEMO_ADDRESSES,
-      membershipTier: 'Nova Prime',
-      novaCoins: 300,
-    };
-    setCurrentUser(user);
-    showToast('Welcome back!', `Logged in as ${email}`);
+  // ---------------- VERIFIED REVIEWS ----------------
+  const checkIsPurchased = async (productId: string): Promise<boolean> => {
+    if (!currentUser) return false;
+    return await checkUserPurchasedProduct(currentUser.id, currentUser.email, productId);
   };
 
-  const logoutUser = () => {
+  const submitVerifiedReview = async (
+    productId: string,
+    rating: number,
+    title: string,
+    comment: string
+  ): Promise<{ success: boolean; isVerified: boolean; message: string }> => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return { success: false, isVerified: false, message: 'Please sign in to write a review.' };
+    }
+
+    const prod = products.find((p) => p.id === productId);
+    const res = await submitReviewToDB({
+      productId,
+      productName: prod?.name || 'NOVA Hardware',
+      author: currentUser.name,
+      authorUid: currentUser.id,
+      authorEmail: currentUser.email,
+      rating,
+      title,
+      comment,
+      avatar: currentUser.avatarUrl,
+    });
+
+    if (res.success) {
+      showToast(res.isVerified ? 'Verified Review Published!' : 'Review Submitted!', res.message);
+      // Refresh products to update aggregate rating
+      await refreshProducts();
+    } else {
+      showToast('Submission Failed', res.message, 'error');
+    }
+
+    return res;
+  };
+
+  // ---------------- AUTHENTICATION ----------------
+  const loginWithEmail = async (email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), pass);
+      setIsAuthModalOpen(false);
+      showToast('Welcome Back', `Successfully signed in as ${email}.`);
+      return { success: true };
+    } catch (error: any) {
+      console.error('Email sign in error:', error);
+      const msg = error.code === 'auth/invalid-credential' 
+        ? 'Invalid email or password. Please check your credentials.' 
+        : error.message || 'Failed to sign in';
+      showToast('Sign In Error', msg, 'error');
+      return { success: false, error: msg };
+    }
+  };
+
+  const registerWithEmail = async (name: string, email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email.trim(), pass);
+      if (cred.user) {
+        await updateProfile(cred.user, { displayName: name.trim() });
+      }
+      setIsAuthModalOpen(false);
+      showToast('Account Created', `Welcome to NOVA Flagship Store, ${name}!`);
+      return { success: true };
+    } catch (error: any) {
+      console.error('Email registration error:', error);
+      const msg = error.code === 'auth/email-already-in-use'
+        ? 'An account with this email already exists. Please sign in instead.'
+        : error.message || 'Failed to register';
+      showToast('Registration Error', msg, 'error');
+      return { success: false, error: msg };
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setIsAuthModalOpen(false);
+      showToast('Google Sign In', 'Successfully authenticated with Google.');
+      return { success: true };
+    } catch (error: any) {
+      console.error('Google sign in error:', error);
+      const msg = error.message || 'Google authentication was cancelled or interrupted.';
+      showToast('Sign In Failed', msg, 'error');
+      return { success: false, error: msg };
+    }
+  };
+
+  const resetPassword = async (email: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      showToast('Password Reset Sent', `Check ${email} for password reset instructions.`);
+      return { success: true };
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      const msg = error.message || 'Failed to send reset email.';
+      showToast('Reset Failed', msg, 'error');
+      return { success: false, error: msg };
+    }
+  };
+
+  const logoutUser = async (): Promise<void> => {
+    await signOut(auth);
     setCurrentUser(null);
-    showToast('Logged Out', 'You have been safely signed out.', 'info');
+    setIsAdmin(false);
+    showToast('Signed Out', 'You have been signed out securely.');
   };
 
-  const updateUserProfile = (profileUpdate: Partial<UserProfile>) => {
+  const updateUserProfile = async (updates: Partial<UserProfile>) => {
     if (!currentUser) return;
-    setCurrentUser((prev) => (prev ? { ...prev, ...profileUpdate } : null));
+    const updated: UserProfile = {
+      ...currentUser,
+      ...updates,
+      savedAddresses: updates.addresses || currentUser.addresses,
+    };
+    setCurrentUser(updated);
+    await saveUserProfileToDB(updated);
     showToast('Profile Updated', 'Your profile details have been saved.');
   };
 
-  const addAddress = (addressData: Omit<Address, 'id'>) => {
+  const addAddress = async (addr: Omit<Address, 'id'>) => {
+    if (!currentUser) return;
     const newAddr: Address = {
-      ...addressData,
+      ...addr,
       id: `addr-${Date.now()}`,
     };
-    if (currentUser) {
-      const updatedAddresses = addressData.isDefault
-        ? [newAddr, ...currentUser.addresses.map((a) => ({ ...a, isDefault: false }))]
-        : [...currentUser.addresses, newAddr];
-      setCurrentUser({
-        ...currentUser,
-        addresses: updatedAddresses,
-      });
+    const currentAddresses = currentUser.addresses || [];
+    let updatedList = [...currentAddresses];
+    if (newAddr.isDefault) {
+      updatedList = updatedList.map((a) => ({ ...a, isDefault: false }));
     }
-    showToast('Address Saved', 'New delivery address added successfully.');
+    updatedList.push(newAddr);
+
+    await updateUserProfile({ addresses: updatedList });
+    showToast('Address Added', 'New delivery address saved.');
   };
 
-  const removeAddress = (id: string) => {
-    if (currentUser) {
-      setCurrentUser({
-        ...currentUser,
-        addresses: currentUser.addresses.filter((a) => a.id !== id),
-      });
-      showToast('Address Removed', 'Address deleted.', 'info');
-    }
+  const removeAddress = async (id: string) => {
+    if (!currentUser) return;
+    const updatedList = (currentUser.addresses || []).filter((a) => a.id !== id);
+    await updateUserProfile({ addresses: updatedList });
+    showToast('Address Removed', 'Address removed from your address book.', 'info');
   };
 
-  const setDefaultAddress = (id: string) => {
-    if (currentUser) {
-      setCurrentUser({
-        ...currentUser,
-        addresses: currentUser.addresses.map((a) => ({
-          ...a,
-          isDefault: a.id === id,
-        })),
-      });
-      showToast('Default Address Set', 'Selected address is now your default.');
-    }
+  const setDefaultAddress = async (id: string) => {
+    if (!currentUser) return;
+    const updatedList = (currentUser.addresses || []).map((a) => ({
+      ...a,
+      isDefault: a.id === id,
+    }));
+    await updateUserProfile({ addresses: updatedList });
+    showToast('Default Address Set', 'Default delivery destination updated.');
   };
 
-  // Quick View / Image / 360 viewer
+  // ---------------- PRODUCT Q&A ----------------
+  const submitProductQuestion = async (productId: string, productName: string, questionText: string): Promise<{ success: boolean; message: string }> => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return { success: false, message: 'Please sign in to ask a question.' };
+    }
+    const res = await submitQuestionToDB({
+      productId,
+      productName,
+      userUid: currentUser.id,
+      userName: currentUser.name,
+      userEmail: currentUser.email,
+      question: questionText,
+    });
+    if (res.success) {
+      showToast('Question Submitted', 'Your question has been posted and will be answered shortly.');
+    }
+    return { success: res.success, message: res.message };
+  };
+
+  const upvoteProductQuestion = async (questionId: string) => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    const voted = await upvoteQuestionInDB(questionId, currentUser.id);
+    showToast(voted ? 'Upvoted' : 'Vote Removed', voted ? 'Thanks for marking this question helpful.' : 'Upvote removed.', 'info');
+  };
+
+  // ---------------- RETURNS & CANCELLATIONS ----------------
+  const refreshReturns = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const list = await getUserReturnsFromDB(currentUser.id, currentUser.email);
+      setUserReturns(list);
+    } catch (err) {
+      console.error('Error refreshing returns:', err);
+    }
+  }, [currentUser]);
+
+  const requestReturn = async (payload: {
+    orderId: string;
+    orderNumber: string;
+    productId: string;
+    productName: string;
+    productImage: string;
+    reason: ReturnRequest['reason'];
+    reasonDetails: string;
+    images?: string[];
+    refundAmount: number;
+  }): Promise<{ success: boolean; returnNumber: string; message: string }> => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return { success: false, returnNumber: '', message: 'Please sign in to request a return.' };
+    }
+    const res = await createReturnRequestInDB({
+      ...payload,
+      userUid: currentUser.id,
+      userEmail: currentUser.email,
+      userName: currentUser.name,
+    });
+    if (res.success) {
+      showToast('Return Requested', `Return ${res.returnNumber} has been logged. Our courier team will reach out for reverse pickup.`);
+      await refreshReturns();
+      await refreshOrders();
+    }
+    return res;
+  };
+
+  const cancelOrderAction = async (orderId: string, reason: string): Promise<{ success: boolean; message: string }> => {
+    if (!currentUser) {
+      return { success: false, message: 'Unauthorized' };
+    }
+    const res = await cancelOrderInDB(orderId, reason, currentUser.id);
+    if (res.success) {
+      showToast('Order Cancelled', 'Order has been cancelled successfully.');
+      await refreshOrders();
+    } else {
+      showToast('Cancellation Failed', res.message, 'error');
+    }
+    return res;
+  };
+
+  // ---------------- NOTIFICATIONS ----------------
+  const refreshNotifications = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const notifs = await getUserNotificationsFromDB(currentUser.id);
+      setNotifications(notifs);
+    } catch (err) {
+      console.error('Error refreshing notifications:', err);
+    }
+  }, [currentUser]);
+
+  const markNotificationRead = async (id: string) => {
+    await markNotificationReadInDB(id);
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+  };
+
+  const markAllNotificationsRead = async () => {
+    if (!currentUser) return;
+    await markAllNotificationsReadInDB(currentUser.id);
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    showToast('Notifications Cleared', 'All notifications marked as read.');
+  };
+
+  const unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
+
+  // ---------------- SELLER HUB ----------------
+  const refreshSellerProfile = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      const profile = await getSellerProfileFromDB(currentUser.id);
+      setSellerProfile(profile);
+    } catch (err) {
+      console.error('Error refreshing seller profile:', err);
+    }
+  }, [currentUser]);
+
+  const registerSellerAccount = async (sellerData: Omit<SellerProfile, 'id' | 'createdAt' | 'status' | 'rating' | 'totalSales' | 'earnings' | 'commissionRate'>): Promise<{ success: boolean; message: string }> => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return { success: false, message: 'Please sign in first.' };
+    }
+    const res = await registerSellerInDB(sellerData);
+    if (res.success) {
+      showToast('Partner Store Created', 'Welcome to NOVA Marketplace Partner Hub!');
+      await refreshSellerProfile();
+      if (currentUser) {
+        setCurrentUser({ ...currentUser, role: 'seller', sellerId: res.sellerId });
+      }
+    }
+    return res;
+  };
+
+  const isSeller = currentUser?.role === 'seller' || !!sellerProfile;
+
+  // ---------------- SUPPORT TICKETS ----------------
+  const refreshTickets = useCallback(async () => {
+    if (!currentUser?.email) return;
+    try {
+      const list = await getUserSupportTicketsFromDB(currentUser.email);
+      setUserTickets(list);
+    } catch (err) {
+      console.error('Error fetching tickets:', err);
+    }
+  }, [currentUser]);
+
+  const submitSupportTicket = async (ticket: Omit<SupportTicket, 'id' | 'ticketNumber' | 'createdAt' | 'status'>): Promise<{ success: boolean; ticketNumber: string }> => {
+    const res = await createSupportTicketInDB(ticket);
+    if (res.success) {
+      showToast('Ticket Created', `Your support ticket #${res.ticketNumber} has been logged.`);
+      if (currentUser?.email) {
+        await refreshTickets();
+      }
+    }
+    return res;
+  };
+
+  // ---------------- UI CONTROLS ----------------
   const openQuickView = (product: Product) => setQuickViewProduct(product);
   const closeQuickView = () => setQuickViewProduct(null);
 
@@ -750,55 +1133,38 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const open360Viewer = (product: Product) => setViewer360Product(product);
   const close360Viewer = () => setViewer360Product(null);
 
-  // Search History
   const addRecentSearch = (query: string) => {
-    const clean = query.trim();
-    if (!clean) return;
-    setRecentSearches((prev) => {
-      const filtered = prev.filter((s) => s.toLowerCase() !== clean.toLowerCase());
-      const updated = [clean, ...filtered].slice(0, 8);
-      try {
-        localStorage.setItem('nova_recent_searches', JSON.stringify(updated));
-      } catch (e) {
-        console.error(e);
-      }
-      return updated;
-    });
+    if (!query.trim()) return;
+    setRecentSearches((prev) => [query, ...prev.filter((q) => q !== query)].slice(0, 8));
   };
 
-  const clearRecentSearches = () => {
-    setRecentSearches([]);
-    localStorage.removeItem('nova_recent_searches');
-  };
+  const clearRecentSearches = () => setRecentSearches([]);
 
-  // Recently Viewed
   const addRecentlyViewed = (product: Product) => {
-    setRecentlyViewed((prev) => {
-      const filtered = prev.filter((p) => p.id !== product.id);
-      const updated = [product, ...filtered].slice(0, 10);
-      try {
-        localStorage.setItem('nova_recently_viewed', JSON.stringify(updated));
-      } catch (e) {
-        console.error(e);
-      }
-      return updated;
-    });
+    setRecentlyViewed((prev) => [product, ...prev.filter((p) => p.id !== product.id)].slice(0, 10));
   };
 
   return (
     <ShopContext.Provider
       value={{
+        products,
+        isLoadingProducts,
+        refreshProducts,
         cart,
         savedForLater,
         wishlist,
         comparisonItems,
         currentUser,
+        isAdmin,
+        isAuthLoading,
         orders,
         appliedCoupon,
         recentlyViewed,
         recentSearches,
         isSearchOpen,
         isCartOpen,
+        isAuthModalOpen,
+        authModalMode,
         quickViewProduct,
         imageViewerData,
         viewer360Product,
@@ -839,8 +1205,43 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         placeOrder,
         getOrderById,
+        refreshOrders,
 
-        loginUser,
+        submitVerifiedReview,
+        checkIsPurchased,
+
+        // Q&A
+        submitProductQuestion,
+        upvoteProductQuestion,
+
+        // Returns & Cancellations
+        userReturns,
+        refreshReturns,
+        requestReturn,
+        cancelOrderAction,
+
+        // Notifications
+        notifications,
+        unreadNotificationsCount,
+        refreshNotifications,
+        markNotificationRead,
+        markAllNotificationsRead,
+
+        // Seller Hub
+        sellerProfile,
+        isSeller,
+        registerSellerAccount,
+        refreshSellerProfile,
+
+        // Support Tickets
+        userTickets,
+        refreshTickets,
+        submitSupportTicket,
+
+        loginWithEmail,
+        registerWithEmail,
+        loginWithGoogle,
+        resetPassword,
         logoutUser,
         updateUserProfile,
         addAddress,
@@ -849,6 +1250,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         setIsSearchOpen,
         setIsCartOpen,
+        setIsAuthModalOpen,
+        setAuthModalMode,
         openQuickView,
         closeQuickView,
         openImageViewer,
@@ -860,7 +1263,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         addRecentSearch,
         clearRecentSearches,
-
         addRecentlyViewed,
 
         setReducedMotion,

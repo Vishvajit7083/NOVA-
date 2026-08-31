@@ -24,6 +24,7 @@ import { PRODUCTS } from '../data/products';
 import { Product, ColorOption, ProductVariant } from '../types';
 import { useShop } from '../context/ShopContext';
 import { ProductReviews, ProductSpecTable } from '../components/product/ProductReviews';
+import { ProductQA } from '../components/product/ProductQA';
 import { ProductCard } from '../components/product/ProductCard';
 
 interface ProductDetailPageProps {
@@ -36,6 +37,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onNavigate,
 }) => {
   const {
+    products,
     addToCart,
     toggleWishlist,
     isInWishlist,
@@ -47,15 +49,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     setIsCartOpen,
   } = useShop();
 
-  const product = PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
+  const product = products.find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
 
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0]);
+  const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0] || { name: 'Space Gray', hex: '#333' });
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(
     product.variants ? product.variants[0] : undefined
   );
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'compatibility' | 'box'>('specs');
+  const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'qa' | 'compatibility' | 'box'>('specs');
 
   // PIN Code lookup state
   const [pincode, setPincode] = useState('');
@@ -487,6 +489,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             {[
               { id: 'specs', label: 'Technical Specifications' },
               { id: 'reviews', label: `Verified Reviews (${product.reviewCount})` },
+              { id: 'qa', label: 'Questions & Answers' },
               { id: 'compatibility', label: 'Certified Compatibility' },
               { id: 'box', label: 'In The Box & Warranty' },
             ].map((tab) => (
@@ -507,6 +510,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           <div className="pt-8">
             {activeTab === 'specs' && <ProductSpecTable product={product} />}
             {activeTab === 'reviews' && <ProductReviews product={product} />}
+            {activeTab === 'qa' && <ProductQA product={product} />}
             {activeTab === 'compatibility' && (
               <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 space-y-6">
                 <div>
