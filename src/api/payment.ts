@@ -7,8 +7,8 @@ export const paymentRouter = Router();
  * Lazy initializer for Razorpay SDK client using credentials from environment.
  */
 export function getRazorpayClient(keyIdOverride?: string, keySecretOverride?: string): Razorpay | null {
-  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID;
-  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET;
+  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID || 'rzp_live_TWNW4QLaIecxI5';
+  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
   if (keyId && keySecret) {
     try {
       return new Razorpay({
@@ -163,7 +163,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
  * GET /api/payment/config Express handler
  */
 export function configHandler(req: Request, res: Response) {
-  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TWgKoZyWSSUiG2';
+  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_live_TWNW4QLaIecxI5';
   const rawCurrency = String(process.env.DEFAULT_CURRENCY || 'INR').replace(/[^a-zA-Z]/g, '').toUpperCase().trim();
   const currency = rawCurrency.length === 3 ? rawCurrency : 'INR';
   return res.status(200).json({
