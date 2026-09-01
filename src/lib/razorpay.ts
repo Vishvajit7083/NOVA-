@@ -84,7 +84,17 @@ export async function openRazorpayCheckout(
     throw new Error('Could not load Razorpay payment gateway. Please check your network connection.');
   }
 
-  const rzp = new window.Razorpay(options);
+  // Clone options and sanitize order_id
+  const checkoutOptions = { ...options };
+  if (
+    checkoutOptions.order_id &&
+    (checkoutOptions.order_id.startsWith('order_test_') || !checkoutOptions.order_id.startsWith('order_'))
+  ) {
+    // If order_id was not created on official Razorpay API, omit it so SDK doesn't fail with "Uh! oh! Something went wrong"
+    delete checkoutOptions.order_id;
+  }
+
+  const rzp = new window.Razorpay(checkoutOptions);
 
   if (onFailure) {
     rzp.on('payment.failed', (response: any) => {
