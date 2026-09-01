@@ -424,7 +424,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           </button>
 
           {/* Stepper */}
-          <div className="flex items-center space-x-4 text-xs font-semibold">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-xs font-semibold">
             <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-[#9A7B38]' : 'text-stone-400'}`}>
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-[#9A7B38] text-white' : 'bg-stone-200 text-stone-600'}`}>
                 1

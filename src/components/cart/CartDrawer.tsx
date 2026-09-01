@@ -35,6 +35,17 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
 
   const [couponInput, setCouponInput] = useState('');
 
+  React.useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isCartOpen]);
+
   if (!isCartOpen) return null;
 
   const freeShippingThreshold = 2500;

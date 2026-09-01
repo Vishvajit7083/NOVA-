@@ -213,7 +213,7 @@ const AppContent: React.FC = () => {
       <Navbar currentView={currentView} onNavigate={handleNavigate} />
 
       {/* Main Body View Switcher */}
-      <main className="flex-1 overflow-x-hidden">
+      <main className="flex-1 overflow-x-clip w-full max-w-[100vw]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentView + (viewParams?.productId ? `-${viewParams.productId}` : '') + (viewParams?.category ? `-${viewParams.category}` : '')}

@@ -33,16 +33,21 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
     'Pleated Runway Skirt',
   ];
 
-  // Focus input on open
+  // Focus input on open & lock body scroll
   useEffect(() => {
     if (isSearchOpen) {
+      document.body.style.overflow = 'hidden';
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
     } else {
+      document.body.style.overflow = '';
       setQuery('');
       setResults([]);
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isSearchOpen]);
 
   // Global keydown for Cmd+K and Escape

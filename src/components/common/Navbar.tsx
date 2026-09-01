@@ -63,11 +63,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [announcements.length]);
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const handleNavClick = (view: string, params?: any) => {
     onNavigate(view, params);
@@ -134,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             : 'bg-[#FDFBF7] border-b border-[#E8E2D9] py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-8 lg:px-12 flex items-center justify-between">
           
           {/* Brand Wordmark / Logo */}
           <div className="flex items-center space-x-10">
@@ -321,7 +325,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           </div>
 
           {/* Right Action Icons */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-1 sm:space-x-3 md:space-x-4">
             
             {/* Search Button */}
             <button
@@ -407,7 +411,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
         {mobileMenuOpen && (
           <div
             id="mobile-drawer-menu"
-            className="lg:hidden bg-white border-b border-[#E8E2D9] px-6 py-6 space-y-4 shadow-xl"
+            className="lg:hidden bg-white border-b border-[#E8E2D9] px-6 py-6 space-y-4 shadow-xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
           >
             <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#F0EBE1]">
               <button

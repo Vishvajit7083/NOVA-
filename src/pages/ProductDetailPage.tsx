@@ -80,6 +80,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product.id]);
 
+  useEffect(() => {
+    if (isSizeGuideOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isSizeGuideOpen]);
+
   const inWishlist = isInWishlist(product.id);
   const inCompare = isInComparison(product.id);
 
@@ -384,7 +395,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   </button>
                 </div>
 
-                <div className="grid grid-cols-6 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {product.sizes.map((sz) => (
                     <button
                       key={sz}
@@ -481,7 +492,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Atelier Trust Guarantee */}
-            <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
               <div className="p-4 rounded-2xl bg-white border border-[#E8E2D9] flex items-center space-x-3 shadow-xs">
                 <Scissors className="w-5 h-5 text-[#9A7B38] shrink-0" />
                 <div>
