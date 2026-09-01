@@ -7,8 +7,8 @@ export const paymentRouter = Router();
  * Lazy initializer for Razorpay SDK client using credentials from environment.
  */
 export function getRazorpayClient(keyIdOverride?: string, keySecretOverride?: string): Razorpay | null {
-  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
-  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
+  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID;
+  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET;
   if (keyId && keySecret) {
     try {
       return new Razorpay({
@@ -125,7 +125,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
   const generatedOrderNumber = orderNumber || generatedOrderId;
   const currency = process.env.DEFAULT_CURRENCY || 'INR';
   const amountInPaise = Math.round(calculatedTotal * 100);
-  const keyId = defaultKeyId || process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
+  const keyId = defaultKeyId || process.env.RAZORPAY_KEY_ID || '';
 
   return {
     isValid: true,
@@ -154,7 +154,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
  * GET /api/payment/config Express handler
  */
 export function configHandler(req: Request, res: Response) {
-  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
+  const keyId = process.env.RAZORPAY_KEY_ID || '';
   return res.status(200).json({
     success: true,
     keyId,
@@ -274,7 +274,7 @@ export async function verifyHandler(req: Request, res: Response) {
       });
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
     if (!keySecret) {
       return res.status(400).json({
         success: false,

@@ -46,7 +46,7 @@ export async function onRequest(context: EventContext<Env, any, any>): Promise<R
 
   // Route 1: GET /api/payment/config
   if (pathname === '/api/payment/config' || pathname === '/api/payment/config/') {
-    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
+    const keyId = env.RAZORPAY_KEY_ID || '';
     return jsonResponse({
       success: true,
       keyId,
@@ -147,8 +147,8 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const currency = env.DEFAULT_CURRENCY || 'INR';
     const amountInPaise = Math.round(calculatedTotal * 100);
 
-    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
-    const keySecret = env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
+    const keyId = env.RAZORPAY_KEY_ID;
+    const keySecret = env.RAZORPAY_KEY_SECRET;
 
     if (!keyId || !keySecret) {
       return jsonResponse({
@@ -251,7 +251,7 @@ async function handleVerifyPayment(request: Request, env: Env): Promise<Response
       }, 400);
     }
 
-    const keySecret = env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
+    const keySecret = env.RAZORPAY_KEY_SECRET;
     if (!keySecret) {
       return jsonResponse({
         success: false,
