@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -133,6 +133,11 @@ async function startServer() {
   // 3. Create Gateway Order (Server-Authoritative Price Calculation)
   app.all(['/api/payment/create-order', '/api/payment/create-order/'], async (req: Request, res: Response) => {
     try {
+      let body = req.body || {};
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (e) { body = {}; }
+      }
+
       const {
         items = [],
         shippingFee = 0,
@@ -144,7 +149,7 @@ async function startServer() {
         orderId,
         orderNumber,
         userUid,
-      } = req.body;
+      } = body;
 
       if (!items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ success: false, error: 'Cart items are required to create a payment order.' });
@@ -268,6 +273,11 @@ async function startServer() {
   // 4. Verify Payment Cryptographic Signature & Capture Details
   app.all(['/api/payment/verify', '/api/payment/verify/'], async (req: Request, res: Response) => {
     try {
+      let body = req.body || {};
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (e) { body = {}; }
+      }
+
       const {
         razorpay_order_id,
         razorpay_payment_id,
@@ -276,7 +286,7 @@ async function startServer() {
         orderNumber,
         userUid,
         userEmail,
-      } = req.body;
+      } = body;
 
       if (!razorpay_order_id || !razorpay_payment_id) {
         return res.status(400).json({
@@ -553,6 +563,27 @@ async function startServer() {
     res.status(404).json({
       success: false,
       error: `API endpoint not found: ${req.method} ${req.path}`,
+    });
+  });
+
+  // 9. Prevent serve-static from returning HTTP 405 Method Not Allowed for unhandled POST/PUT requests
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+      return res.status(404).json({
+        success: false,
+        error: `Cannot ${req.method} ${req.originalUrl}. Route not found.`,
+      });
+    }
+    next();
+  });
+
+  // 10. Express Global Error Handler (catches JSON parsing errors and internal exceptions)
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error('Express caught unhandled request error:', err);
+    const statusCode = err.status || err.statusCode || 400;
+    res.status(statusCode).json({
+      success: false,
+      error: err.message || 'Malformed request body or server error.',
     });
   });
 

@@ -97,7 +97,7 @@ export async function openRazorpayCheckout(
 }
 
 /**
- * Safely fetches JSON from API endpoints, preventing "Unexpected end of JSON input" errors.
+ * Safely fetches JSON from API endpoints, preventing "Unexpected end of JSON input" and 405 status issues.
  */
 export async function safeFetchJson<T = any>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);
@@ -111,14 +111,23 @@ export async function safeFetchJson<T = any>(url: string, options?: RequestInit)
       console.error(`Non-JSON response received from ${url} (Status ${response.status}):`, text);
       const isHtml = text.trim().startsWith('<');
       const preview = isHtml ? 'Received non-JSON HTML response from server' : text.slice(0, 100);
-      throw new Error(`Gateway Error (${response.status}): ${preview}`);
+      throw new Error(`Gateway Response Error (${response.status}): ${preview}`);
     }
   } else {
     data = {};
   }
 
   if (!response.ok) {
-    const errorMsg = data?.error || data?.message || `Gateway request failed with status ${response.status}`;
+    let errorMsg = data?.error || data?.message;
+    if (!errorMsg) {
+      if (response.status === 405) {
+        errorMsg = `Gateway Method Not Allowed (${response.status}) at endpoint ${url}. Please verify request method or proxy configuration.`;
+      } else if (response.status === 404) {
+        errorMsg = `Gateway API endpoint not found (${response.status}) at ${url}.`;
+      } else {
+        errorMsg = `Gateway request failed with HTTP status ${response.status}`;
+      }
+    }
     throw new Error(errorMsg);
   }
 
