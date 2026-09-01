@@ -25,8 +25,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
     removeFromCart,
     updateQuantity,
     cartSubtotal,
-    discountAmount,
-    shippingFee,
+    cartDiscount,
+    cartShippingFee,
     cartTotal,
     appliedCoupon,
     applyCoupon,
@@ -221,16 +221,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                   <span>Subtotal</span>
                   <span className="text-zinc-900 font-semibold">₹{cartSubtotal.toLocaleString('en-IN')}</span>
                 </div>
-                {discountAmount > 0 && (
+                {cartDiscount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-medium">
                     <span>Discount</span>
-                    <span>-₹{discountAmount.toLocaleString('en-IN')}</span>
+                    <span>-₹{cartDiscount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Estimated Shipping</span>
                   <span className="text-emerald-600 font-bold">
-                    {shippingFee === 0 ? 'FREE' : `₹${shippingFee}`}
+                    {cartShippingFee === 0 ? 'FREE' : `₹${cartShippingFee}`}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-zinc-200 flex justify-between text-base font-extrabold text-zinc-950">
