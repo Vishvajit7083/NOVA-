@@ -86,12 +86,23 @@ async function startServer() {
   );
   app.use(express.urlencoded({ extended: true }));
 
+  // Global CORS & OPTIONS Preflight Middleware
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  });
+
   // ----------------------------------------------------
   // PAYMENT API ENDPOINTS
   // ----------------------------------------------------
 
   // 1. Healthcheck
-  app.get('/api/health', (_req: Request, res: Response) => {
+  app.all(['/api/health', '/api/health/'], (_req: Request, res: Response) => {
     res.json({
       status: 'ok',
       service: 'NOVA Hardware Commerce API',
@@ -100,7 +111,7 @@ async function startServer() {
   });
 
   // 2. Gateway Configuration & Diagnostics
-  app.get('/api/payment/config', (_req: Request, res: Response) => {
+  app.all(['/api/payment/config', '/api/payment/config/'], (_req: Request, res: Response) => {
     const rawKeyId = process.env.RAZORPAY_KEY_ID;
     const isConfigured = Boolean(rawKeyId && process.env.RAZORPAY_KEY_SECRET);
     const keyId = rawKeyId || 'rzp_test_51NOVAStoreDemoKey';
@@ -120,7 +131,7 @@ async function startServer() {
   });
 
   // 3. Create Gateway Order (Server-Authoritative Price Calculation)
-  app.post('/api/payment/create-order', async (req: Request, res: Response) => {
+  app.all(['/api/payment/create-order', '/api/payment/create-order/'], async (req: Request, res: Response) => {
     try {
       const {
         items = [],
@@ -255,7 +266,7 @@ async function startServer() {
   });
 
   // 4. Verify Payment Cryptographic Signature & Capture Details
-  app.post('/api/payment/verify', async (req: Request, res: Response) => {
+  app.all(['/api/payment/verify', '/api/payment/verify/'], async (req: Request, res: Response) => {
     try {
       const {
         razorpay_order_id,
@@ -399,7 +410,7 @@ async function startServer() {
   });
 
   // 5. Razorpay Webhook Handler
-  app.post('/api/payment/webhook', async (req: any, res: Response) => {
+  app.all(['/api/payment/webhook', '/api/payment/webhook/'], async (req: any, res: Response) => {
     try {
       const webhookSignature = req.headers['x-razorpay-signature'] as string;
       const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -464,9 +475,10 @@ async function startServer() {
   });
 
   // 6. Admin Gateway Refund Execution
-  app.post('/api/admin/refund', async (req: Request, res: Response) => {
+  app.all(['/api/admin/refund', '/api/admin/refund/'], async (req: Request, res: Response) => {
     try {
-      const { paymentId, amount, reason, orderId, adminEmail } = req.body;
+      const body = req.method === 'GET' ? req.query : req.body;
+      const { paymentId, amount, reason, orderId, adminEmail } = body as any;
 
       if (!paymentId) {
         return res.status(400).json({ success: false, error: 'Payment ID is required to initiate a refund.' });
@@ -528,11 +540,19 @@ async function startServer() {
   });
 
   // 7. Admin Reconciliation Transactions List
-  app.get('/api/admin/transactions', (_req: Request, res: Response) => {
+  app.all(['/api/admin/transactions', '/api/admin/transactions/'], (_req: Request, res: Response) => {
     res.json({
       success: true,
       count: serverTransactions.length,
       transactions: serverTransactions,
+    });
+  });
+
+  // 8. Catch-all for unmatched /api routes (prevents HTML or 405 fallback)
+  app.all(['/api/*', '/api'], (req: Request, res: Response) => {
+    res.status(404).json({
+      success: false,
+      error: `API endpoint not found: ${req.method} ${req.path}`,
     });
   });
 
