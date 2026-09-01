@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface CinematicWelcomeProps {
   onComplete?: () => void;
@@ -8,9 +8,8 @@ interface CinematicWelcomeProps {
 
 export const CinematicWelcome: React.FC<CinematicWelcomeProps> = ({ onComplete }) => {
   const [show, setShow] = useState(() => {
-    // Only show once per browser session unless reset
     try {
-      const shown = sessionStorage.getItem('nova_intro_shown');
+      const shown = sessionStorage.getItem('aurelia_intro_shown');
       return !shown;
     } catch {
       return true;
@@ -32,7 +31,7 @@ export const CinematicWelcome: React.FC<CinematicWelcomeProps> = ({ onComplete }
 
   const handleDismiss = () => {
     try {
-      sessionStorage.setItem('nova_intro_shown', 'true');
+      sessionStorage.setItem('aurelia_intro_shown', 'true');
     } catch (e) {
       console.error(e);
     }
@@ -46,47 +45,44 @@ export const CinematicWelcome: React.FC<CinematicWelcomeProps> = ({ onComplete }
         <motion.div
           id="cinematic-welcome-overlay"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: 'blur(10px)' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#07080A] text-white select-none overflow-hidden"
+          exit={{ opacity: 0, filter: 'blur(8px)' }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0D0D0D] text-white select-none overflow-hidden"
         >
-          {/* Ambient red tech glow background */}
-          <div className="absolute w-[600px] h-[600px] bg-[#EB0029]/10 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(#1E232D_1px,transparent_1px)] [background-size:24px_24px] opacity-20" />
+          {/* Subtle gold ambient haze */}
+          <div className="absolute w-[500px] h-[500px] bg-[#9A7B38]/10 rounded-full blur-[140px] pointer-events-none" />
 
           <div className="relative z-10 flex flex-col items-center text-center px-4">
-            {/* Minimal glowing icon */}
+            {/* Minimal gold crest icon */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="w-14 h-14 rounded-2xl bg-[#14171D] border border-white/10 flex items-center justify-center mb-6 shadow-2xl relative group"
+              className="w-14 h-14 rounded-full bg-[#181818] border border-[#9A7B38]/30 flex items-center justify-center mb-6 shadow-2xl relative"
             >
-              <div className="absolute inset-0 bg-[#EB0029]/20 rounded-2xl blur-lg" />
-              <Zap className="w-7 h-7 text-[#EB0029] relative z-10" />
+              <Sparkles className="w-6 h-6 text-[#9A7B38]" />
             </motion.div>
 
-            {/* Brand Wordmark with scale & blur-to-sharp */}
+            {/* Brand Wordmark with refined serif typography */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, filter: 'blur(12px)' }}
+              initial={{ opacity: 0, scale: 0.96, filter: 'blur(10px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="flex items-center space-x-2"
             >
-              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-[0.25em] font-display text-white">
-                NOVA
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-[0.25em] text-[#FDFBF7]">
+                AURELIA & CO.
               </h1>
-              <span className="w-2.5 h-2.5 rounded-full bg-[#EB0029] shadow-[0_0_12px_#EB0029]" />
             </motion.div>
 
             {/* Tagline */}
             <motion.p
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35, ease: 'easeOut' }}
-              className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-zinc-400 mt-3"
+              className="text-xs sm:text-sm font-medium tracking-[0.35em] uppercase text-[#9A7B38] mt-3"
             >
-              Engineering Flagship Accessories
+              Haute Couture & Atelier Accessories
             </motion.p>
           </div>
 
@@ -97,9 +93,9 @@ export const CinematicWelcome: React.FC<CinematicWelcomeProps> = ({ onComplete }
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
             onClick={handleDismiss}
-            className="absolute bottom-8 text-xs font-semibold tracking-wider text-zinc-300 hover:text-white uppercase px-4 py-2 rounded-full border border-white/10 hover:border-white/20 transition-colors"
+            className="absolute bottom-8 text-[11px] font-semibold tracking-widest text-stone-400 hover:text-white uppercase px-5 py-2 rounded-full border border-stone-800 hover:border-stone-600 transition-colors cursor-pointer"
           >
-            Skip Intro
+            Enter Maison
           </motion.button>
         </motion.div>
       )}

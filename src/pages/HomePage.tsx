@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { HeroSection } from '../components/home/HeroSection';
 import { CategoryCarousel } from '../components/home/CategoryCarousel';
 import { FlashOffersSection } from '../components/home/FlashOffersSection';
-import { AccessoriesFinder } from '../components/home/AccessoriesFinder';
+import { StyleFinder } from '../components/home/StyleFinder';
 import { TechInnovationSection } from '../components/home/TechInnovationSection';
 import { ProductCard } from '../components/product/ProductCard';
 import { PRODUCTS } from '../data/products';
-import { ArrowRight, Star, ShieldCheck, Zap, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Star, Sparkles, CheckCircle2, Scissors, Compass } from 'lucide-react';
 
 interface HomePageProps {
   onNavigate: (view: string, params?: any) => void;
@@ -16,11 +16,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<string>('all');
 
   const filterCategories = [
-    { id: 'all', label: 'All Flagships' },
-    { id: 'chargers-power', label: 'GaN Power' },
-    { id: 'cases-protection', label: 'Aramid Cases' },
-    { id: 'audio', label: 'Spatial Audio' },
-    { id: 'cables-connectors', label: 'Ultra Cables' },
+    { id: 'all', label: 'All Ready-to-Wear' },
+    { id: 'men-clothing', label: "Men's Atelier" },
+    { id: 'women-clothing', label: "Women's Runway" },
+    { id: 'outerwear-jackets', label: 'Outerwear & Coats' },
+    { id: 'footwear-shoes', label: 'Footwear & Boots' },
+    { id: 'leather-bags', label: 'Tuscan Leather' },
+    { id: 'fine-jewellery', label: 'Fine Jewellery & Watches' },
   ];
 
   const filteredProducts =
@@ -29,22 +31,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       : PRODUCTS.filter((p) => p.category === activeTab);
 
   return (
-    <div id="home-page" className="min-h-screen bg-white text-black">
-      {/* 1. Cinematic Hero Flagship Showcase */}
+    <div id="home-page" className="min-h-screen bg-[#FDFBF7] text-[#111111]">
+      
+      {/* 1. Cinematic Editorial Runway Hero Showcase */}
       <HeroSection onNavigate={onNavigate} />
 
-      {/* 2. Curated Categories Carousel */}
+      {/* 2. Curated Departements Carousel */}
       <CategoryCarousel onNavigate={onNavigate} />
 
-      {/* 3. Featured Flagship Products Section with Filter Tabs */}
+      {/* 3. Featured Atelier Ready-to-Wear Section with Filter Tabs */}
       <section id="featured-products-section" className="py-20 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 pb-4 border-b border-gray-100 gap-4">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 pb-5 border-b border-[#E0D8C8] gap-4">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.25em] text-[#EB0028] uppercase">
-              Precision Hardware
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight mt-1">
-              Flagship Accessories
+            <div className="flex items-center space-x-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+              <span className="text-[10px] font-bold tracking-[0.25em] text-[#9A7B38] uppercase">
+                Autumn / Winter Atelier
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-[#111111] tracking-tight mt-1.5">
+              Curated Garments & Accessories
             </h2>
           </div>
 
@@ -54,10 +60,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-black text-white shadow-sm'
-                    : 'bg-white border border-gray-200 text-gray-500 hover:text-black hover:border-gray-400'
+                    ? 'bg-[#111111] text-white shadow-sm'
+                    : 'bg-white border border-[#E0D8C8] text-stone-600 hover:text-[#111111] hover:border-stone-400'
                 }`}
               >
                 {tab.label}
@@ -73,79 +79,79 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           ))}
         </div>
 
-        {/* View full store CTA */}
+        {/* View full collection CTA */}
         <div className="mt-14 text-center">
           <button
-            onClick={() => onNavigate('store')}
-            className="px-8 py-4 rounded-full bg-black hover:bg-[#EB0028] text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 inline-flex items-center space-x-2 cursor-pointer"
+            onClick={() => onNavigate('shop')}
+            className="px-9 py-4 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-medium text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 inline-flex items-center space-x-2 cursor-pointer"
           >
-            <span>Explore Complete {PRODUCTS.length}+ Catalog</span>
+            <span>Explore Full {PRODUCTS.length}+ Piece Atelier Catalog</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </section>
 
-      {/* 4. Interactive 3-Step Device Matcher Engine */}
-      <AccessoriesFinder onNavigate={onNavigate} />
+      {/* 4. Interactive Bespoke Style & Capsule Finder */}
+      <StyleFinder onNavigate={onNavigate} />
 
-      {/* 5. Live Flash Offers & Bundles */}
+      {/* 5. Shop The Look & Limited Runway Outfits */}
       <FlashOffersSection onNavigate={onNavigate} />
 
-      {/* 6. Deep Tech & Materials Innovation Section */}
+      {/* 6. Generational Craftsmanship & Sustainable Materials */}
       <TechInnovationSection onNavigate={onNavigate} />
 
-      {/* 7. Community & Verified Reviews Banner */}
-      <section className="py-20 bg-[#FAFAFA] border-t border-gray-100">
+      {/* 7. Editorial VIP Reviews & Client Testimonials */}
+      <section className="py-24 bg-white border-t border-[#E8E2D9]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center space-y-6">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Over 150,000+ Flagship Enthusiasts Powered Across India</span>
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-stone-800 text-xs font-semibold">
+            <CheckCircle2 className="w-4 h-4 text-[#9A7B38]" />
+            <span>Over 45,000+ Discerning Clients Dressed Globally</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight">
-            Built for Power Users Who Demand Perfection
+          <h2 className="text-3xl sm:text-4xl font-serif text-[#111111] tracking-tight">
+            Client Voices & Editorial Acclaim
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 text-left">
-            <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-3 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 text-left">
+            <div className="p-7 bg-[#FAF8F5] border border-[#E8E2D9] rounded-2xl space-y-4 shadow-xs">
               <div className="flex text-amber-500 space-x-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-500" />
+                  <Star key={s} className="w-3.5 h-3.5 fill-amber-500" />
                 ))}
               </div>
-              <p className="text-xs text-gray-600 leading-relaxed font-normal">
-                "The 120W GaN Station charges my laptop, OnePlus 12, and earbuds at maximum peak speed simultaneously. Pure industrial art."
+              <p className="text-xs text-stone-700 leading-relaxed font-normal">
+                "The Milano Tailored Wool Blazer fits as though crafted by a bespoke Savile Row tailor. The Super 120s drape and floating canvas construction are extraordinary."
               </p>
-              <div className="text-xs font-bold text-black pt-2 border-t border-gray-100">
-                Vikramaditya S. <span className="text-gray-400 font-normal">• Verified Tech Creator</span>
+              <div className="text-xs font-serif font-bold text-stone-900 pt-3 border-t border-[#EAE4D8]">
+                Devika Singhania <span className="text-stone-500 font-normal font-sans">• Mumbai, MH</span>
               </div>
             </div>
 
-            <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-3 shadow-sm">
+            <div className="p-7 bg-[#FAF8F5] border border-[#E8E2D9] rounded-2xl space-y-4 shadow-xs">
               <div className="flex text-amber-500 space-x-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-500" />
+                  <Star key={s} className="w-3.5 h-3.5 fill-amber-500" />
                 ))}
               </div>
-              <p className="text-xs text-gray-600 leading-relaxed font-normal">
-                "The 1500D Aramid case feels incredible in hand. Precise cutouts, zero bulk, and the subtle weave texture gives solid grip."
+              <p className="text-xs text-stone-700 leading-relaxed font-normal">
+                "The 22 Momme silk slip dress is liquid poetry. Flawless French seams, zero synthetic cling, and arrived in archival packaging within 48 hours."
               </p>
-              <div className="text-xs font-bold text-black pt-2 border-t border-gray-100">
-                Rohan Deshmukh <span className="text-gray-400 font-normal">• Pune, MH</span>
+              <div className="text-xs font-serif font-bold text-stone-900 pt-3 border-t border-[#EAE4D8]">
+                Priyanka Sen <span className="text-stone-500 font-normal font-sans">• New Delhi</span>
               </div>
             </div>
 
-            <div className="p-6 bg-white border border-gray-200 rounded-2xl space-y-3 shadow-sm">
+            <div className="p-7 bg-[#FAF8F5] border border-[#E8E2D9] rounded-2xl space-y-4 shadow-xs">
               <div className="flex text-amber-500 space-x-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-500" />
+                  <Star key={s} className="w-3.5 h-3.5 fill-amber-500" />
                 ))}
               </div>
-              <p className="text-xs text-gray-600 leading-relaxed font-normal">
-                "Super fast next-day delivery to Bengaluru. NovaCare 2-year replacement gives me absolute peace of mind."
+              <p className="text-xs text-stone-700 leading-relaxed font-normal">
+                "The Goodyear welted Chelsea boots and the Tuscan leather tote are pure heirloom tier. The 14-day doorstep size exchange was effortless."
               </p>
-              <div className="text-xs font-bold text-black pt-2 border-t border-gray-100">
-                Ananya Roy <span className="text-gray-400 font-normal">• Bengaluru, KA</span>
+              <div className="text-xs font-serif font-bold text-stone-900 pt-3 border-t border-[#EAE4D8]">
+                Arjun K. Varma <span className="text-stone-500 font-normal font-sans">• Bengaluru, KA</span>
               </div>
             </div>
           </div>

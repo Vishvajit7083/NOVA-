@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Zap,
   Search,
   ShoppingBag,
   Heart,
@@ -10,15 +9,16 @@ import {
   SlidersHorizontal,
   ChevronDown,
   ArrowRight,
-  Shield,
   Sparkles,
   Layers,
-  Headphones,
-  Car,
-  Cpu,
+  Shirt,
+  Scissors,
+  Footprints,
   Watch,
+  Eye,
   Bell,
   Store,
+  Compass,
 } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { CATEGORIES } from '../../data/categories';
@@ -40,19 +40,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
     currentUser,
     isAdmin,
     isSeller,
-    setIsAuthModalOpen,
   } = useShop();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [accessoriesDropdownOpen, setAccessoriesDropdownOpen] = useState(false);
+  const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [announcementIndex, setAnnouncementIndex] = useState(0);
 
   const announcements = [
-    '⚡ FLAGSHIP DROP: NOVA HyperCharge 120W GaN Pro Station is now live with 2-Year Warranty',
-    '🚚 Free Express Shipping across India on all orders above ₹999 | No code required',
-    '🎁 Use Code "NOVA10" at checkout for Flat 10% Instant Savings on your first purchase',
+    '✦ AUTUMN / WINTER ATELIER: The Milano Virgin Wool & 22 Momme Silk Edit is now live',
+    '🚚 Complimentary Insured Delivery on orders above ₹1,999 • 14-Day Doorstep Size Exchanges',
+    '🎁 Welcome Gift: Use code "ATELIER10" at checkout for 10% savings on your first order',
   ];
 
   useEffect(() => {
@@ -66,35 +65,32 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(interval);
   }, [announcements.length]);
 
   const handleNavClick = (view: string, params?: any) => {
     onNavigate(view, params);
     setMobileMenuOpen(false);
-    setAccessoriesDropdownOpen(false);
+    setCategoriesDropdownOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Zap':
-        return <Zap className="w-4 h-4 text-[#EB0029]" />;
-      case 'Shield':
-        return <Shield className="w-4 h-4 text-emerald-400" />;
-      case 'Cpu':
-        return <Cpu className="w-4 h-4 text-cyan-400" />;
-      case 'Headphones':
-        return <Headphones className="w-4 h-4 text-rose-400" />;
+      case 'Shirt':
+      case 'Scissors':
+        return <Shirt className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Footprints':
+        return <Footprints className="w-4 h-4 text-[#9A7B38]" />;
+      case 'ShoppingBag':
+        return <ShoppingBag className="w-4 h-4 text-[#9A7B38]" />;
       case 'Watch':
-        return <Watch className="w-4 h-4 text-amber-400" />;
-      case 'Sparkles':
-        return <Sparkles className="w-4 h-4 text-purple-400" />;
-      case 'Car':
-        return <Car className="w-4 h-4 text-blue-400" />;
+        return <Watch className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Eye':
+        return <Eye className="w-4 h-4 text-[#9A7B38]" />;
       default:
-        return <Layers className="w-4 h-4 text-zinc-400" />;
+        return <Sparkles className="w-4 h-4 text-[#9A7B38]" />;
     }
   };
 
@@ -103,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
       {/* Top Announcement Bar */}
       <div
         id="announcement-bar"
-        className="bg-[#F9FAFB] text-gray-500 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest py-2 px-6 border-b border-gray-100 relative z-40"
+        className="bg-[#111111] text-[#E8E2D9] text-[10px] sm:text-[11px] font-medium tracking-widest py-2 px-6 border-b border-[#2A2A2A] relative z-40"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex-1 text-center truncate">
@@ -111,19 +107,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               {announcements[announcementIndex]}
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-6 text-gray-400 shrink-0 text-[10px] font-bold uppercase tracking-widest">
+          <div className="hidden md:flex items-center space-x-6 text-[#A0988A] shrink-0 text-[10px] uppercase font-semibold tracking-widest">
             <button
               onClick={() => handleNavClick('tracking')}
-              className="hover:text-black transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Track Order
             </button>
             <span>•</span>
             <button
               onClick={() => handleNavClick('support')}
-              className="hover:text-black transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
-              24-Month Warranty
+              Atelier Concierge
             </button>
           </div>
         </div>
@@ -134,100 +130,104 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
         id="main-navbar"
         className={`sticky top-0 z-30 transition-all duration-300 ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm py-3.5'
-            : 'bg-white border-b border-gray-100 py-4'
+            ? 'bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8E2D9] shadow-sm py-3.5'
+            : 'bg-[#FDFBF7] border-b border-[#E8E2D9] py-4'
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between">
+          
           {/* Brand Wordmark / Logo */}
           <div className="flex items-center space-x-10">
             <button
               id="navbar-brand-logo"
               onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-2.5 text-left group focus:outline-none"
+              className="flex items-center space-x-2 text-left group focus:outline-none cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center shadow-sm group-hover:bg-[#EB0028] transition-colors">
-                <Zap className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex items-center">
-                <span className="text-2xl font-black tracking-tighter text-black">
-                  NOVA
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <span className="text-2xl sm:text-3xl font-serif font-bold tracking-[0.18em] text-[#111111]">
+                    AURELIA
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38] ml-1.5 mb-1" />
+                </div>
+                <span className="text-[8px] uppercase tracking-[0.35em] text-[#9A7B38] -mt-1 font-semibold">
+                  HAUTE COUTURE
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#EB0028] ml-1" />
               </div>
             </button>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-8 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+            <nav className="hidden lg:flex items-center space-x-8 text-[11px] font-semibold uppercase tracking-widest text-stone-600">
+              
               <button
                 id="nav-link-store"
-                onClick={() => handleNavClick('store')}
-                className={`py-1 transition-colors ${
-                  currentView === 'store'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                onClick={() => handleNavClick('shop')}
+                className={`py-1 transition-colors cursor-pointer ${
+                  currentView === 'store' || currentView === 'shop'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
-                Store
+                Collections
               </button>
 
-              {/* Accessories with Mega Dropdown */}
+              {/* Atelier Mega Dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => setAccessoriesDropdownOpen(true)}
-                onMouseLeave={() => setAccessoriesDropdownOpen(false)}
+                onMouseEnter={() => setCategoriesDropdownOpen(true)}
+                onMouseLeave={() => setCategoriesDropdownOpen(false)}
               >
                 <button
-                  id="nav-link-accessories-dropdown"
-                  onClick={() => handleNavClick('store')}
-                  className={`py-1 flex items-center space-x-1 transition-colors ${
-                    accessoriesDropdownOpen || currentView === 'store'
-                      ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                      : 'hover:text-black'
+                  id="nav-link-categories-dropdown"
+                  onClick={() => handleNavClick('shop')}
+                  className={`py-1 flex items-center space-x-1 transition-colors cursor-pointer ${
+                    categoriesDropdownOpen
+                      ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                      : 'hover:text-[#111111]'
                   }`}
                 >
-                  <span>Accessories</span>
-                  <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                  <span>Atelier Departments</span>
+                  <ChevronDown className="w-3 h-3 opacity-60" />
                 </button>
 
                 {/* Dropdown Menu */}
-                {accessoriesDropdownOpen && (
-                  <div className="absolute top-full left-0 w-[540px] pt-3 z-50">
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-2xl grid grid-cols-2 gap-3">
+                {categoriesDropdownOpen && (
+                  <div className="absolute top-full left-0 w-[580px] pt-3 z-50">
+                    <div className="bg-white border border-[#E5DFD5] rounded-2xl p-5 shadow-2xl grid grid-cols-2 gap-3">
                       {CATEGORIES.map((cat) => (
                         <button
                           key={cat.id}
-                          onClick={() => handleNavClick('store', { category: cat.id })}
-                          className="flex items-start space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-all text-left group"
+                          onClick={() => handleNavClick('shop', { category: cat.id })}
+                          className="flex items-start space-x-3 p-3 rounded-xl hover:bg-[#FAF8F5] transition-all text-left group cursor-pointer"
                         >
-                          <div className="p-2 rounded-lg bg-gray-100 border border-gray-200 group-hover:border-[#EB0028]/40 transition-colors shrink-0">
+                          <div className="p-2 rounded-lg bg-[#F5F2EB] border border-[#E8E2D9] group-hover:border-[#9A7B38] transition-colors shrink-0">
                             {getCategoryIcon(cat.iconName)}
                           </div>
                           <div>
-                            <div className="text-xs font-bold text-black group-hover:text-[#EB0028] flex items-center">
+                            <div className="text-xs font-serif font-bold text-stone-900 group-hover:text-[#9A7B38] flex items-center">
                               {cat.shortName}
-                              <ArrowRight className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-[#EB0028]" />
+                              <ArrowRight className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-[#9A7B38]" />
                             </div>
-                            <p className="text-[11px] text-gray-500 line-clamp-1 mt-0.5 font-normal">
+                            <p className="text-[11px] text-stone-500 line-clamp-1 mt-0.5 font-normal">
                               {cat.description}
                             </p>
                           </div>
                         </button>
                       ))}
 
-                      <div className="col-span-2 pt-3 mt-1 border-t border-gray-100 flex items-center justify-between px-2 text-xs">
+                      <div className="col-span-2 pt-3 mt-1 border-t border-[#F0EBE1] flex items-center justify-between px-2 text-xs">
                         <button
                           onClick={() => handleNavClick('finder')}
-                          className="text-[#EB0028] hover:underline font-bold text-[11px] uppercase tracking-wider flex items-center"
+                          className="text-[#9A7B38] hover:underline font-bold text-[11px] uppercase tracking-wider flex items-center cursor-pointer"
                         >
-                          <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
-                          Launch Device Matcher
+                          <Compass className="w-3.5 h-3.5 mr-1.5" />
+                          Launch Style & Capsule Finder
                         </button>
                         <button
-                          onClick={() => handleNavClick('store')}
-                          className="text-gray-500 hover:text-black font-semibold text-[11px] uppercase tracking-wider"
+                          onClick={() => handleNavClick('shop')}
+                          className="text-stone-500 hover:text-stone-900 font-semibold text-[11px] uppercase tracking-wider cursor-pointer"
                         >
-                          Browse All Catalog &rarr;
+                          All Ready-To-Wear &rarr;
                         </button>
                       </div>
                     </div>
@@ -238,41 +238,41 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               <button
                 id="nav-link-finder"
                 onClick={() => handleNavClick('finder')}
-                className={`py-1 flex items-center space-x-1.5 transition-colors ${
+                className={`py-1 flex items-center space-x-1.5 transition-colors cursor-pointer ${
                   currentView === 'finder'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-[#EB0028]" />
-                <span>Device Matcher</span>
+                <Compass className="w-3.5 h-3.5 text-[#9A7B38]" />
+                <span>Style Finder</span>
               </button>
 
               <button
                 id="nav-link-offers"
                 onClick={() => handleNavClick('offers')}
-                className={`py-1 flex items-center space-x-1.5 transition-colors ${
+                className={`py-1 flex items-center space-x-1.5 transition-colors cursor-pointer ${
                   currentView === 'offers'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#EB0028]" />
-                <span>Offers</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+                <span>Shop The Look</span>
               </button>
 
               <button
                 id="nav-link-comparison"
                 onClick={() => handleNavClick('comparison')}
-                className={`py-1 transition-colors ${
+                className={`py-1 transition-colors cursor-pointer ${
                   currentView === 'comparison'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
                 Compare
                 {comparisonItems.length > 0 && (
-                  <span className="ml-1.5 px-1.5 py-0.2 bg-[#EB0028] text-white text-[9px] rounded-full font-bold">
+                  <span className="ml-1.5 px-1.5 py-0.2 bg-[#9A7B38] text-white text-[9px] rounded-full font-bold">
                     {comparisonItems.length}
                   </span>
                 )}
@@ -281,40 +281,40 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               <button
                 id="nav-link-seller"
                 onClick={() => handleNavClick('seller')}
-                className={`py-1 flex items-center space-x-1.5 transition-colors ${
+                className={`py-1 flex items-center space-x-1.5 transition-colors cursor-pointer ${
                   currentView === 'seller'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
-                <Store className="w-3.5 h-3.5 text-[#EB0028]" />
-                <span>{isSeller ? 'Seller Hub' : 'Sell on NOVA'}</span>
+                <Store className="w-3.5 h-3.5 text-[#9A7B38]" />
+                <span>{isSeller ? 'Designer Hub' : 'Partner Atelier'}</span>
               </button>
 
               <button
                 id="nav-link-support"
                 onClick={() => handleNavClick('support')}
-                className={`py-1 transition-colors ${
+                className={`py-1 transition-colors cursor-pointer ${
                   currentView === 'support'
-                    ? 'text-black underline underline-offset-8 decoration-[#EB0028] decoration-2'
-                    : 'hover:text-black'
+                    ? 'text-[#111111] underline underline-offset-8 decoration-[#9A7B38] decoration-2'
+                    : 'hover:text-[#111111]'
                 }`}
               >
-                Support
+                Concierge
               </button>
 
               {isAdmin && (
                 <button
                   id="nav-link-admin"
                   onClick={() => handleNavClick('admin')}
-                  className={`py-1 flex items-center space-x-1 font-bold text-[#EB0028] transition-colors ${
+                  className={`py-1 flex items-center space-x-1 font-bold text-[#9A7B38] transition-colors cursor-pointer ${
                     currentView === 'admin'
-                      ? 'underline underline-offset-8 decoration-[#EB0028] decoration-2'
+                      ? 'underline underline-offset-8 decoration-[#9A7B38] decoration-2'
                       : 'hover:opacity-80'
                   }`}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#EB0028] animate-pulse" />
-                  <span>Admin Panel</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38] animate-pulse" />
+                  <span>Admin Suite</span>
                 </button>
               )}
             </nav>
@@ -322,26 +322,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
 
           {/* Right Action Icons */}
           <div className="flex items-center space-x-3 sm:space-x-4">
+            
             {/* Search Button */}
             <button
               id="navbar-search-btn"
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 rounded-full text-black hover:bg-gray-100 transition-colors flex items-center space-x-2 group"
-              title="Search accessories (Cmd+K)"
+              className="p-2 rounded-full text-stone-800 hover:bg-[#F0EBE1] transition-colors flex items-center space-x-2 group cursor-pointer"
+              title="Search collection (Cmd+K)"
             >
-              <Search className="w-5 h-5 text-black" />
+              <Search className="w-5 h-5 text-stone-800" />
             </button>
 
             {/* Notifications Button */}
             <button
               id="navbar-notifications-btn"
               onClick={() => setIsNotificationsOpen(true)}
-              className="p-2 rounded-full text-black hover:bg-gray-100 transition-colors relative cursor-pointer"
+              className="p-2 rounded-full text-stone-800 hover:bg-[#F0EBE1] transition-colors relative cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-5 h-5" />
               {notifications.filter((n) => !n.isRead).length > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 bg-[#EB0028] text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                <span className="absolute top-0 right-0 w-4 h-4 bg-[#9A7B38] text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
                   {notifications.filter((n) => !n.isRead).length}
                 </span>
               )}
@@ -351,12 +352,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <button
               id="navbar-wishlist-btn"
               onClick={() => handleNavClick('wishlist')}
-              className="p-2 rounded-full text-black hover:bg-gray-100 transition-colors relative"
-              title="Wishlist"
+              className="p-2 rounded-full text-stone-800 hover:bg-[#F0EBE1] transition-colors relative cursor-pointer"
+              title="Saved Pieces (Wishlist)"
             >
               <Heart className="w-5 h-5" />
               {wishlist.length > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 bg-[#EB0028] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0 right-0 w-4 h-4 bg-[#9A7B38] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {wishlist.length}
                 </span>
               )}
@@ -366,12 +367,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <button
               id="navbar-account-btn"
               onClick={() => handleNavClick('account')}
-              className="p-2 rounded-full text-black hover:bg-gray-100 transition-colors relative"
+              className="p-2 rounded-full text-stone-800 hover:bg-[#F0EBE1] transition-colors relative cursor-pointer"
               title={currentUser ? `Account (${currentUser.name})` : 'Account'}
             >
               <User className="w-5 h-5" />
               {currentUser && (
-                <span className="absolute bottom-1 right-1 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white" />
+                <span className="absolute bottom-1 right-1 w-2 h-2 bg-emerald-600 rounded-full ring-2 ring-white" />
               )}
             </button>
 
@@ -379,12 +380,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <button
               id="navbar-cart-btn"
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 rounded-full text-black hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer"
+              className="relative p-2.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white transition-colors flex items-center justify-center cursor-pointer shadow-xs"
               title="Shopping Bag"
             >
-              <ShoppingBag className="w-5 h-5 text-black" />
+              <ShoppingBag className="w-4 h-4 text-white" />
               {cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 bg-[#EB0028] text-white text-[9px] flex items-center justify-center rounded-full font-bold">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#9A7B38] text-white text-[9px] flex items-center justify-center rounded-full font-bold border border-white">
                   {cartItemCount}
                 </span>
               )}
@@ -394,7 +395,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <button
               id="navbar-mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-black hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-lg text-stone-800 hover:bg-[#F0EBE1] transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -406,38 +407,38 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
         {mobileMenuOpen && (
           <div
             id="mobile-drawer-menu"
-            className="lg:hidden bg-white border-b border-gray-200 px-6 py-6 space-y-4 shadow-xl animate-in slide-in-from-top duration-200"
+            className="lg:hidden bg-white border-b border-[#E8E2D9] px-6 py-6 space-y-4 shadow-xl"
           >
-            <div className="grid grid-cols-2 gap-2 pb-3 border-b border-gray-100">
+            <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#F0EBE1]">
               <button
-                onClick={() => handleNavClick('store')}
-                className="p-3 bg-gray-50 rounded-xl text-left border border-gray-200 hover:border-black"
+                onClick={() => handleNavClick('shop')}
+                className="p-3 bg-[#FAF8F5] rounded-xl text-left border border-[#E8E2D9] hover:border-[#111111]"
               >
-                <div className="text-xs font-bold uppercase tracking-wider text-black">Store</div>
-                <div className="text-[11px] text-gray-500">All Flagship Gear</div>
+                <div className="text-xs font-serif font-bold text-stone-900">Collections</div>
+                <div className="text-[11px] text-stone-500">All Ready-to-Wear</div>
               </button>
               <button
                 onClick={() => handleNavClick('seller')}
-                className="p-3 bg-gray-50 rounded-xl text-left border border-gray-200 hover:border-black"
+                className="p-3 bg-[#FAF8F5] rounded-xl text-left border border-[#E8E2D9] hover:border-[#111111]"
               >
-                <div className="text-xs font-bold uppercase tracking-wider text-black flex items-center">
-                  <Store className="w-3 h-3 mr-1 text-[#EB0028]" />
-                  Seller Hub
+                <div className="text-xs font-serif font-bold text-stone-900 flex items-center">
+                  <Store className="w-3 h-3 mr-1 text-[#9A7B38]" />
+                  Designer Hub
                 </div>
-                <div className="text-[11px] text-gray-500">Partner Portal</div>
+                <div className="text-[11px] text-stone-500">Partner Atelier</div>
               </button>
             </div>
 
             <div className="space-y-1">
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 mb-1">
-                Shop By Category
+              <div className="text-[10px] font-bold text-stone-400 uppercase tracking-widest px-2 mb-1">
+                Atelier Departments
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {CATEGORIES.map((c) => (
                   <button
                     key={c.id}
-                    onClick={() => handleNavClick('store', { category: c.id })}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50 text-left"
+                    onClick={() => handleNavClick('shop', { category: c.id })}
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-medium text-stone-800 hover:bg-[#FAF8F5] text-left"
                   >
                     {getCategoryIcon(c.iconName)}
                     <span className="truncate">{c.shortName}</span>
@@ -446,26 +447,38 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-gray-100 space-y-1">
+            <div className="pt-3 border-t border-[#F0EBE1] space-y-1">
               <button
-                onClick={() => handleNavClick('offers')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-black hover:bg-gray-50"
+                onClick={() => handleNavClick('finder')}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-stone-900 hover:bg-[#FAF8F5]"
               >
                 <span className="flex items-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#EB0028] mr-2" />
-                  Offers & Bundles
+                  <Compass className="w-4 h-4 text-[#9A7B38] mr-2" />
+                  Style & Capsule Finder
                 </span>
-                <span className="text-[10px] bg-[#EB0028]/10 text-[#EB0028] px-2 py-0.5 rounded font-bold">
-                  Up to 40% Off
+                <span className="text-[10px] bg-[#9A7B38]/15 text-[#9A7B38] px-2 py-0.5 rounded font-bold">
+                  Bespoke
+                </span>
+              </button>
+              <button
+                onClick={() => handleNavClick('offers')}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-stone-900 hover:bg-[#FAF8F5]"
+              >
+                <span className="flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38] mr-2" />
+                  Shop The Look Ensembles
+                </span>
+                <span className="text-[10px] bg-stone-100 text-stone-800 px-2 py-0.5 rounded font-bold">
+                  Capsules
                 </span>
               </button>
               <button
                 onClick={() => handleNavClick('comparison')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-[#FAF8F5]"
               >
-                <span>Spec Comparison Matrix</span>
+                <span>Compare Garments</span>
                 {comparisonItems.length > 0 && (
-                  <span className="text-[10px] bg-black text-white px-2 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-[#111111] text-white px-2 py-0.5 rounded font-bold">
                     {comparisonItems.length}
                   </span>
                 )}
@@ -475,33 +488,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
                   setMobileMenuOpen(false);
                   setIsNotificationsOpen(true);
                 }}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-[#FAF8F5]"
               >
                 <span>Notifications & Alerts</span>
                 {notifications.filter((n) => !n.isRead).length > 0 && (
-                  <span className="text-[10px] bg-[#EB0028] text-white px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-[10px] bg-[#9A7B38] text-white px-2 py-0.5 rounded-full font-bold">
                     {notifications.filter((n) => !n.isRead).length}
                   </span>
                 )}
               </button>
               <button
                 onClick={() => handleNavClick('tracking')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-[#FAF8F5]"
               >
-                <span>Order Tracking</span>
+                <span>Track Order</span>
               </button>
               <button
                 onClick={() => handleNavClick('support')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-[#FAF8F5]"
               >
-                <span>Support & Warranty</span>
+                <span>Atelier Concierge & Care</span>
               </button>
               <button
                 onClick={() => handleNavClick('account')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-700 hover:text-stone-900 hover:bg-[#FAF8F5]"
               >
-                <span>Account Portal</span>
-                {currentUser && <span className="text-[10px] text-emerald-600 font-bold">Active</span>}
+                <span>Client Account Portal</span>
+                {currentUser && <span className="text-[10px] text-emerald-700 font-bold">Active</span>}
               </button>
             </div>
           </div>

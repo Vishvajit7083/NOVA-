@@ -127,12 +127,10 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     let calculatedDiscount = 0;
     if (couponCode) {
       const codeClean = String(couponCode).trim().toUpperCase();
-      if (codeClean === 'NOVA10') {
+      if (codeClean === 'ATELIER10' || codeClean === 'NOVA10') {
         calculatedDiscount = Math.round(calculatedSubtotal * 0.10);
-      } else if (codeClean === 'FLAGSHIP20' && calculatedSubtotal >= 4999) {
+      } else if ((codeClean === 'AURELIA20' || codeClean === 'FLAGSHIP20') && calculatedSubtotal >= 4999) {
         calculatedDiscount = Math.round(calculatedSubtotal * 0.20);
-      } else if (codeClean === 'PROAUDIO' && calculatedSubtotal >= 2999) {
-        calculatedDiscount = 500;
       } else if (codeClean === 'FIRST100' && calculatedSubtotal >= 999) {
         calculatedDiscount = 100;
       }
@@ -142,7 +140,7 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const calculatedTax = Math.round((calculatedSubtotal - calculatedDiscount) * 0.18);
     const calculatedTotal = Math.max(1, calculatedSubtotal - calculatedDiscount + calculatedShipping + calculatedTax);
 
-    const generatedOrderId = orderId || `NV-${Date.now().toString().slice(-6)}`;
+    const generatedOrderId = orderId || `AUR-${Date.now().toString().slice(-6)}`;
     const generatedOrderNumber = orderNumber || generatedOrderId;
     const rawCurrency = String(body.currency || env.DEFAULT_CURRENCY || 'INR').replace(/[^a-zA-Z]/g, '').toUpperCase().trim();
     const currency = rawCurrency.length === 3 ? rawCurrency : 'INR';

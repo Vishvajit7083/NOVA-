@@ -1,54 +1,40 @@
 import { DeviceModel } from '../types';
+export * from './styleOptions';
 
 export const POPULAR_DEVICES: DeviceModel[] = [
   {
-    id: 'nova-12-ultra',
-    brand: 'NOVA',
-    name: 'NOVA 12 Ultra / Pro',
+    id: 'men-tailoring',
+    brand: 'ATELIER NOVA',
+    name: "Men's Tailoring & Essentials",
     category: 'smartphones',
-    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2026',
+    image: 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=500&q=80',
+    releaseYear: '2026 Collection',
   },
   {
-    id: 'oneplus-12',
-    brand: 'OnePlus',
-    name: 'OnePlus 12 / 12R / Open',
+    id: 'women-runway',
+    brand: 'ATELIER NOVA',
+    name: "Women's Ready-to-Wear & Evening",
     category: 'smartphones',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2025/2026',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80',
+    releaseYear: '2026 Collection',
   },
   {
-    id: 'iphone-16-pro',
-    brand: 'Apple',
-    name: 'iPhone 16 Pro / Pro Max',
+    id: 'outerwear-heritage',
+    brand: 'ATELIER NOVA',
+    name: 'Outerwear & Italian Leather',
     category: 'smartphones',
-    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2025/2026',
+    image: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=500&q=80',
+    releaseYear: '2026 Collection',
   },
   {
-    id: 'galaxy-s25-ultra',
-    brand: 'Samsung',
-    name: 'Galaxy S25 / S24 Ultra',
-    category: 'smartphones',
-    image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2025/2026',
-  },
-  {
-    id: 'pixel-9-pro',
-    brand: 'Google',
-    name: 'Pixel 9 Pro / 9 Pro XL',
-    category: 'smartphones',
-    image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2025/2026',
-  },
-  {
-    id: 'macbook-pro',
-    brand: 'Apple',
-    name: 'MacBook Pro / Air M-Series',
+    id: 'footwear-leather',
+    brand: 'ATELIER NOVA',
+    name: 'Handcrafted Boots & Sneakers',
     category: 'laptops',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80',
-    releaseYear: '2024-2026',
+    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=500&q=80',
+    releaseYear: '2026 Collection',
   },
 ];
 
 export const DEVICES = POPULAR_DEVICES;
+

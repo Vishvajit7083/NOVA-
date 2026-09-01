@@ -65,12 +65,12 @@ export const ProductQA: React.FC<ProductQAProps> = ({ product }) => {
       {/* Header & Ask question CTA */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50 border border-gray-200 rounded-2xl p-6">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
-            <HelpCircle className="w-5 h-5 text-[#EB0028]" />
-            <span>Have a Question about {product.name}?</span>
+          <h3 className="text-xl font-serif font-bold text-gray-900 flex items-center space-x-2">
+            <HelpCircle className="w-5 h-5 text-[#9A7B38]" />
+            <span>Have a Styling Inquiry about {product.name}?</span>
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            Get verified answers from {product.sellerName || 'NOVA Audio & Tech Team'}, official technicians, and verified purchasers.
+            Get verified answers from {product.sellerName || 'AURELIA Atelier Master Stylists'}, certified textile conservators, and clients.
           </p>
         </div>
 
@@ -154,8 +154,8 @@ export const ProductQA: React.FC<ProductQAProps> = ({ product }) => {
                       <span className="font-semibold text-gray-800 flex items-center space-x-1">
                         {q.answer.answeredByRole === 'admin' ? (
                           <>
-                            <ShieldCheck className="w-3.5 h-3.5 text-[#EB0028]" />
-                            <span>NOVA Official Support</span>
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#9A7B38]" />
+                            <span>AURELIA Atelier Concierge</span>
                           </>
                         ) : q.answer.answeredByRole === 'seller' ? (
                           <>

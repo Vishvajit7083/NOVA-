@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import Razorpay from 'razorpay';
 import { createServer as createViteServer } from 'vite';
 import { paymentRouter } from './src/api/payment';
+import { shippingRouter } from './src/api/shipping';
 
 dotenv.config();
 const envExamplePath = path.join(process.cwd(), '.env.example');
@@ -116,6 +117,9 @@ async function startServer() {
 
   // 2. Mount modular Payment Router (handles /payment/config, /payment/create-order, /payment/verify)
   apiRouter.use('/payment', paymentRouter);
+
+  // 3. Mount modular Shipping & Logistics Router (handles /shipping/config, /shipping/serviceability, /shipping/create-shipment, /shipping/webhook)
+  apiRouter.use('/shipping', shippingRouter);
 
   // 4. Verify Payment Cryptographic Signature & Capture Details
   apiRouter.post(['/payment/verify', '/payment/verify/'], async (req: Request, res: Response) => {

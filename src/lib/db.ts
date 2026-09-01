@@ -30,7 +30,12 @@ import {
   AppNotification,
   AuditLog,
   SupportTicket,
-  PaymentTransaction
+  PaymentTransaction,
+  InventoryAuditLog,
+  ShipmentRecord,
+  ShippingConfig,
+  ShipmentStatus,
+  InventoryAdjustmentReason
 } from '../types';
 import { PRODUCTS } from '../data/products';
 import { CATEGORIES } from '../data/categories';
@@ -50,6 +55,9 @@ const SELLERS_COLL = 'sellers';
 const NOTIFICATIONS_COLL = 'notifications';
 const TICKETS_COLL = 'tickets';
 const AUDIT_LOGS_COLL = 'audit_logs';
+const INVENTORY_LOGS_COLL = 'inventory_logs';
+const SHIPMENTS_COLL = 'shipments';
+const SHIPPING_CONFIG_COLL = 'shipping_config';
 
 /**
  * Recursively removes undefined values from objects and arrays so Firestore never throws unsupported field value errors.
@@ -174,10 +182,12 @@ export async function getProductByIdFromDB(productId: string): Promise<Product |
   }
 }
 
-export async function saveProductToDB(product: Partial<Product> & { id: string }): Promise<void> {
-  const docRef = doc(db, PRODUCTS_COLL, product.id);
+export async function saveProductToDB(product: Partial<Product> & { id?: string }): Promise<void> {
+  const prodId = product.id || `prod_${Date.now()}`;
+  const docRef = doc(db, PRODUCTS_COLL, prodId);
   const data = sanitizeForFirestore({
     ...product,
+    id: prodId,
     updatedAt: new Date().toISOString(),
   });
   await setDoc(docRef, data, { merge: true });
@@ -371,6 +381,55 @@ export async function getUserOrdersFromDB(userUid: string, userEmail?: string): 
   }
 }
 
+export async function deleteOrderFromDB(orderId: string): Promise<void> {
+  try {
+    const docRef = doc(db, ORDERS_COLL, orderId);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error('Error deleting order from DB:', error);
+  }
+}
+
+export async function clearUserOrdersFromDB(userUid?: string, userEmail?: string): Promise<void> {
+  try {
+    const batch = writeBatch(db);
+    let count = 0;
+
+    if (userUid) {
+      const q1 = query(collection(db, ORDERS_COLL), where('userUid', '==', userUid));
+      const snap1 = await getDocs(q1);
+      snap1.forEach((d) => {
+        batch.delete(d.ref);
+        count++;
+      });
+    }
+
+    if (userEmail) {
+      const q2 = query(collection(db, ORDERS_COLL), where('contactEmail', '==', userEmail));
+      const snap2 = await getDocs(q2);
+      snap2.forEach((d) => {
+        batch.delete(d.ref);
+        count++;
+      });
+    }
+
+    // If neither uid nor email is specified, or as a general clear fallback for all orders if requested
+    if (!userUid && !userEmail) {
+      const snapAll = await getDocs(collection(db, ORDERS_COLL));
+      snapAll.forEach((d) => {
+        batch.delete(d.ref);
+        count++;
+      });
+    }
+
+    if (count > 0) {
+      await batch.commit();
+    }
+  } catch (error) {
+    console.error('Error clearing user orders from DB:', error);
+  }
+}
+
 export async function getAllOrdersFromDB(): Promise<Order[]> {
   try {
     const q = query(collection(db, ORDERS_COLL), orderBy('createdAt', 'desc'));
@@ -401,11 +460,13 @@ export async function updateOrderStatusInDB(
   const statusTitles: Record<OrderStatus, string> = {
     placed: 'Order Placed & Verified',
     confirmed: 'Order Confirmed & QC Assigned',
+    processing: 'Order Processing at Atelier',
     packed: 'Package Sealed with Security Tape',
     shipped: 'Handed over to Courier Hub',
     out_for_delivery: 'Out for Doorstep Delivery',
     delivered: 'Delivered Successfully',
     cancelled: 'Order Cancelled',
+    returned: 'Garment Returned to Atelier',
     refunded: 'Payment Refunded to Source Account',
   };
 
@@ -1245,5 +1306,359 @@ export async function updateOrderPaymentInDB(
     await updateDoc(orderRef, sanitizeForFirestore(updateData));
   } catch (error) {
     console.error('Error updating order payment in DB:', error);
+  }
+}
+
+// ---------------- INVENTORY MANAGEMENT & AUDIT LOGS ----------------
+
+export async function adjustVariantStockInDB(
+  productId: string,
+  variantId: string | undefined,
+  adjustedQuantity: number,
+  reason: InventoryAdjustmentReason,
+  notes: string = '',
+  adminEmail: string = 'admin@aureliacouture.com',
+  adminName: string = 'Master Tailor Logistics'
+): Promise<{ success: boolean; newStock: number; message: string }> {
+  try {
+    const prodRef = doc(db, PRODUCTS_COLL, productId);
+    const prodSnap = await getDoc(prodRef);
+
+    if (!prodSnap.exists()) {
+      return { success: false, newStock: 0, message: 'Product not found in catalog.' };
+    }
+
+    const prod = prodSnap.data() as Product;
+    let previousStock = prod.stockCount || 0;
+    let newStock = Math.max(0, previousStock + adjustedQuantity);
+    let targetVariantName = 'Base Garment';
+    let targetSku = prod.sku || `AUR-${productId.substring(0, 4).toUpperCase()}`;
+    let targetSize = '';
+    let targetColor = '';
+
+    const updatedVariants = prod.variants ? [...prod.variants] : [];
+
+    if (variantId && updatedVariants.length > 0) {
+      const vIdx = updatedVariants.findIndex((v) => v.id === variantId || v.sku === variantId);
+      if (vIdx > -1) {
+        previousStock = updatedVariants[vIdx].stockCount || 0;
+        newStock = Math.max(0, previousStock + adjustedQuantity);
+        updatedVariants[vIdx].stockCount = newStock;
+        updatedVariants[vIdx].inStock = newStock > 0;
+        targetVariantName = updatedVariants[vIdx].name || `${updatedVariants[vIdx].color || ''} / ${updatedVariants[vIdx].size || ''}`;
+        targetSku = updatedVariants[vIdx].sku || targetSku;
+        targetSize = updatedVariants[vIdx].size || '';
+        targetColor = updatedVariants[vIdx].color || '';
+      }
+    }
+
+    // Recalculate total product stock across variants
+    const totalVariantStock = updatedVariants.length > 0
+      ? updatedVariants.reduce((sum, v) => sum + (v.stockCount || 0), 0)
+      : newStock;
+
+    // Update Product in DB
+    await updateDoc(prodRef, sanitizeForFirestore({
+      stockCount: totalVariantStock,
+      inStock: totalVariantStock > 0,
+      variants: updatedVariants,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    // Record Audit Log Entry
+    const logId = `inv-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const logDoc = doc(db, INVENTORY_LOGS_COLL, logId);
+    const logRecord: InventoryAuditLog = {
+      id: logId,
+      productId,
+      productName: prod.name,
+      variantId: variantId || 'base',
+      sku: targetSku,
+      size: targetSize,
+      color: targetColor,
+      previousStock,
+      adjustedQuantity,
+      newStock,
+      reason,
+      notes,
+      adminEmail,
+      adminName,
+      timestamp: new Date().toISOString(),
+    };
+
+    await setDoc(logDoc, sanitizeForFirestore(logRecord));
+
+    return {
+      success: true,
+      newStock,
+      message: `Stock updated for ${prod.name} (${targetVariantName}). New stock: ${newStock}`,
+    };
+  } catch (error: any) {
+    console.error('Error adjusting variant stock in DB:', error);
+    return { success: false, newStock: 0, message: error.message || 'Failed to update stock.' };
+  }
+}
+
+export async function getInventoryAuditLogsFromDB(): Promise<InventoryAuditLog[]> {
+  try {
+    const q = query(collection(db, INVENTORY_LOGS_COLL), orderBy('timestamp', 'desc'), limit(150));
+    const snap = await getDocs(q);
+    const logs: InventoryAuditLog[] = [];
+    snap.forEach((d) => logs.push(d.data() as InventoryAuditLog));
+    return logs;
+  } catch (error) {
+    console.error('Error fetching inventory audit logs:', error);
+    return [];
+  }
+}
+
+// ---------------- SHIPPING CONFIGURATION ----------------
+
+const DEFAULT_DB_SHIPPING_CONFIG: ShippingConfig = {
+  pickupWarehouse: {
+    companyName: 'AURELIA & CO. Atelier Logistics',
+    contactName: 'Master Logistics Director',
+    phone: '+91 80 4968 3300',
+    email: 'logistics@aureliacouture.com',
+    addressLine1: 'Plot 48/B, EPIP Luxury Garment Zone, Phase 1',
+    addressLine2: 'Whitefield Commercial Hub',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    pincode: '560066',
+    country: 'India',
+  },
+  connectedProvider: 'manual',
+  providerStatus: {
+    configured: false,
+    mode: 'manual',
+    providerName: 'Atelier Enterprise Dispatch & Manual AWB',
+    lastSyncAt: new Date().toISOString(),
+  },
+  packageDefaults: {
+    defaultWeightGrams: 850,
+    defaultDimensions: {
+      length: 38,
+      width: 28,
+      height: 10,
+      unit: 'cm',
+    },
+    defaultBoxType: 'Archival Luxury Garment Presentation Box',
+  },
+  shippingRules: {
+    standardShippingFee: 99,
+    freeShippingThreshold: 999,
+    expressShippingFee: 249,
+    codAvailable: true,
+    codExtraFee: 50,
+    enableServiceabilityCheck: true,
+    defaultTransitDays: 3,
+  },
+  returnPolicy: {
+    returnWindowDays: 14,
+    exchangesAllowed: true,
+    returnFee: 0,
+    terms: 'Complimentary white-glove doorstep reverse pickup within 14 days for unworn garments with atelier security tags intact.',
+  },
+};
+
+export async function getShippingConfigFromDB(): Promise<ShippingConfig> {
+  try {
+    const docRef = doc(db, SHIPPING_CONFIG_COLL, 'active_config');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      return { ...DEFAULT_DB_SHIPPING_CONFIG, ...(snap.data() as ShippingConfig) };
+    }
+    return DEFAULT_DB_SHIPPING_CONFIG;
+  } catch (error) {
+    console.error('Error fetching shipping config:', error);
+    return DEFAULT_DB_SHIPPING_CONFIG;
+  }
+}
+
+export async function saveShippingConfigToDB(config: ShippingConfig): Promise<boolean> {
+  try {
+    const docRef = doc(db, SHIPPING_CONFIG_COLL, 'active_config');
+    await setDoc(docRef, sanitizeForFirestore({
+      ...config,
+      updatedAt: new Date().toISOString(),
+    }), { merge: true });
+    return true;
+  } catch (error) {
+    console.error('Error saving shipping config to DB:', error);
+    return false;
+  }
+}
+
+// ---------------- SHIPMENTS & COURIER FULFILLMENT ----------------
+
+export async function getAllShipmentsFromDB(): Promise<ShipmentRecord[]> {
+  try {
+    const q = query(collection(db, SHIPMENTS_COLL), orderBy('createdAt', 'desc'), limit(150));
+    const snap = await getDocs(q);
+    const shipments: ShipmentRecord[] = [];
+    snap.forEach((d) => shipments.push(d.data() as ShipmentRecord));
+    return shipments;
+  } catch (error) {
+    console.error('Error fetching shipments from DB:', error);
+    return [];
+  }
+}
+
+export async function saveShipmentToDB(shipment: ShipmentRecord): Promise<void> {
+  try {
+    const docRef = doc(db, SHIPMENTS_COLL, shipment.id);
+    await setDoc(docRef, sanitizeForFirestore({
+      ...shipment,
+      updatedAt: new Date().toISOString(),
+    }), { merge: true });
+
+    // Synchronize Order status and tracking info
+    const orderRef = doc(db, ORDERS_COLL, shipment.orderId);
+    const orderSnap = await getDoc(orderRef);
+    if (orderSnap.exists()) {
+      const order = orderSnap.data() as Order;
+      const history = order.trackingHistory || [];
+      const updatedHistory = [
+        ...history.map((h) => ({ ...h, current: false })),
+        ...(shipment.events || []),
+      ];
+
+      await updateDoc(orderRef, sanitizeForFirestore({
+        status: 'shipped',
+        fulfillmentStatus: 'shipped',
+        trackingCarrier: shipment.courierName,
+        trackingNumber: shipment.awbNumber,
+        shipment,
+        trackingHistory: updatedHistory,
+        updatedAt: new Date().toISOString(),
+      }));
+    }
+  } catch (error) {
+    console.error('Error saving shipment to DB:', error);
+  }
+}
+
+export async function updateShipmentStatusInDB(
+  shipmentId: string,
+  status: ShipmentStatus,
+  event: OrderTrackingEvent,
+  orderId?: string
+): Promise<void> {
+  try {
+    const docRef = doc(db, SHIPMENTS_COLL, shipmentId);
+    const snap = await getDoc(docRef);
+
+    let targetOrderId = orderId;
+    let existingEvents: OrderTrackingEvent[] = [];
+
+    if (snap.exists()) {
+      const data = snap.data() as ShipmentRecord;
+      targetOrderId = targetOrderId || data.orderId;
+      existingEvents = (data.events || []).map((e) => ({ ...e, current: false }));
+    }
+
+    existingEvents.push(event);
+
+    await updateDoc(docRef, sanitizeForFirestore({
+      status,
+      events: existingEvents,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    if (targetOrderId) {
+      const orderRef = doc(db, ORDERS_COLL, targetOrderId);
+      const orderSnap = await getDoc(orderRef);
+      if (orderSnap.exists()) {
+        const order = orderSnap.data() as Order;
+        const currentHist = (order.trackingHistory || []).map((h) => ({ ...h, current: false }));
+        currentHist.push({ ...event, current: true });
+
+        const mappedOrderStatus: OrderStatus =
+          status === 'delivered' ? 'delivered' :
+          status === 'out_for_delivery' ? 'out_for_delivery' :
+          status === 'cancelled' ? 'cancelled' :
+          status === 'returned_to_origin' ? 'returned' : 'shipped';
+
+        await updateDoc(orderRef, sanitizeForFirestore({
+          status: mappedOrderStatus,
+          fulfillmentStatus: mappedOrderStatus,
+          trackingHistory: currentHist,
+          updatedAt: new Date().toISOString(),
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Error updating shipment status in DB:', error);
+  }
+}
+
+// ---------------- ORDER PACKING & FULFILLMENT ----------------
+
+export async function packOrderInDB(
+  orderId: string,
+  packDetails: {
+    packedBy: string;
+    boxType: string;
+    notes?: string;
+    verifiedItemIds: string[];
+  }
+): Promise<void> {
+  try {
+    const orderRef = doc(db, ORDERS_COLL, orderId);
+    const orderSnap = await getDoc(orderRef);
+
+    const packEvent: OrderTrackingEvent = {
+      status: 'packed',
+      title: 'Luxury Garment Box Sealed & Inspected',
+      location: 'Atelier Packaging Salon',
+      timestamp: new Date().toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      description: `Packed in ${packDetails.boxType} with garment protection and QC seal by ${packDetails.packedBy}.`,
+      completed: true,
+      current: true,
+    };
+
+    let updatedHistory: OrderTrackingEvent[] = [packEvent];
+    if (orderSnap.exists()) {
+      const o = orderSnap.data() as Order;
+      updatedHistory = [
+        ...(o.trackingHistory || []).map((h) => ({ ...h, current: false })),
+        packEvent,
+      ];
+    }
+
+    await updateDoc(orderRef, sanitizeForFirestore({
+      status: 'packed',
+      fulfillmentStatus: 'packed',
+      packingDetails: {
+        ...packDetails,
+        packedAt: new Date().toISOString(),
+      },
+      trackingHistory: updatedHistory,
+      updatedAt: new Date().toISOString(),
+    }));
+  } catch (error) {
+    console.error('Error packing order in DB:', error);
+  }
+}
+
+// ---------------- RETURNS & EXCHANGES ----------------
+
+export async function updateReturnRequestInDB(
+  returnId: string,
+  updates: Partial<ReturnRequest>
+): Promise<void> {
+  try {
+    const docRef = doc(db, RETURNS_COLL, returnId);
+    await updateDoc(docRef, sanitizeForFirestore({
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    }));
+  } catch (error) {
+    console.error('Error updating return request in DB:', error);
   }
 }

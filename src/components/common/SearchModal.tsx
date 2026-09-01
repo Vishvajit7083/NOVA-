@@ -24,13 +24,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const popularKeywords = [
-    '120W GaN Charger',
-    'Aramid Fiber Case',
-    'AirPulse ANC Earbuds',
-    '240W Type-C Cable',
-    'MagSafe Power Bank',
-    'Cockpit Car Mount',
-    'Thunderbolt Hub',
+    'Silk Evening Gown',
+    'Double-Breasted Wool Coat',
+    'Cashmere Knitwear',
+    'Tuscan Leather Tote',
+    'Bespoke Tailored Blazer',
+    '925 Silver Cuff',
+    'Pleated Runway Skirt',
   ];
 
   // Focus input on open
@@ -111,41 +111,41 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search accessories, GaN chargers, cables, cases, device model..."
-              className="w-full bg-transparent text-zinc-900 text-sm sm:text-base placeholder-zinc-400 focus:outline-none"
+              placeholder="Search evening gowns, cashmere coats, artisanal leather, tailoring..."
+              className="w-full bg-transparent text-stone-900 text-sm sm:text-base placeholder-stone-400 focus:outline-none"
             />
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="p-1 text-zinc-400 hover:text-zinc-700 mr-2"
+                className="p-1 text-stone-400 hover:text-stone-700 mr-2"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
             <button
               onClick={() => setIsSearchOpen(false)}
-              className="px-2 py-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 text-xs font-mono rounded border border-zinc-200"
+              className="px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-600 text-xs font-mono rounded border border-stone-200"
             >
               ESC
             </button>
           </div>
 
           {/* Body content */}
-          <div className="overflow-y-auto p-4 space-y-6 flex-1 no-scrollbar bg-[#FAFAFA]">
+          <div className="overflow-y-auto p-4 space-y-6 flex-1 no-scrollbar bg-[#FAF8F5]">
             {/* If Query is empty, show Recent & Popular Searches */}
             {!query && (
               <>
                 {/* Recent Searches */}
                 {recentSearches.length > 0 && (
                   <div>
-                    <div className="flex items-center justify-between text-xs font-semibold text-zinc-600 mb-2">
+                    <div className="flex items-center justify-between text-xs font-semibold text-stone-600 mb-2">
                       <div className="flex items-center space-x-1.5">
-                        <Clock className="w-3.5 h-3.5 text-zinc-400" />
+                        <Clock className="w-3.5 h-3.5 text-stone-400" />
                         <span>Recent Searches</span>
                       </div>
                       <button
                         onClick={clearRecentSearches}
-                        className="text-[11px] text-zinc-500 hover:text-[#EB0028] transition-colors"
+                        className="text-[11px] text-stone-500 hover:text-[#9A7B38] transition-colors"
                       >
                         Clear
                       </button>
@@ -155,7 +155,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
                         <button
                           key={idx}
                           onClick={() => handleSelectKeyword(s)}
-                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200 text-xs text-zinc-700 hover:text-zinc-950 transition-colors flex items-center space-x-1.5 shadow-sm"
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-stone-100 border border-stone-200 text-xs text-stone-700 hover:text-stone-950 transition-colors flex items-center space-x-1.5 shadow-xs"
                         >
                           <span>{s}</span>
                         </button>
@@ -166,18 +166,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
 
                 {/* Popular Keywords */}
                 <div>
-                  <div className="flex items-center space-x-1.5 text-xs font-semibold text-zinc-600 mb-2">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#EB0028]" />
-                    <span>Trending Now</span>
+                  <div className="flex items-center space-x-1.5 text-xs font-semibold text-stone-600 mb-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-[#9A7B38]" />
+                    <span>Trending Silhouettes</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {popularKeywords.map((keyword, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleSelectKeyword(keyword)}
-                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-red-50 hover:border-[#EB0028]/40 border border-zinc-200 text-xs text-zinc-700 hover:text-[#EB0028] transition-all flex items-center space-x-1.5 group shadow-sm"
+                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-50/50 hover:border-[#9A7B38]/40 border border-stone-200 text-xs text-stone-700 hover:text-[#9A7B38] transition-all flex items-center space-x-1.5 group shadow-xs"
                       >
-                        <Zap className="w-3 h-3 text-[#EB0028] group-hover:scale-110 transition-transform" />
+                        <Zap className="w-3 h-3 text-[#9A7B38] group-hover:scale-110 transition-transform" />
                         <span>{keyword}</span>
                       </button>
                     ))}
@@ -186,26 +186,26 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
 
                 {/* Curated Recommendations */}
                 <div>
-                  <div className="text-xs font-semibold text-zinc-600 mb-3">
-                    Featured Flagship Gear
+                  <div className="text-xs font-semibold text-stone-600 mb-3">
+                    Featured Haute Pieces
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {PRODUCTS.slice(0, 4).map((product) => (
                       <div
                         key={product.id}
                         onClick={() => handleSelectProduct(product)}
-                        className="p-3 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl cursor-pointer transition-all flex items-center space-x-3 group shadow-sm"
+                        className="p-3 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl cursor-pointer transition-all flex items-center space-x-3 group shadow-xs"
                       >
                         <img
                           src={product.images[0]}
                           alt={product.name}
-                          className="w-12 h-12 object-contain rounded-lg bg-[#F8F9FA] p-1 shrink-0 group-hover:scale-105 transition-transform"
+                          className="w-12 h-16 object-cover object-top rounded-lg bg-[#FAF8F5] p-0.5 shrink-0 group-hover:scale-105 transition-transform"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-bold text-zinc-900 truncate group-hover:text-[#EB0028] transition-colors">
+                          <h4 className="text-xs font-serif font-bold text-stone-900 truncate group-hover:text-[#9A7B38] transition-colors">
                             {product.name}
                           </h4>
-                          <p className="text-[11px] text-zinc-500 truncate mt-0.5 font-semibold">
+                          <p className="text-[11px] text-stone-500 truncate mt-0.5 font-serif font-semibold">
                             ₹{product.price.toLocaleString('en-IN')}
                           </p>
                         </div>
@@ -219,7 +219,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
             {/* If Query has input */}
             {query && (
               <div>
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-600 mb-3">
+                <div className="flex items-center justify-between text-xs font-semibold text-stone-600 mb-3">
                   <span>Found {results.length} results for "{query}"</span>
                   {results.length > 0 && (
                     <button
@@ -227,21 +227,21 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
                         setIsSearchOpen(false);
                         onNavigate('store', { searchQuery: query });
                       }}
-                      className="text-[#EB0028] hover:underline flex items-center font-bold"
+                      className="text-[#9A7B38] hover:underline flex items-center font-bold"
                     >
-                      View in Store <ArrowRight className="w-3 h-3 ml-1" />
+                      View in Salon <ArrowRight className="w-3 h-3 ml-1" />
                     </button>
                   )}
                 </div>
 
                 {results.length === 0 ? (
                   <div className="py-12 text-center space-y-3">
-                    <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center mx-auto text-zinc-400">
+                    <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center mx-auto text-stone-400">
                       <Search className="w-6 h-6" />
                     </div>
-                    <h4 className="text-sm font-bold text-zinc-900">No accessories found</h4>
-                    <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                      We couldn't find matching items for "{query}". Try searching for GaN charger, aramid, cable, or earbuds.
+                    <h4 className="text-sm font-serif font-bold text-stone-900">No couture garments found</h4>
+                    <p className="text-xs text-stone-500 max-w-sm mx-auto">
+                      We couldn't find matching creations for "{query}". Try searching for evening gown, cashmere, blazer, or leather.
                     </p>
                   </div>
                 ) : (
@@ -250,40 +250,40 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
                       <div
                         key={product.id}
                         onClick={() => handleSelectProduct(product)}
-                        className="p-3 bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-[#EB0028]/50 rounded-xl cursor-pointer transition-all flex items-center justify-between group shadow-sm"
+                        className="p-3 bg-white hover:bg-stone-50 border border-stone-200 hover:border-[#9A7B38]/50 rounded-xl cursor-pointer transition-all flex items-center justify-between group shadow-xs"
                       >
                         <div className="flex items-center space-x-3.5 min-w-0">
                           <img
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-14 h-14 object-contain rounded-lg bg-[#F8F9FA] p-1.5 shrink-0"
+                            className="w-12 h-16 object-cover object-top rounded-lg bg-[#FAF8F5] p-0.5 shrink-0"
                           />
                           <div className="min-w-0">
                             <div className="flex items-center space-x-2">
-                              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+                              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">
                                 {product.category}
                               </span>
                               {product.badge && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-50 text-[#EB0028]">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-[#9A7B38]">
                                   {product.badge}
                                 </span>
                               )}
                             </div>
-                            <h4 className="text-xs sm:text-sm font-bold text-zinc-900 group-hover:text-[#EB0028] transition-colors truncate mt-1">
+                            <h4 className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-[#9A7B38] transition-colors truncate mt-1">
                               {product.name}
                             </h4>
-                            <p className="text-[11px] text-zinc-500 truncate mt-0.5">
+                            <p className="text-[11px] text-stone-500 truncate mt-0.5">
                               {product.tagline}
                             </p>
                           </div>
                         </div>
 
                         <div className="text-right shrink-0 pl-3">
-                          <div className="text-xs sm:text-sm font-extrabold text-zinc-950">
+                          <div className="text-xs sm:text-sm font-bold text-stone-950 font-serif">
                             ₹{product.price.toLocaleString('en-IN')}
                           </div>
                           {product.originalPrice > product.price && (
-                            <div className="text-[10px] text-zinc-400 line-through">
+                            <div className="text-[10px] text-stone-400 line-through">
                               ₹{product.originalPrice.toLocaleString('en-IN')}
                             </div>
                           )}
@@ -297,9 +297,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onNavigate }) => {
           </div>
 
           {/* Footer of modal */}
-          <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-[11px] text-zinc-500 flex items-center justify-between">
-            <span>Press <strong className="text-zinc-800">ESC</strong> to close</span>
-            <span>⚡ Next-Day Dispatch on all orders</span>
+          <div className="p-3 bg-stone-50 border-t border-stone-200 text-[11px] text-stone-500 flex items-center justify-between">
+            <span>Press <strong className="text-stone-800">ESC</strong> to close</span>
+            <span>✦ Complimentary White-Glove Courier & Atelier Fitting</span>
           </div>
         </motion.div>
       </div>

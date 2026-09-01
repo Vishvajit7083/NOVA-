@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, RotateCcw, ShieldAlert, CheckCircle2, ArrowRight, Package, Image as ImageIcon } from 'lucide-react';
+import { X, RotateCcw, ShieldAlert, ArrowRight, Image as ImageIcon, Scissors } from 'lucide-react';
 import { Order, CartItem, ReturnRequest } from '../../types';
 import { useShop } from '../../context/ShopContext';
 
@@ -21,7 +21,7 @@ export const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({ order, i
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!details.trim() || details.trim().length < 10) {
-      showToast('Please elaborate', 'Please give at least 10 characters explaining why you want to return or replace the item.', 'error');
+      showToast('Please elaborate', 'Please share at least 10 characters explaining your size exchange or alteration request.', 'error');
       return;
     }
 
@@ -30,9 +30,9 @@ export const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({ order, i
       const res = await requestReturn({
         orderId: order.id,
         orderNumber: order.orderNumber || order.id.slice(0, 8),
-        productId: item.product.id,
-        productName: item.product.name,
-        productImage: item.product.images[0] || '',
+        productId: item.product?.id || item.productId,
+        productName: item.product?.name || item.productId,
+        productImage: item.product?.images?.[0] || '',
         reason,
         reasonDetails: details.trim(),
         images: imageUrl.trim() ? [imageUrl.trim()] : undefined,
@@ -49,119 +49,119 @@ export const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({ order, i
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-10 h-10 rounded-xl bg-red-50 text-[#EB0028] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8E2D9] animate-in fade-in zoom-in-95 duration-150">
+        <div className="flex items-center justify-between border-b border-[#EAE4D8] pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] flex items-center justify-center">
               <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-gray-900 text-base">Request Return / Replacement</h4>
-              <p className="text-xs text-gray-500">Order #{order.orderNumber || order.id.slice(0, 8)}</p>
+              <h4 className="font-serif font-bold text-stone-900 text-base">Request Fitting Exchange or Return</h4>
+              <p className="text-xs text-stone-500">Atelier Order #{order.orderNumber || order.id.slice(0, 8)}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            className="text-stone-400 hover:text-stone-700 p-1.5 rounded-full hover:bg-[#FAF8F5] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Item summary */}
-        <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200 flex items-center space-x-3">
+        <div className="mt-4 p-3.5 bg-[#FAF8F5] rounded-2xl border border-[#EAE4D8] flex items-center space-x-3">
           <img
-            src={item.product.images[0]}
-            alt={item.product.name}
-            className="w-12 h-12 object-cover rounded-lg bg-white border border-gray-200"
+            src={item.product?.images?.[0] || 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80'}
+            alt=""
+            className="w-12 h-16 object-cover object-top rounded-xl bg-white border border-[#E8E2D9]"
             referrerPolicy="no-referrer"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-gray-900 truncate">{item.product.name}</p>
-            <p className="text-[11px] text-gray-500">
-              Qty: {item.quantity} • Refund Value:{' '}
-              <strong className="text-gray-900">₹{(item.price * item.quantity).toLocaleString('en-IN')}</strong>
+            <p className="text-xs font-serif font-bold text-stone-900 truncate">{item.product?.name || item.productId}</p>
+            <p className="text-[11px] text-stone-500">
+              Qty: {item.quantity} {item.selectedSize && `• Size: ${item.selectedSize}`} • Value:{' '}
+              <strong className="text-stone-900 font-serif">₹{(item.price * item.quantity).toLocaleString('en-IN')}</strong>
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-              Reason for Return
+            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Reason for Exchange / Return
             </label>
             <select
               id="select-return-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value as ReturnRequest['reason'])}
-              className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#EB0028]"
+              className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs font-medium text-stone-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
             >
-              <option value="defective">Hardware Issue / Defective Product</option>
-              <option value="damaged">Item Damaged in Transit</option>
-              <option value="wrong_item">Received Wrong Model or Color</option>
-              <option value="missing_parts">Missing Cables / Accessories / Box Contents</option>
-              <option value="not_as_described">Specifications Not Matching Description</option>
-              <option value="changed_mind">No Longer Needed / Changed Mind (Sealed Only)</option>
+              <option value="defective">Sizing / Fit Adjustment (Need Different Size)</option>
+              <option value="damaged">Garment Damaged or Creased in Transit</option>
+              <option value="wrong_item">Received Incorrect Silhouette or Colorway</option>
+              <option value="missing_parts">Missing Atelier Belt / Brooch / Garment Bag</option>
+              <option value="not_as_described">Drape or Texture Differed from Lookbook</option>
+              <option value="changed_mind">Changed Mind (With Tamper Seal Intact)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-              Detailed Issue Description
+            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Fitting Details / Sizing Needs
             </label>
             <textarea
               id="textarea-return-details"
               rows={3}
               value={details}
               onChange={(e) => setDetails(e.target.value)}
-              placeholder="Describe what happened with the product and whether you prefer an exact replacement or direct original-method refund..."
-              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#EB0028]"
+              placeholder="Describe your desired size exchange (e.g. Need Size L instead of M) or tailor alteration details..."
+              className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
-              Optional Image Link (Proof of defect or damaged packaging)
+            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Optional Image Link (Garment Fit or Fabric Detail)
             </label>
             <div className="relative">
-              <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <ImageIcon className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 id="input-return-image"
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://images.unsplash.com/... (optional)"
-                className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#EB0028]"
+                className="w-full pl-10 pr-3 py-2.5 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
               />
             </div>
           </div>
 
-          <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1">
-            <p className="font-bold flex items-center space-x-1.5">
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-700" />
-              <span>Reverse Pickup Protocol:</span>
+          <div className="bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#E0D8C8] text-xs text-stone-700 space-y-1">
+            <p className="font-serif font-bold text-stone-900 flex items-center space-x-1.5">
+              <Scissors className="w-3.5 h-3.5 text-[#9A7B38]" />
+              <span>Complimentary Doorstep Exchange:</span>
             </p>
-            <p className="text-[11px] text-amber-800">
-              Our courier will pick up the package from your delivery address ({order.shippingAddress.city}, {order.shippingAddress.pincode}) within 2 business days.
+            <p className="text-[11px] text-stone-600">
+              Our bespoke logistics concierge will pick up the garment from your location ({order.shippingAddress.city}, {order.shippingAddress.pincode}) in archival protective packaging.
             </p>
           </div>
 
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#EAE4D8]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-xs font-semibold text-stone-600 hover:bg-[#FAF8F5] rounded-full transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center space-x-2 px-5 py-2 text-xs font-bold text-white bg-[#EB0028] hover:bg-[#c80022] rounded-xl transition-all shadow-sm active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center space-x-2 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-white bg-[#111111] hover:bg-[#9A7B38] rounded-full transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer"
             >
-              <span>{isSubmitting ? 'Submitting...' : 'Submit Return Request'}</span>
+              <span>{isSubmitting ? 'Processing...' : 'Submit Exchange Request'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

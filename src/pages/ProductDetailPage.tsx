@@ -6,7 +6,6 @@ import {
   RotateCcw,
   ShoppingBag,
   Heart,
-  Zap,
   SlidersHorizontal,
   ChevronRight,
   Check,
@@ -15,10 +14,12 @@ import {
   Maximize2,
   Sparkles,
   Package,
-  Info,
   MapPin,
   ArrowRight,
   Share2,
+  Ruler,
+  Scissors,
+  HelpCircle,
 } from 'lucide-react';
 import { PRODUCTS } from '../data/products';
 import { Product, ColorOption, ProductVariant } from '../types';
@@ -52,12 +53,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   const product = products.find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
 
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0] || { name: 'Space Gray', hex: '#333' });
+  const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0] || { name: 'Midnight Charcoal', hex: '#1c1b18' });
+  const [selectedSize, setSelectedSize] = useState<string>(product.sizes ? product.sizes[0] : 'M');
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(
     product.variants ? product.variants[0] : undefined
   );
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'qa' | 'compatibility' | 'box'>('specs');
+  const [activeTab, setActiveTab] = useState<'specs' | 'reviews' | 'qa' | 'care' | 'box'>('specs');
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   // PIN Code lookup state
   const [pincode, setPincode] = useState('');
@@ -71,6 +74,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   useEffect(() => {
     setSelectedImageIdx(0);
     setSelectedColor(product.colors[0]);
+    setSelectedSize(product.sizes ? product.sizes[0] : 'M');
     setSelectedVariant(product.variants ? product.variants[0] : undefined);
     setQuantity(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -85,11 +89,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     : product.originalPrice;
 
   const handleAddToCart = () => {
-    addToCart(product, selectedColor, selectedVariant, quantity);
+    addToCart(product, selectedColor, selectedVariant, quantity, selectedSize);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, selectedColor, selectedVariant, quantity);
+    addToCart(product, selectedColor, selectedVariant, quantity, selectedSize);
     setIsCartOpen(false);
     onNavigate('checkout');
   };
@@ -101,7 +105,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       return;
     }
 
-    const pinNum = parseInt(pincode, 10);
     let city = 'Metro Region';
     let isExpress = true;
 
@@ -115,7 +118,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     else if (pincode.startsWith('380')) city = 'Ahmedabad, GJ';
 
     const deliveryDate = new Date();
-    deliveryDate.setDate(deliveryDate.getDate() + (isExpress ? 1 : 3));
+    deliveryDate.setDate(deliveryDate.getDate() + (isExpress ? 2 : 4));
     const formattedDate = deliveryDate.toLocaleDateString('en-IN', {
       weekday: 'short',
       month: 'short',
@@ -138,79 +141,81 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      showToast('Link Copied', 'Product link copied to clipboard.');
+      showToast('Link Copied', 'Garment link copied to clipboard.');
     }
   };
 
-  // Related companion accessories
+  // Related companion pieces
   const relatedProducts = PRODUCTS.filter(
     (p) => p.id !== product.id && (p.category === product.category || Math.random() > 0.4)
   ).slice(0, 4);
 
   return (
-    <div id="product-detail-page" className="min-h-screen bg-white text-black py-8">
+    <div id="product-detail-page" className="min-h-screen bg-[#FDFBF7] text-[#111111] py-8">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-12">
+        
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center space-x-2 text-xs text-gray-500 font-medium">
-          <button onClick={() => onNavigate('home')} className="hover:text-black cursor-pointer">
-            Home
+        <nav className="flex items-center space-x-2 text-xs text-stone-500 font-medium">
+          <button onClick={() => onNavigate('home')} className="hover:text-stone-900 cursor-pointer">
+            Atelier
           </button>
           <ChevronRight className="w-3.5 h-3.5" />
-          <button onClick={() => onNavigate('store')} className="hover:text-black cursor-pointer">
-            Store
+          <button onClick={() => onNavigate('shop')} className="hover:text-stone-900 cursor-pointer">
+            Collections
           </button>
           <ChevronRight className="w-3.5 h-3.5" />
           <button
-            onClick={() => onNavigate('store', { category: product.category })}
-            className="hover:text-black capitalize cursor-pointer"
+            onClick={() => onNavigate('shop', { category: product.category })}
+            className="hover:text-stone-900 capitalize cursor-pointer"
           >
             {product.category.replace('-', ' & ')}
           </button>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-black font-bold truncate max-w-xs">{product.name}</span>
+          <span className="text-stone-900 font-bold truncate max-w-xs">{product.name}</span>
         </nav>
 
-        {/* Top Hero Section: Gallery (Left) & Configurator (Right) */}
+        {/* Top Hero Section: Gallery (Left) & Atelier Configurator (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
-          {/* Left: Interactive Media Gallery */}
+          
+          {/* Left: Editorial Fashion Gallery */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square bg-[#F8F9FA] border border-gray-200 rounded-3xl p-8 flex items-center justify-center overflow-hidden shadow-xs group">
+            <div className="relative aspect-[3/4] bg-[#FAF8F5] border border-[#E8E2D9] rounded-3xl overflow-hidden shadow-xs group flex items-center justify-center">
               {/* Product Main Display */}
               <img
                 src={product.images[selectedImageIdx] || product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col space-y-2">
                 {product.badge && (
-                  <span className="px-3 py-1 rounded-full bg-[#EB0028] text-white text-[10px] font-bold uppercase tracking-widest shadow-xs">
+                  <span className="px-3 py-1 rounded-full bg-[#111111] text-white text-[10px] font-bold uppercase tracking-widest shadow-xs">
                     {product.badge}
                   </span>
                 )}
                 {product.discountPercent > 0 && (
-                  <span className="px-2.5 py-1 rounded-full bg-black text-white text-[10px] font-bold uppercase tracking-wider">
+                  <span className="px-2.5 py-1 rounded-full bg-[#9A7B38] text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
                     {product.discountPercent}% Savings
                   </span>
                 )}
               </div>
 
-              {/* Gallery Zoom & 360 Buttons */}
+              {/* Gallery Zoom & 360 Studio Buttons */}
               <div className="absolute bottom-4 right-4 flex items-center space-x-2">
                 <button
                   onClick={() => open360Viewer(product)}
-                  className="px-3.5 py-2 rounded-full bg-white/90 hover:bg-black hover:text-white border border-gray-200 backdrop-blur-md text-black text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer"
-                  title="Interactive 360° View"
+                  className="px-3.5 py-2 rounded-full bg-white/95 hover:bg-[#111111] hover:text-white border border-[#E0D8C8] backdrop-blur-md text-stone-900 text-xs font-serif font-bold tracking-wider flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer"
+                  title="Runway 360° View"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#EB0028]" />
-                  <span>360° Studio</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#9A7B38]" />
+                  <span>360° Runway</span>
                 </button>
 
                 <button
                   onClick={() => openImageViewer(product.images, selectedImageIdx)}
-                  className="p-2 rounded-full bg-white/90 hover:bg-black hover:text-white border border-gray-200 backdrop-blur-md text-black transition-all shadow-sm cursor-pointer"
-                  title="Fullscreen Zoom Viewer"
+                  className="p-2 rounded-full bg-white/95 hover:bg-[#111111] hover:text-white border border-[#E0D8C8] backdrop-blur-md text-stone-900 transition-all shadow-sm cursor-pointer"
+                  title="High-Res Inspection"
                 >
                   <Maximize2 className="w-4 h-4" />
                 </button>
@@ -224,13 +229,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   <button
                     key={idx}
                     onClick={() => setSelectedImageIdx(idx)}
-                    className={`aspect-square rounded-2xl p-2 bg-[#F8F9FA] border-2 transition-all overflow-hidden cursor-pointer ${
+                    className={`aspect-[3/4] rounded-2xl bg-[#FAF8F5] border-2 transition-all overflow-hidden cursor-pointer ${
                       selectedImageIdx === idx
-                        ? 'border-black scale-[1.02] shadow-sm'
-                        : 'border-gray-200 opacity-60 hover:opacity-100 hover:border-gray-400'
+                        ? 'border-[#9A7B38] scale-[1.02] shadow-sm'
+                        : 'border-[#E8E2D9] opacity-70 hover:opacity-100 hover:border-stone-400'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-contain" />
+                    <img src={img} alt="" className="w-full h-full object-cover object-top" />
                   </button>
                 ))}
               </div>
@@ -243,18 +248,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-xs">
-                  <span className="font-bold text-[#EB0028] uppercase tracking-widest text-[10px]">
-                    {product.category.replace('-', ' & ')}
+                  <span className="font-bold text-[#9A7B38] uppercase tracking-widest text-[10px]">
+                    {product.fabric || product.category.replace('-', ' & ')}
                   </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-gray-400 font-mono text-[11px]">SKU: {product.id.toUpperCase()}</span>
+                  <span className="text-stone-300">•</span>
+                  <span className="text-stone-500 font-mono text-[11px]">ATELIER #{product.id.toUpperCase()}</span>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleShare}
-                    className="p-2 rounded-full bg-gray-100 hover:bg-black text-gray-600 hover:text-white border border-gray-200 transition-colors cursor-pointer"
-                    title="Share accessory"
+                    className="p-2 rounded-full bg-white hover:bg-[#111111] text-stone-700 hover:text-white border border-[#E0D8C8] transition-colors cursor-pointer"
+                    title="Share garment"
                   >
                     <Share2 className="w-4 h-4" />
                   </button>
@@ -262,10 +267,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     onClick={() => toggleWishlist(product)}
                     className={`p-2 rounded-full border transition-colors cursor-pointer ${
                       inWishlist
-                        ? 'bg-[#EB0028] text-white border-[#EB0028]'
-                        : 'bg-gray-100 hover:bg-black text-gray-600 hover:text-white border-gray-200'
+                        ? 'bg-[#9A7B38] text-white border-[#9A7B38]'
+                        : 'bg-white hover:bg-[#111111] text-stone-700 hover:text-white border-[#E0D8C8]'
                     }`}
-                    title="Add to Wishlist"
+                    title="Save to Wishlist"
                   >
                     <Heart className={`w-4 h-4 ${inWishlist ? 'fill-white' : ''}`} />
                   </button>
@@ -273,10 +278,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     onClick={() => toggleComparison(product)}
                     className={`p-2 rounded-full border transition-colors cursor-pointer ${
                       inCompare
-                        ? 'bg-black text-white border-black'
-                        : 'bg-gray-100 hover:bg-black text-gray-600 hover:text-white border-gray-200'
+                        ? 'bg-[#111111] text-white border-[#111111]'
+                        : 'bg-white hover:bg-[#111111] text-stone-700 hover:text-white border-[#E0D8C8]'
                     }`}
-                    title="Add to Compare"
+                    title="Add to Comparison"
                   >
                     <SlidersHorizontal className="w-4 h-4" />
                   </button>
@@ -284,62 +289,62 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </div>
 
               {/* Title & Tagline */}
-              <h1 className="text-3xl sm:text-4xl font-black uppercase text-black tracking-tight mt-2 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#111111] tracking-tight mt-2 leading-tight">
                 {product.name}
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed font-normal">
-                {product.tagline}
+              <p className="text-xs sm:text-sm text-stone-600 mt-1.5 leading-relaxed font-normal">
+                {product.tagline || product.description}
               </p>
 
               {/* Rating score row */}
               <div className="flex items-center space-x-3 mt-3">
                 <div className="flex items-center space-x-1 text-amber-500">
                   <Star className="w-4 h-4 fill-amber-500" />
-                  <span className="text-xs font-black text-black">{product.rating}</span>
+                  <span className="text-xs font-bold text-stone-900">{product.rating}</span>
                 </div>
-                <span className="text-gray-300">•</span>
+                <span className="text-stone-300">•</span>
                 <button
                   onClick={() => setActiveTab('reviews')}
-                  className="text-xs text-gray-500 hover:text-black underline cursor-pointer"
+                  className="text-xs text-stone-600 hover:text-stone-900 underline cursor-pointer"
                 >
-                  {product.reviewCount} Verified Reviews
+                  {product.reviewCount} Verified Client Reviews
                 </button>
-                <span className="text-gray-300">•</span>
-                <span className="text-xs text-emerald-700 font-bold flex items-center">
-                  <Check className="w-3.5 h-3.5 mr-1" />
-                  In Stock
+                <span className="text-stone-300">•</span>
+                <span className="text-xs text-emerald-800 font-semibold flex items-center">
+                  <Check className="w-3.5 h-3.5 mr-1 text-emerald-700" />
+                  Available in Atelier
                 </span>
               </div>
             </div>
 
             {/* Price Box */}
-            <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl flex items-baseline justify-between">
+            <div className="p-5 bg-white border border-[#E8E2D9] rounded-2xl flex items-baseline justify-between shadow-xs">
               <div className="space-y-1">
                 <div className="flex items-baseline space-x-3">
-                  <span className="text-3xl sm:text-4xl font-black text-black tracking-tight">
+                  <span className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">
                     ₹{currentPrice.toLocaleString('en-IN')}
                   </span>
                   {currentOriginalPrice > currentPrice && (
-                    <span className="text-sm text-gray-400 line-through">
+                    <span className="text-sm text-stone-400 line-through">
                       ₹{currentOriginalPrice.toLocaleString('en-IN')}
                     </span>
                   )}
                   {product.discountPercent > 0 && (
-                    <span className="text-[11px] font-bold text-white bg-[#EB0028] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-[11px] font-bold text-white bg-[#9A7B38] px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
                       Save ₹{(currentOriginalPrice - currentPrice).toLocaleString('en-IN')} ({product.discountPercent}%)
                     </span>
                   )}
                 </div>
-                <div className="text-[11px] text-gray-500">
-                  Inclusive of all taxes & GST. Free express delivery on orders over ₹999.
+                <div className="text-[11px] text-stone-500">
+                  Inclusive of all taxes & import duties. Free insured delivery & 14-day doorstep size exchange.
                 </div>
               </div>
             </div>
 
             {/* Color Swatch Options */}
             <div className="space-y-2">
-              <div className="text-xs font-bold uppercase tracking-wider text-black">
-                Finish: <span className="text-gray-600 font-normal">{selectedColor.name}</span>
+              <div className="text-xs font-serif font-bold uppercase tracking-wider text-stone-900">
+                Colorway: <span className="text-stone-600 font-sans font-normal">{selectedColor.name}</span>
               </div>
               <div className="flex items-center space-x-3">
                 {product.colors.map((c, idx) => (
@@ -349,8 +354,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     style={{ backgroundColor: c.hex }}
                     className={`w-8 h-8 rounded-full border-2 transition-all relative cursor-pointer ${
                       selectedColor.name === c.name
-                        ? 'border-white ring-2 ring-black scale-110'
-                        : 'border-gray-300 opacity-80 hover:opacity-100'
+                        ? 'border-white ring-2 ring-stone-900 scale-110 shadow-sm'
+                        : 'border-stone-300 opacity-80 hover:opacity-100'
                     }`}
                     title={c.name}
                   >
@@ -362,44 +367,57 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </div>
             </div>
 
-            {/* Variant selector (if applicable) */}
-            {product.variants && (
-              <div className="space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-black">Configuration:</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {product.variants.map((v) => (
+            {/* Size Selector & Fit Guide Trigger */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="space-y-2.5 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-serif font-bold uppercase tracking-wider text-stone-900">
+                    Select Size: <span className="text-[#9A7B38] font-sans">{selectedSize}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="text-xs font-semibold text-[#9A7B38] hover:underline flex items-center space-x-1 cursor-pointer"
+                  >
+                    <Ruler className="w-3.5 h-3.5" />
+                    <span>Bespoke Size & Fit Guide</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-6 gap-2">
+                  {product.sizes.map((sz) => (
                     <button
-                      key={v.id}
-                      onClick={() => setSelectedVariant(v)}
-                      className={`p-3 rounded-xl text-left border text-xs font-medium transition-all cursor-pointer ${
-                        selectedVariant?.id === v.id
-                          ? 'bg-black text-white border-black font-bold'
-                          : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                      key={sz}
+                      type="button"
+                      onClick={() => setSelectedSize(sz)}
+                      className={`py-2.5 text-xs font-bold rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center ${
+                        selectedSize === sz
+                          ? 'bg-[#111111] text-white border-[#111111] shadow-xs'
+                          : 'bg-white border-[#E0D8C8] text-stone-800 hover:border-stone-500'
                       }`}
                     >
-                      <div className="font-bold uppercase tracking-wider">{v.name}</div>
-                      <div className="text-[11px] opacity-80 mt-0.5">₹{v.price.toLocaleString('en-IN')}</div>
+                      <span>{sz}</span>
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Quantity Stepper & Add to Cart Controls */}
+            {/* Quantity Stepper & Add to Bag Controls */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-full p-2">
+                <div className="flex items-center space-x-2 bg-white border border-[#E0D8C8] rounded-full p-2">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-1.5 text-gray-500 hover:text-black rounded-full cursor-pointer"
+                    className="p-1.5 text-stone-500 hover:text-stone-900 rounded-full cursor-pointer"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-xs font-black px-3 font-mono text-black">{quantity}</span>
+                  <span className="text-xs font-bold px-3 font-mono text-stone-900">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-1.5 text-gray-500 hover:text-black rounded-full cursor-pointer"
+                    className="p-1.5 text-stone-500 hover:text-stone-900 rounded-full cursor-pointer"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-4 h-4" />
@@ -409,28 +427,28 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <button
                   id="product-add-to-cart-btn"
                   onClick={handleAddToCart}
-                  className="flex-1 py-4 px-6 rounded-full bg-black hover:bg-[#EB0028] text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
+                  className="flex-1 py-4 px-6 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-medium text-xs uppercase tracking-widest flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  <span>Add to Bag</span>
+                  <span>Add to Shopping Bag • {selectedSize}</span>
                 </button>
               </div>
 
               <button
                 id="product-buy-now-btn"
                 onClick={handleBuyNow}
-                className="w-full py-4 rounded-full bg-[#EB0028] hover:bg-black text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
+                className="w-full py-4 rounded-full bg-[#9A7B38] hover:bg-[#B38F43] text-stone-950 font-bold text-xs uppercase tracking-widest flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
               >
-                <span>Express Buy Now • ₹{(currentPrice * quantity).toLocaleString('en-IN')}</span>
+                <span>Express Atelier Checkout • ₹{(currentPrice * quantity).toLocaleString('en-IN')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Indian PIN Code Delivery Checker */}
-            <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl space-y-3 text-xs">
-              <div className="flex items-center space-x-2 text-black font-bold uppercase tracking-wider text-[11px]">
-                <MapPin className="w-4 h-4 text-[#EB0028]" />
-                <span>Estimate Delivery Time to Your PIN Code</span>
+            <div className="p-5 bg-white border border-[#E8E2D9] rounded-2xl space-y-3 text-xs shadow-xs">
+              <div className="flex items-center space-x-2 text-stone-900 font-serif font-bold uppercase tracking-wider text-[11px]">
+                <MapPin className="w-4 h-4 text-[#9A7B38]" />
+                <span>Estimate Insured Delivery to Your PIN Code</span>
               </div>
               <form onSubmit={handlePincodeCheck} className="flex space-x-2">
                 <input
@@ -438,68 +456,68 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   maxLength={6}
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
-                  placeholder="Enter 6-Digit PIN (e.g. 560001)"
-                  className="flex-1 bg-white border border-gray-200 rounded-full px-4 py-2.5 text-black font-mono text-xs placeholder-gray-400 focus:outline-none focus:border-black"
+                  placeholder="Enter 6-Digit PIN (e.g. 110001 or 400001)"
+                  className="flex-1 bg-[#FAF8F5] border border-[#E0D8C8] rounded-full px-4 py-2.5 text-stone-900 font-mono text-xs placeholder-stone-400 focus:outline-none focus:border-[#9A7B38]"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-black hover:bg-[#EB0028] text-white font-bold rounded-full text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold rounded-full text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
-                  Check
+                  Verify
                 </button>
               </form>
 
               {deliveryResult && (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 space-y-1">
-                  <div className="font-bold flex items-center text-xs">
-                    <Truck className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-                    Guaranteed Delivery to {deliveryResult.city} by {deliveryResult.deliveryDate}
+                <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#E0D8C8] text-stone-800 space-y-1">
+                  <div className="font-serif font-bold flex items-center text-xs text-stone-900">
+                    <Truck className="w-3.5 h-3.5 mr-1.5 text-[#9A7B38]" />
+                    Insured BlueDart Express to {deliveryResult.city} by {deliveryResult.deliveryDate}
                   </div>
-                  <div className="text-[11px] text-gray-600">
-                    Dispatched from Bengaluru Fulfilment Center via BlueDart Air Express.
+                  <div className="text-[11px] text-stone-500">
+                    Archival garment packaging with complimentary 14-day doorstep size exchange.
                   </div>
                 </div>
               )}
             </div>
 
-            {/* NovaCare Trust Guarantee */}
+            {/* Atelier Trust Guarantee */}
             <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
-              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center space-x-3">
-                <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div className="p-4 rounded-2xl bg-white border border-[#E8E2D9] flex items-center space-x-3 shadow-xs">
+                <Scissors className="w-5 h-5 text-[#9A7B38] shrink-0" />
                 <div>
-                  <div className="font-bold text-black uppercase tracking-wider text-[11px]">2-Year NovaCare™</div>
-                  <div className="text-[10px] text-gray-500">Direct doorstep replacement</div>
+                  <div className="font-serif font-bold text-stone-900 uppercase tracking-wider text-[11px]">1-Year Seam Guarantee</div>
+                  <div className="text-[10px] text-stone-500">Complimentary atelier repairs</div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center space-x-3">
-                <RotateCcw className="w-5 h-5 text-blue-600 shrink-0" />
+              <div className="p-4 rounded-2xl bg-white border border-[#E8E2D9] flex items-center space-x-3 shadow-xs">
+                <RotateCcw className="w-5 h-5 text-[#9A7B38] shrink-0" />
                 <div>
-                  <div className="font-bold text-black uppercase tracking-wider text-[11px]">7-Day Return Policy</div>
-                  <div className="text-[10px] text-gray-500">100% money back guarantee</div>
+                  <div className="font-serif font-bold text-stone-900 uppercase tracking-wider text-[11px]">14-Day Doorstep Fitting</div>
+                  <div className="text-[10px] text-stone-500">Hassle-free size exchanges</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Tabbed In-Depth Sections: Specs, Reviews, Compatibility, In The Box */}
-        <div className="pt-10 border-t border-gray-200">
-          <div className="flex items-center space-x-2 border-b border-gray-200 pb-4 overflow-x-auto no-scrollbar">
+        {/* Tabbed In-Depth Sections */}
+        <div className="pt-10 border-t border-[#E0D8C8]">
+          <div className="flex items-center space-x-2 border-b border-[#E0D8C8] pb-4 overflow-x-auto no-scrollbar">
             {[
-              { id: 'specs', label: 'Technical Specifications' },
-              { id: 'reviews', label: `Verified Reviews (${product.reviewCount})` },
-              { id: 'qa', label: 'Questions & Answers' },
-              { id: 'compatibility', label: 'Certified Compatibility' },
-              { id: 'box', label: 'In The Box & Warranty' },
+              { id: 'specs', label: 'Tailoring & Fabric Specifications' },
+              { id: 'reviews', label: `Verified Client Reviews (${product.reviewCount})` },
+              { id: 'qa', label: 'Stylist Questions & Answers' },
+              { id: 'care', label: 'Garment Care & Longevity' },
+              { id: 'box', label: 'Archival Packaging & Packaging' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-black text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-600 hover:text-black hover:bg-gray-200'
+                    ? 'bg-[#111111] text-white shadow-sm'
+                    : 'bg-white border border-[#E0D8C8] text-stone-600 hover:text-stone-900 hover:border-stone-400'
                 }`}
               >
                 {tab.label}
@@ -511,82 +529,81 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             {activeTab === 'specs' && <ProductSpecTable product={product} />}
             {activeTab === 'reviews' && <ProductReviews product={product} />}
             {activeTab === 'qa' && <ProductQA product={product} />}
-            {activeTab === 'compatibility' && (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 space-y-6">
+            {activeTab === 'care' && (
+              <div className="bg-white border border-[#E8E2D9] rounded-2xl p-8 space-y-6 shadow-xs">
                 <div>
-                  <h3 className="text-lg font-black uppercase text-black tracking-tight">
-                    Guaranteed Device Compatibility
+                  <h3 className="text-xl font-serif text-stone-900 tracking-tight">
+                    Garment Care & Fabric Preservation
                   </h3>
-                  <p className="text-xs text-gray-500 mt-1 font-normal">
-                    Lab-tested for maximum power delivery, thermal stability, and exact dimensional fit.
+                  <p className="text-xs text-stone-500 mt-1 font-normal">
+                    Crafted with natural unblended fibers requiring gentle care to preserve hand-feel and luster for decades.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {product.compatibility.map((device, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 bg-white rounded-xl border border-gray-200 flex items-center space-x-2.5 text-xs shadow-xs"
-                    >
-                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span className="text-black font-bold">{device}</span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E8E2D9] space-y-1 text-xs">
+                    <div className="font-serif font-bold text-stone-900">Dry Cleaning & Steaming</div>
+                    <p className="text-stone-600 leading-relaxed font-normal">
+                      Professional eco-friendly dry clean recommended. Use a handheld low-temperature garment steamer instead of direct hot iron plates to preserve the natural fiber crimp.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E8E2D9] space-y-1 text-xs">
+                    <div className="font-serif font-bold text-stone-900">Archival Storage</div>
+                    <p className="text-stone-600 leading-relaxed font-normal">
+                      Store on the included contoured cedar wood hanger inside the breathable cotton dust bag. Natural cedar emits aromatic oils that repel moths without chemicals.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
             {activeTab === 'box' && (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 space-y-6">
+              <div className="bg-white border border-[#E8E2D9] rounded-2xl p-8 space-y-6 shadow-xs">
                 <div>
-                  <h3 className="text-lg font-black uppercase text-black tracking-tight">What's Inside the Box</h3>
-                  <p className="text-xs text-gray-500 mt-1 font-normal">
-                    Packaged with 100% recyclable aerospace-grade unboxing materials.
+                  <h3 className="text-xl font-serif text-stone-900 tracking-tight">What's Inside Your Atelier Parcel</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-normal">
+                    Packaged with 100% recyclable archival luxury unboxing elements.
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  {(product.whatsInTheBox || product.inTheBox || []).map((item, idx) => (
+                  {(product.whatsInTheBox || product.inTheBox || [
+                    '1x Mastercrafted Garment in Archival Tissue',
+                    '1x Breathable Cotton & Silk Garment Dust Bag',
+                    '1x Contoured Natural Cedar Wood Atelier Hanger',
+                    '1x Certificate of Fiber Authenticity with Serial Number',
+                  ]).map((item, idx) => (
                     <div
                       key={idx}
-                      className="p-4 bg-white border border-gray-200 rounded-xl flex items-center space-x-3 text-xs shadow-xs"
+                      className="p-4 bg-[#FAF8F5] border border-[#E8E2D9] rounded-xl flex items-center space-x-3 text-xs shadow-xs"
                     >
-                      <Package className="w-4 h-4 text-[#EB0028] shrink-0" />
-                      <span className="text-black font-bold">{item}</span>
+                      <Package className="w-4 h-4 text-[#9A7B38] shrink-0" />
+                      <span className="text-stone-900 font-medium">{item}</span>
                     </div>
                   ))}
-                </div>
-
-                <div className="p-5 rounded-xl bg-white border border-gray-200 flex items-start space-x-3 text-xs shadow-xs">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-bold text-black uppercase tracking-wider text-xs">NovaCare™ 2-Year Direct Warranty Included</h4>
-                    <p className="text-gray-500 mt-1 font-normal leading-relaxed">
-                      No tedious service center visits. If any hardware defect occurs, our courier will collect and replace the unit at your doorstep.
-                    </p>
-                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Related / Frequently Paired Products */}
-        <div className="pt-12 border-t border-gray-200 space-y-6">
+        {/* Related / Complete The Look Ensembles */}
+        <div className="pt-12 border-t border-[#E0D8C8] space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold text-[#EB0028] uppercase tracking-[0.25em]">
-                Frequently Paired Together
+              <span className="text-[10px] font-bold text-[#9A7B38] uppercase tracking-[0.25em]">
+                Complete The Look
               </span>
-              <h3 className="text-2xl font-black uppercase text-black tracking-tight mt-1">
-                Complete Your Flagship Setup
+              <h3 className="text-2xl sm:text-3xl font-serif text-stone-900 tracking-tight mt-1">
+                Curated Ensemble Pairings
               </h3>
             </div>
             <button
-              onClick={() => onNavigate('store')}
-              className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black flex items-center cursor-pointer"
+              onClick={() => onNavigate('shop')}
+              className="text-xs font-semibold uppercase tracking-wider text-stone-600 hover:text-stone-900 flex items-center cursor-pointer"
             >
               <span>Explore All</span>
-              <ArrowRight className="w-4 h-4 ml-1 text-[#EB0028]" />
+              <ArrowRight className="w-4 h-4 ml-1 text-[#9A7B38]" />
             </button>
           </div>
 
@@ -597,6 +614,95 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Bespoke Size Guide Modal */}
+      {isSizeGuideOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white border border-[#E8E2D9] rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative space-y-6">
+            <div className="flex items-center justify-between border-b border-[#EAE4D8] pb-4">
+              <div className="flex items-center space-x-2">
+                <Ruler className="w-5 h-5 text-[#9A7B38]" />
+                <h3 className="text-lg font-serif font-bold text-stone-900">
+                  Bespoke Sizing & Measurement Guide
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="text-stone-400 hover:text-stone-900 p-1 cursor-pointer text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#FAF8F5] border-b border-[#E8E2D9] text-stone-800 font-serif font-bold">
+                    <th className="p-3">Size</th>
+                    <th className="p-3">Chest (in)</th>
+                    <th className="p-3">Waist (in)</th>
+                    <th className="p-3">Shoulder (in)</th>
+                    <th className="p-3">Length (in)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0EBE1] text-stone-700">
+                  <tr>
+                    <td className="p-3 font-bold text-stone-900">XS (36)</td>
+                    <td className="p-3">36 - 38</td>
+                    <td className="p-3">28 - 30</td>
+                    <td className="p-3">16.5</td>
+                    <td className="p-3">27.5</td>
+                  </tr>
+                  <tr className="bg-[#FAF8F5]/50">
+                    <td className="p-3 font-bold text-stone-900">S (38)</td>
+                    <td className="p-3">38 - 40</td>
+                    <td className="p-3">30 - 32</td>
+                    <td className="p-3">17.2</td>
+                    <td className="p-3">28.5</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-stone-900">M (40)</td>
+                    <td className="p-3">40 - 42</td>
+                    <td className="p-3">32 - 34</td>
+                    <td className="p-3">18.0</td>
+                    <td className="p-3">29.5</td>
+                  </tr>
+                  <tr className="bg-[#FAF8F5]/50">
+                    <td className="p-3 font-bold text-stone-900">L (42)</td>
+                    <td className="p-3">42 - 44</td>
+                    <td className="p-3">34 - 36</td>
+                    <td className="p-3">18.8</td>
+                    <td className="p-3">30.5</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-stone-900">XL (44)</td>
+                    <td className="p-3">44 - 46</td>
+                    <td className="p-3">36 - 38</td>
+                    <td className="p-3">19.5</td>
+                    <td className="p-3">31.5</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F5] border border-[#E8E2D9] rounded-2xl space-y-1 text-xs">
+              <div className="font-serif font-bold text-stone-900">Doorstep Fitting Guarantee</div>
+              <p className="text-stone-600 leading-relaxed font-normal">
+                Not sure about your size? We offer complimentary 14-day doorstep size exchanges. Our courier brings the replacement size directly to your door.
+              </p>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="px-6 py-2.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white text-xs font-semibold uppercase tracking-wider cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

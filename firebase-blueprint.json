@@ -115,6 +115,48 @@
         "status": { "type": "string" }
       },
       "required": ["id", "orderId", "amount", "status"]
+    },
+    "Shipment": {
+      "title": "Shipment",
+      "description": "Order fulfillment shipment record and courier AWB tracking data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "provider": { "type": "string" },
+        "courierName": { "type": "string" },
+        "awbNumber": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "orderId", "awbNumber", "status"]
+    },
+    "InventoryLog": {
+      "title": "InventoryLog",
+      "description": "Variant-level inventory adjustment audit trail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "variantId": { "type": "string" },
+        "sku": { "type": "string" },
+        "previousStock": { "type": "number" },
+        "adjustedQuantity": { "type": "number" },
+        "newStock": { "type": "number" },
+        "reason": { "type": "string" },
+        "adminEmail": { "type": "string" }
+      },
+      "required": ["id", "productId", "sku", "reason", "adminEmail"]
+    },
+    "ShippingConfig": {
+      "title": "ShippingConfig",
+      "description": "Store shipping and warehouse configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "connectedProvider": { "type": "string" }
+      },
+      "required": ["id"]
     }
   },
   "firestore": {
@@ -125,6 +167,18 @@
     "/orders/{orderId}": {
       "schema": "Order",
       "description": "Store customer orders"
+    },
+    "/shipments/{shipmentId}": {
+      "schema": "Shipment",
+      "description": "Order fulfillment shipments"
+    },
+    "/inventory_logs/{logId}": {
+      "schema": "InventoryLog",
+      "description": "Stock adjustment audit records"
+    },
+    "/shipping_config/{configId}": {
+      "schema": "ShippingConfig",
+      "description": "Warehouse and courier configuration"
     },
     "/payment_transactions/{txnId}": {
       "schema": "PaymentTransaction",

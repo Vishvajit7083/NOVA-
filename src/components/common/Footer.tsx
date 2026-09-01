@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Zap,
   ShieldCheck,
   Truck,
   RotateCcw,
-  Headphones,
+  Sparkles,
   Check,
   ArrowRight,
   Lock,
+  Compass,
+  Scissors,
 } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { CATEGORIES } from '../../data/categories';
@@ -28,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       return;
     }
     setSubscribed(true);
-    showToast('Subscribed!', 'Welcome to the NOVA VIP Club. Check your inbox for your 15% code.');
+    showToast('Subscribed!', 'Welcome to the AURELIA Atelier. Your 10% code is ATELIER10.');
     setNewsletterEmail('');
   };
 
@@ -38,47 +39,47 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   };
 
   return (
-    <footer id="main-footer" className="bg-white text-gray-500 border-t border-gray-100 pt-16 pb-12 mt-20">
+    <footer id="main-footer" className="bg-[#111111] text-[#A0988A] border-t border-[#2A2A2A] pt-16 pb-12 mt-20">
       {/* Brand Trust Badges Row */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-14 border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-14 border-b border-[#2A2A2A]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-[#EB0028] shrink-0">
+            <div className="p-3 rounded-2xl bg-[#1A1A1A] border border-[#333333] text-[#9A7B38] shrink-0">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-black">Free Express Delivery</h4>
-              <p className="text-xs text-gray-500 mt-0.5 font-normal">Across India on orders over ₹999</p>
+              <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-white">Insured Global Delivery</h4>
+              <p className="text-xs text-[#8A8275] mt-0.5 font-normal">Complimentary on orders above ₹1,999</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-emerald-600 shrink-0">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="p-3 rounded-2xl bg-[#1A1A1A] border border-[#333333] text-[#9A7B38] shrink-0">
+              <Scissors className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-black">24-Month Warranty</h4>
-              <p className="text-xs text-gray-500 mt-0.5 font-normal">Direct doorstep replacement policy</p>
+              <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-white">Atelier Guarantee</h4>
+              <p className="text-xs text-[#8A8275] mt-0.5 font-normal">1-Year Stitch & Seam Warranty</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-amber-600 shrink-0">
+            <div className="p-3 rounded-2xl bg-[#1A1A1A] border border-[#333333] text-[#9A7B38] shrink-0">
               <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-black">7-Day Easy Returns</h4>
-              <p className="text-xs text-gray-500 mt-0.5 font-normal">Hassle-free replacement guarantee</p>
+              <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-white">14-Day Size Exchanges</h4>
+              <p className="text-xs text-[#8A8275] mt-0.5 font-normal">Complimentary doorstep fitting service</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200 text-cyan-600 shrink-0">
-              <Headphones className="w-5 h-5" />
+            <div className="p-3 rounded-2xl bg-[#1A1A1A] border border-[#333333] text-[#9A7B38] shrink-0">
+              <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-black">Dedicated Support</h4>
-              <p className="text-xs text-gray-500 mt-0.5 font-normal">Expert gear engineers ready to help</p>
+              <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-white">Personal Concierge</h4>
+              <p className="text-xs text-[#8A8275] mt-0.5 font-normal">Dedicated styling consultants</p>
             </div>
           </div>
         </div>
@@ -90,26 +91,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand Col & Newsletter */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-black flex items-center justify-center text-white font-bold">
-                <Zap className="w-4 h-4 text-[#EB0028]" />
-              </div>
-              <span className="text-2xl font-black tracking-tighter text-black">
-                NOVA
+              <span className="text-2xl font-serif font-bold tracking-[0.2em] text-white">
+                AURELIA & CO.
               </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
             </div>
-            <p className="text-xs leading-relaxed text-gray-600 max-w-sm">
-              We design and engineer uncompromising consumer electronics accessories with aerospace materials, next-generation GaN silicon, and refined industrial aesthetics.
+            <p className="text-xs leading-relaxed text-[#8A8275] max-w-sm">
+              An international luxury fashion atelier creating architectural tailoring, pure silk slip dresses, Italian leather accessories, and bespoke contemporary garments with zero synthetic compromise.
             </p>
 
             {/* Newsletter Form */}
             <div className="pt-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-black block mb-2">
-                Join the NOVA VIP Community
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#E8E2D9] block mb-2">
+                Join the Haute Couture Circle
               </span>
               {subscribed ? (
-                <div className="flex items-center space-x-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                <div className="flex items-center space-x-2 text-xs text-[#9A7B38] bg-[#1A1A1A] border border-[#9A7B38]/30 p-3 rounded-xl">
                   <Check className="w-4 h-4" />
-                  <span>You're subscribed! Use code FIRSTDROP for 15% off.</span>
+                  <span>Welcome to the Atelier. Use code ATELIER10 for 10% off.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex max-w-sm">
@@ -118,11 +117,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="flex-1 bg-gray-50 border border-gray-200 rounded-l-xl px-3.5 py-2.5 text-xs text-black placeholder-gray-400 focus:outline-none focus:border-black"
+                    className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-l-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-[#9A7B38]"
                   />
                   <button
                     type="submit"
-                    className="bg-black hover:bg-[#EB0028] text-white px-5 py-2.5 rounded-r-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center shrink-0"
+                    className="bg-[#9A7B38] hover:bg-[#B38F43] text-stone-900 px-5 py-2.5 rounded-r-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center shrink-0 cursor-pointer"
                   >
                     <span>Join</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -132,17 +131,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* Shop Column */}
+          {/* Collections Column */}
           <div>
-            <h4 className="text-[11px] font-bold tracking-widest uppercase text-black mb-4">
-              Flagship Gear
+            <h4 className="text-[11px] font-serif font-bold tracking-widest uppercase text-white mb-4">
+              Atelier Collections
             </h4>
             <ul className="space-y-2 text-xs">
-              {CATEGORIES.slice(0, 5).map((cat) => (
+              {CATEGORIES.slice(0, 6).map((cat) => (
                 <li key={cat.id}>
                   <button
-                    onClick={() => handleNav('store', { category: cat.id })}
-                    className="text-gray-500 hover:text-black transition-colors"
+                    onClick={() => handleNav('shop', { category: cat.id })}
+                    className="text-[#8A8275] hover:text-white transition-colors cursor-pointer"
                   >
                     {cat.name}
                   </button>
@@ -151,74 +150,75 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <li>
                 <button
                   onClick={() => handleNav('finder')}
-                  className="text-[#EB0028] hover:underline font-bold text-xs"
+                  className="text-[#9A7B38] hover:underline font-bold text-xs cursor-pointer flex items-center"
                 >
-                  Device Matcher
+                  <Compass className="w-3 h-3 mr-1" />
+                  Style & Capsule Finder
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Customer Care */}
+          {/* Client Concierge */}
           <div>
-            <h4 className="text-[11px] font-bold tracking-widest uppercase text-black mb-4">
-              Help & Support
+            <h4 className="text-[11px] font-serif font-bold tracking-widest uppercase text-white mb-4">
+              Client Concierge
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => handleNav('tracking')} className="text-gray-500 hover:text-black transition-colors">
-                  Track Consignment
+                <button onClick={() => handleNav('tracking')} className="text-[#8A8275] hover:text-white transition-colors cursor-pointer">
+                  Track Delivery
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('support')} className="text-gray-500 hover:text-black transition-colors">
-                  Warranty Verification
+                <button onClick={() => handleNav('support')} className="text-[#8A8275] hover:text-white transition-colors cursor-pointer">
+                  Garment Care & Fabrics
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('support')} className="text-gray-500 hover:text-black transition-colors">
-                  Returns & Replacements
+                <button onClick={() => handleNav('support')} className="text-[#8A8275] hover:text-white transition-colors cursor-pointer">
+                  Doorstep Size Exchange
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('support')} className="text-gray-500 hover:text-black transition-colors">
-                  Technical Specifications FAQs
+                <button onClick={() => handleNav('support')} className="text-[#8A8275] hover:text-white transition-colors cursor-pointer">
+                  Bespoke Fitting Guide
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('comparison')} className="text-gray-500 hover:text-black transition-colors">
-                  Spec Comparison Matrix
+                <button onClick={() => handleNav('comparison')} className="text-[#8A8275] hover:text-white transition-colors cursor-pointer">
+                  Compare Silhouettes
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Company & Legal */}
+          {/* Security & Authenticity */}
           <div>
-            <h4 className="text-[11px] font-bold tracking-widest uppercase text-black mb-4">
-              Security & Payment
+            <h4 className="text-[11px] font-serif font-bold tracking-widest uppercase text-white mb-4">
+              Authenticity & Security
             </h4>
-            <p className="text-[11px] text-gray-500 leading-relaxed mb-3">
-              All transactions encrypted with 256-bit SSL. Supported UPI, RuPay, Visa, Mastercard, NetBanking & COD.
+            <p className="text-[11px] text-[#8A8275] leading-relaxed mb-3">
+              100% Certified natural materials, verified origin certificates, and 256-bit SSL encrypted payments.
             </p>
-            <div className="flex items-center space-x-2 text-[11px] text-gray-700 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-              <Lock className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>PCI-DSS Level 1 Secure Checkouts</span>
+            <div className="flex items-center space-x-2 text-[11px] text-[#C5A059] bg-[#1A1A1A] p-2.5 rounded-xl border border-[#333333]">
+              <Lock className="w-4 h-4 text-[#9A7B38] shrink-0" />
+              <span>PCI-DSS Tier 1 Encrypted</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-8 mt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+        {/* Bottom Copyright */}
+        <div className="pt-8 mt-8 border-t border-[#2A2A2A] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A8275] gap-4">
           <div className="flex items-center space-x-2">
-            <span>© 2026 NOVA Technologies Private Limited. All rights reserved.</span>
+            <span>© 2026 AURELIA & CO. Haute Couture & Luxury Fashion. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-6 text-[11px]">
-            <span>Currency: <strong className="text-black">INR (₹)</strong></span>
-            <button onClick={() => handleNav('support')} className="hover:text-black">
+            <span>Currency: <strong className="text-white">INR (₹)</strong></span>
+            <button onClick={() => handleNav('support')} className="hover:text-white cursor-pointer">
               Privacy Policy
             </button>
-            <button onClick={() => handleNav('support')} className="hover:text-black">
+            <button onClick={() => handleNav('support')} className="hover:text-white cursor-pointer">
               Terms of Sale
             </button>
           </div>

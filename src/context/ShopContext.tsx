@@ -59,6 +59,8 @@ import {
   upvoteQuestionInDB,
   createSupportTicketInDB,
   getUserSupportTicketsFromDB,
+  deleteOrderFromDB,
+  clearUserOrdersFromDB,
 } from '../lib/db';
 
 interface ToastData {
@@ -96,7 +98,7 @@ interface ShopContextType {
   highContrast: boolean;
 
   // Cart actions
-  addToCart: (product: Product, selectedColor?: ColorOption, selectedVariant?: ProductVariant, quantity?: number) => void;
+  addToCart: (product: Product, selectedColor?: ColorOption, selectedVariant?: ProductVariant, quantity?: number, selectedSize?: string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -134,6 +136,8 @@ interface ShopContextType {
   placeOrder: (orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>) => Promise<Order>;
   getOrderById: (orderIdOrNumber: string) => Order | undefined;
   refreshOrders: () => Promise<void>;
+  deleteOrder: (orderId: string) => Promise<void>;
+  clearOrderHistory: () => Promise<void>;
 
   // Reviews
   submitVerifiedReview: (productId: string, rating: number, title: string, comment: string) => Promise<{ success: boolean; isVerified: boolean; message: string }>;
@@ -287,9 +291,9 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Discovery History
   const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([
-    '120W GaN Station',
-    'MagSafe Cooling Stand',
-    'Braided 240W Cable',
+    'Mulberry Silk Evening Gown',
+    'Double-Breasted Wool Coat',
+    'Tuscan Leather Tote',
   ]);
 
   // Accessibility
@@ -322,10 +326,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!currentUser) return;
     try {
       const dbOrders = await getUserOrdersFromDB(currentUser.id, currentUser.email);
-      if (dbOrders && dbOrders.length > 0) {
-        setOrders(dbOrders);
-        localStorage.setItem('nova_orders', JSON.stringify(dbOrders));
-      }
+      setOrders(dbOrders || []);
+      localStorage.setItem('nova_orders', JSON.stringify(dbOrders || []));
     } catch (err) {
       console.error('Failed to refresh orders:', err);
     }
@@ -495,13 +497,15 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     product: Product,
     selectedColor?: ColorOption,
     selectedVariant?: ProductVariant,
-    quantity: number = 1
+    quantity: number = 1,
+    selectedSize?: string
   ) => {
     const color = selectedColor || product.colors[0] || { name: 'Standard', hex: '#000000', inStock: true };
     const variant = selectedVariant || (product.variants && product.variants[0]);
+    const size = selectedSize || (product.sizes && product.sizes[0]);
     const price = variant ? variant.price : product.price;
 
-    const itemKey = `${product.id}-${color.name}-${variant ? variant.id : 'base'}`;
+    const itemKey = `${product.id}-${color.name}-${size || (variant ? variant.id : 'base')}`;
 
     setCart((prev) => {
       const existingIdx = prev.findIndex((item) => item.id === itemKey);
@@ -520,6 +524,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
           product,
           selectedColor: color,
           selectedVariant: variant,
+          selectedSize: size,
           quantity: Math.min(quantity, product.stockCount || 99),
           price,
         };
@@ -527,7 +532,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    showToast('Added to Bag', `${product.name} has been added to your shopping bag.`);
+    showToast('Added to Bag', `${product.name} ${size ? `(${size})` : ''} has been added to your shopping bag.`);
   };
 
   const removeFromCart = (itemId: string) => {
@@ -699,49 +704,49 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     orderPayload: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'status' | 'trackingHistory'>
   ): Promise<Order> => {
     const timestamp = Date.now();
-    const orderId = `NV-${timestamp.toString().slice(-6)}`;
+    const orderId = `AUR-${timestamp.toString().slice(-6)}`;
     const trackingNumber = `BLRDART${Math.floor(100000000 + Math.random() * 900000000)}`;
 
     const initialTracking: OrderTrackingEvent[] = [
       {
         status: 'placed',
-        title: 'Order Placed & Verified',
-        location: 'NOVA Bengaluru Hub',
+        title: 'Couture Order Confirmed',
+        location: 'AURELIA Central Atelier',
         timestamp: 'Just now',
-        description: 'Payment authorized. Order queued for high-speed automated packaging.',
+        description: 'Payment authorized. Garment reserved for master tailor inspection.',
         completed: true,
         current: true,
       },
       {
         status: 'confirmed',
-        title: 'Quality Check & Firmware Test',
-        location: 'Central Vault QC Line 4',
+        title: 'Master Tailor Quality & Fabric Audit',
+        location: 'Atelier Inspection Salon',
         timestamp: 'Pending',
-        description: 'Hardware authentication and tamper-evident serial seal verification.',
+        description: 'Hand inspection of seams, fabric integrity, and numbered atelier certification.',
         completed: false,
       },
       {
         status: 'packed',
-        title: 'Anti-Static Shock-Proof Packaging',
-        location: 'Fulfillment Station A',
+        title: 'Luxury Garment Bag & Sealed Box Packaging',
+        location: 'Atelier Dispatch Salon',
         timestamp: 'Pending',
-        description: 'Enclosed with 24-Month official warranty passport and invoice.',
+        description: 'Enclosed with organic cotton garment cover, scented tissue, and tax invoice.',
         completed: false,
       },
       {
         status: 'shipped',
-        title: 'Dispatched with BlueDart Priority Air',
-        location: 'Air Cargo Transit Hub',
+        title: 'Dispatched with BlueDart Priority Express',
+        location: 'Air Cargo Express Facility',
         timestamp: 'Pending',
         description: `AWB Tracking Number: ${trackingNumber}`,
         completed: false,
       },
       {
         status: 'out_for_delivery',
-        title: 'Out for Doorstep Delivery',
-        location: `${orderPayload.shippingAddress.city} Express Facility`,
+        title: 'Out for White-Glove Doorstep Delivery',
+        location: `${orderPayload.shippingAddress.city} Express Courier Hub`,
         timestamp: 'Pending',
-        description: 'Driver assigned with secure OTP verification.',
+        description: 'Courier specialist assigned with secure signature verification.',
         completed: false,
       },
       {
@@ -749,7 +754,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: 'Delivered',
         location: `${orderPayload.shippingAddress.street}, ${orderPayload.shippingAddress.city}`,
         timestamp: 'Pending',
-        description: 'Delivered with tamper-proof seal intact.',
+        description: 'Delivered with luxury seals intact.',
         completed: false,
       },
     ];
@@ -805,6 +810,37 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
+  const deleteOrder = async (orderId: string) => {
+    try {
+      await deleteOrderFromDB(orderId);
+      setOrders((prev) => {
+        const next = prev.filter((o) => o.id !== orderId && o.orderNumber !== orderId);
+        localStorage.setItem('nova_orders', JSON.stringify(next));
+        return next;
+      });
+      showToast('Order Removed', 'Selected order has been removed from your history.', 'info');
+    } catch (err) {
+      console.error('Failed to delete order:', err);
+      showToast('Error', 'Failed to remove order from history.', 'error');
+    }
+  };
+
+  const clearOrderHistory = async () => {
+    try {
+      if (currentUser) {
+        await clearUserOrdersFromDB(currentUser.id, currentUser.email);
+      } else {
+        await clearUserOrdersFromDB();
+      }
+      setOrders([]);
+      localStorage.removeItem('nova_orders');
+      showToast('History Cleared', 'Your order history and invoices have been cleared.', 'success');
+    } catch (err) {
+      console.error('Failed to clear order history:', err);
+      showToast('Error', 'Failed to clear order history.', 'error');
+    }
+  };
+
   // ---------------- VERIFIED REVIEWS ----------------
   const checkIsPurchased = async (productId: string): Promise<boolean> => {
     if (!currentUser) return false;
@@ -825,7 +861,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const prod = products.find((p) => p.id === productId);
     const res = await submitReviewToDB({
       productId,
-      productName: prod?.name || 'NOVA Hardware',
+      productName: prod?.name || 'AURELIA Couture Piece',
       author: currentUser.name,
       authorUid: currentUser.id,
       authorEmail: currentUser.email,
@@ -870,7 +906,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await updateProfile(cred.user, { displayName: name.trim() });
       }
       setIsAuthModalOpen(false);
-      showToast('Account Created', `Welcome to NOVA Flagship Store, ${name}!`);
+      showToast('Account Created', `Welcome to AURELIA & CO. Haute Couture, ${name}!`);
       return { success: true };
     } catch (error: any) {
       console.error('Email registration error:', error);
@@ -1088,7 +1124,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     const res = await registerSellerInDB(sellerData);
     if (res.success) {
-      showToast('Partner Store Created', 'Welcome to NOVA Marketplace Partner Hub!');
+      showToast('Partner Store Created', 'Welcome to AURELIA Designer Consignment Hub!');
       await refreshSellerProfile();
       if (currentUser) {
         setCurrentUser({ ...currentUser, role: 'seller', sellerId: res.sellerId });
@@ -1206,6 +1242,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         placeOrder,
         getOrderById,
         refreshOrders,
+        deleteOrder,
+        clearOrderHistory,
 
         submitVerifiedReview,
         checkIsPurchased,

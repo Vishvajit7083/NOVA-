@@ -14,12 +14,12 @@ import {
   Globe,
   Wallet,
   CheckCircle2,
-  ExternalLink,
+  Scissors,
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
-import { Address, Order } from '../types';
+import { Address } from '../types';
 import { openRazorpayCheckout, loadRazorpayScript, safeFetchJson } from '../lib/razorpay';
-import { savePaymentTransactionInDB, updateOrderPaymentInDB } from '../lib/db';
+import { savePaymentTransactionInDB } from '../lib/db';
 
 interface CheckoutPageProps {
   onNavigate: (view: string, params?: any) => void;
@@ -57,8 +57,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     mode: 'test',
     currency: 'INR',
     enableInternational: true,
-    storeName: 'NOVA Flagship Electronics',
-    brandColor: '#EB0028',
+    storeName: 'AURELIA & CO. Haute Couture',
+    brandColor: '#9A7B38',
   });
 
   // Address Form State
@@ -117,19 +117,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F8F9FA] text-zinc-900 py-20 px-4 text-center flex flex-col items-center justify-center space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-400 shadow-sm">
+      <div className="min-h-screen bg-[#FDFBF7] text-[#111111] py-20 px-4 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="w-16 h-16 rounded-full bg-white border border-[#E8E2D9] flex items-center justify-center text-[#9A7B38] shadow-xs">
           <Truck className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-zinc-950">Your shopping bag is empty</h2>
-        <p className="text-xs text-zinc-500 max-w-sm">
-          Please add items to your cart before proceeding to the checkout portal.
+        <h2 className="text-2xl font-serif font-bold text-stone-900">Your shopping bag is empty</h2>
+        <p className="text-xs text-stone-500 max-w-sm font-normal">
+          Please select your desired garments or accessories before proceeding to the checkout portal.
         </p>
         <button
-          onClick={() => onNavigate('store')}
-          className="px-6 py-3 rounded-xl bg-[#EB0028] text-white font-bold text-xs shadow-md transition-colors hover:bg-[#c90023] cursor-pointer"
+          onClick={() => onNavigate('shop')}
+          className="px-6 py-3 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-wider shadow-md transition-colors cursor-pointer"
         >
-          Explore Catalog
+          Explore Collections
         </button>
       </div>
     );
@@ -212,9 +212,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           discount: cartDiscount,
           couponCode: appliedCoupon?.code || '',
           shippingFee: cartShippingFee,
-          tax: Math.round((cartSubtotal - cartDiscount) * 0.18),
+          tax: Math.round((cartSubtotal - cartDiscount) * 0.12),
           total: cartTotal,
-          trackingCarrier: 'BlueDart Air Express',
+          trackingCarrier: 'BlueDart Luxury Express',
           trackingNumber: `BD-${Math.floor(10000000 + Math.random() * 90000000)}IN`,
           estimatedDeliveryDate: new Date(Date.now() + 48 * 3600 * 1000).toLocaleDateString('en-IN', {
             weekday: 'short',
@@ -238,7 +238,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     // ----------------------------------------------------
     try {
       const orderTimestamp = Date.now();
-      const generatedOrderId = `NV-${orderTimestamp.toString().slice(-6)}`;
+      const generatedOrderId = `AT-${orderTimestamp.toString().slice(-6)}`;
       const generatedOrderNumber = generatedOrderId;
 
       // 1. Call backend server to create official Razorpay order with server-calculated total
@@ -278,8 +278,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           currency: (orderCreateData.currency && String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').trim().length === 3)
             ? String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').toUpperCase().trim()
             : 'INR',
-          name: gatewayConfig.storeName || 'NOVA Flagship Electronics',
-          description: `Order ${generatedOrderNumber} • ${cart.length} Item(s)`,
+          name: gatewayConfig.storeName || 'AURELIA & CO. Haute Couture',
+          description: `Order ${generatedOrderNumber} • ${cart.length} Atelier Item(s)`,
           order_id: orderCreateData.razorpayOrderId,
           prefill: {
             name: fullName,
@@ -293,8 +293,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
             shippingCity: city,
           },
           theme: {
-            color: '#EB0028',
-            backdrop_color: '#0E1015',
+            color: '#9A7B38',
+            backdrop_color: '#111111',
           },
           modal: {
             confirm_close: true,
@@ -352,9 +352,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                 discount: cartDiscount,
                 couponCode: appliedCoupon?.code || '',
                 shippingFee: cartShippingFee,
-                tax: Math.round((cartSubtotal - cartDiscount) * 0.18),
+                tax: Math.round((cartSubtotal - cartDiscount) * 0.12),
                 total: cartTotal,
-                trackingCarrier: 'BlueDart Air Express',
+                trackingCarrier: 'BlueDart Luxury Express',
                 trackingNumber: `BD-${Math.floor(10000000 + Math.random() * 90000000)}IN`,
                 estimatedDeliveryDate: new Date(Date.now() + 48 * 3600 * 1000).toLocaleDateString('en-IN', {
                   weekday: 'short',
@@ -410,36 +410,37 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div id="checkout-page" className="min-h-screen bg-[#F8F9FA] text-zinc-900 py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="checkout-page" className="min-h-screen bg-[#FDFBF7] text-[#111111] py-12">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        
         {/* Top Breadcrumb & Step Indicator */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E0D8C8]">
           <button
-            onClick={() => onNavigate('store')}
-            className="flex items-center space-x-1.5 text-xs text-zinc-600 hover:text-zinc-950 font-medium cursor-pointer"
+            onClick={() => onNavigate('shop')}
+            className="flex items-center space-x-1.5 text-xs text-stone-600 hover:text-stone-900 font-medium cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>Continue Shopping</span>
+            <span>Return to Collections</span>
           </button>
 
           {/* Stepper */}
           <div className="flex items-center space-x-4 text-xs font-semibold">
-            <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-[#EB0028]' : 'text-zinc-400'}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-[#EB0028] text-white' : 'bg-zinc-200 text-zinc-600'}`}>
+            <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-[#9A7B38]' : 'text-stone-400'}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-[#9A7B38] text-white' : 'bg-stone-200 text-stone-600'}`}>
                 1
               </span>
-              <span>Address</span>
+              <span>Client Address</span>
             </div>
-            <span className="text-zinc-300">──</span>
-            <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-[#EB0028]' : 'text-zinc-400'}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 2 ? 'bg-[#EB0028] text-white' : 'bg-zinc-200 text-zinc-600'}`}>
+            <span className="text-stone-300">──</span>
+            <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-[#9A7B38]' : 'text-stone-400'}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 2 ? 'bg-[#9A7B38] text-white' : 'bg-stone-200 text-stone-600'}`}>
                 2
               </span>
-              <span>Delivery</span>
+              <span>Courier Logistics</span>
             </div>
-            <span className="text-zinc-300">──</span>
-            <div className={`flex items-center space-x-2 ${step >= 3 ? 'text-[#EB0028]' : 'text-zinc-400'}`}>
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 3 ? 'bg-[#EB0028] text-white' : 'bg-zinc-200 text-zinc-600'}`}>
+            <span className="text-stone-300">──</span>
+            <div className={`flex items-center space-x-2 ${step >= 3 ? 'text-[#9A7B38]' : 'text-stone-400'}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 3 ? 'bg-[#9A7B38] text-white' : 'bg-stone-200 text-stone-600'}`}>
                 3
               </span>
               <span>Payment</span>
@@ -454,7 +455,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
             
             {/* Payment Failure / Retry Notification Banner */}
             {paymentError && (
-              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in">
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
                 <div className="flex items-start space-x-2.5">
                   <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                   <div>
@@ -476,94 +477,94 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
             {/* STEP 1: Address Form */}
             {step === 1 && (
-              <form onSubmit={handleAddressSubmit} className="bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="border-b border-zinc-200 pb-4">
-                  <h2 className="text-lg font-bold text-zinc-950">1. Shipping & Contact Information</h2>
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    We deliver across all PIN codes in India via BlueDart Air Express.
+              <form onSubmit={handleAddressSubmit} className="bg-white border border-[#E8E2D9] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="border-b border-[#EAE4D8] pb-4">
+                  <h2 className="text-xl font-serif font-bold text-stone-900">1. Client Shipping & Contact Details</h2>
+                  <p className="text-xs text-stone-500 mt-0.5 font-normal">
+                    Delivered in tamper-proof archival packaging across all Indian PIN codes.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <label className="block text-zinc-700 font-semibold mb-1">Full Name *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">Full Name *</label>
                     <input
                       type="text"
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="e.g. Vikram Sharma"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-700 font-semibold mb-1">Phone Number (+91) *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">Phone Number (+91) *</label>
                     <input
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. 9876543210"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-zinc-700 font-semibold mb-1">Email Address (for invoice & tracking) *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">Email Address (for invoice & dispatch notifications) *</label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. vikram@example.com"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-zinc-700 font-semibold mb-1">Flat / House No. / Street Address *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">Flat / Villa / Apartment / Street Address *</label>
                     <input
                       type="text"
                       required
                       value={street}
                       onChange={(e) => setStreet(e.target.value)}
-                      placeholder="e.g. Flat 402, Skyline Residency, Outer Ring Road"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      placeholder="e.g. Villa 14, Palm Grove Estates, Koramangala"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-700 font-semibold mb-1">6-Digit PIN Code *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">6-Digit PIN Code *</label>
                     <input
                       type="text"
                       required
                       maxLength={6}
                       value={pincode}
                       onChange={(e) => handlePincodeAutoFill(e.target.value.replace(/\D/g, ''))}
-                      placeholder="e.g. 560001"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 font-mono focus:outline-none focus:border-[#EB0028]"
+                      placeholder="e.g. 560034"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 font-mono focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-700 font-semibold mb-1">City *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">City *</label>
                     <input
                       type="text"
                       required
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="e.g. Bengaluru"
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-zinc-700 font-semibold mb-1">State *</label>
+                    <label className="block text-stone-700 font-semibold mb-1">State *</label>
                     <select
                       value={state}
                       onChange={(e) => setState(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-zinc-200 rounded-xl p-3 text-zinc-900 focus:outline-none focus:border-[#EB0028]"
+                      className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
                     >
                       {indianStates.map((st) => (
                         <option key={st} value={st}>
@@ -576,9 +577,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-[#EB0028] hover:bg-[#c90023] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  className="w-full py-4 bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-widest rounded-full shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
-                  <span>Continue to Delivery Speed</span>
+                  <span>Continue to Courier Logistics</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
@@ -586,19 +587,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
             {/* STEP 2: Delivery Speed */}
             {step === 2 && (
-              <div className="bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
+              <div className="bg-white border border-[#E8E2D9] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-[#EAE4D8] pb-4">
                   <div>
-                    <h2 className="text-lg font-bold text-zinc-950">2. Delivery Speed & Logistics</h2>
-                    <p className="text-xs text-zinc-500 mt-0.5">
+                    <h2 className="text-xl font-serif font-bold text-stone-900">2. Logistics & Insured Courier</h2>
+                    <p className="text-xs text-stone-500 mt-0.5">
                       Delivering to <strong>{fullName}</strong>, {city}, {state} - {pincode}
                     </p>
                   </div>
                   <button
                     onClick={() => setStep(1)}
-                    className="text-xs font-bold text-[#EB0028] hover:underline cursor-pointer"
+                    className="text-xs font-semibold text-[#9A7B38] hover:underline cursor-pointer"
                   >
-                    Edit
+                    Edit Address
                   </button>
                 </div>
 
@@ -607,19 +608,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                     onClick={() => setShippingMethod('express_priority')}
                     className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
                       shippingMethod === 'express_priority'
-                        ? 'bg-red-50 border-[#EB0028] text-zinc-950'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-700'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-stone-950'
+                        : 'bg-white border-[#E8E2D9] text-stone-700'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <Truck className="w-5 h-5 text-[#EB0028]" />
+                      <Truck className="w-5 h-5 text-[#9A7B38]" />
                       <div>
-                        <div className="text-xs font-bold text-zinc-900">BlueDart Priority Air Express (24-48 Hours)</div>
-                        <div className="text-[11px] text-zinc-500">Doorstep tracking & tamper-proof seal</div>
+                        <div className="text-xs font-serif font-bold text-stone-900">BlueDart Insured Air Express (24-48 Hours)</div>
+                        <div className="text-[11px] text-stone-500 font-normal">Archival box with 100% insured transit & signature confirmation</div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">
-                      {cartShippingFee === 0 ? 'FREE' : `₹${cartShippingFee}`}
+                    <span className="text-xs font-bold text-[#9A7B38]">
+                      {cartShippingFee === 0 ? 'COMPLIMENTARY' : `₹${cartShippingFee}`}
                     </span>
                   </label>
 
@@ -627,31 +628,31 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                     onClick={() => setShippingMethod('standard')}
                     className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
                       shippingMethod === 'standard'
-                        ? 'bg-red-50 border-[#EB0028] text-zinc-950'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-700'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-stone-950'
+                        : 'bg-white border-[#E8E2D9] text-stone-700'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <Truck className="w-5 h-5 text-zinc-400" />
+                      <Truck className="w-5 h-5 text-stone-400" />
                       <div>
-                        <div className="text-xs font-bold text-zinc-900">Standard Ground Surface (3-5 Days)</div>
-                        <div className="text-[11px] text-zinc-500">Standard courier dispatch</div>
+                        <div className="text-xs font-serif font-bold text-stone-900">Standard Surface Delivery (3-5 Days)</div>
+                        <div className="text-[11px] text-stone-500 font-normal">Standard protected courier dispatch</div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">FREE</span>
+                    <span className="text-xs font-bold text-stone-600">COMPLIMENTARY</span>
                   </label>
                 </div>
 
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setStep(1)}
-                    className="px-5 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold transition-colors cursor-pointer"
+                    className="px-6 py-3.5 rounded-full bg-[#FAF8F5] hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Back
                   </button>
                   <button
                     onClick={() => setStep(3)}
-                    className="flex-1 py-3 bg-[#EB0028] hover:bg-[#c90023] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                    className="flex-1 py-3.5 bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-widest rounded-full shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
                   >
                     <span>Proceed to Secure Payment</span>
                     <ArrowRight className="w-4 h-4" />
@@ -662,14 +663,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
             {/* STEP 3: Payment Gateway Options */}
             {step === 3 && (
-              <div className="bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
+              <div className="bg-white border border-[#E8E2D9] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-[#EAE4D8] pb-4">
                   <div>
-                    <h2 className="text-lg font-bold text-zinc-950">3. Select Payment Mode</h2>
-                    <p className="text-xs text-zinc-500 mt-0.5 flex items-center space-x-1.5">
+                    <h2 className="text-xl font-serif font-bold text-stone-900">3. Select Payment Mode</h2>
+                    <p className="text-xs text-stone-500 mt-0.5 flex items-center space-x-1.5 font-normal">
                       <span>Powered by Razorpay</span>
-                      <span className="text-zinc-300">•</span>
-                      <span className="text-emerald-600 font-semibold flex items-center space-x-1">
+                      <span className="text-stone-300">•</span>
+                      <span className="text-emerald-700 font-semibold flex items-center space-x-1">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         <span>256-Bit SSL Encrypted</span>
                       </span>
@@ -677,191 +678,117 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                   </div>
                   <button
                     onClick={() => setStep(2)}
-                    className="text-xs font-bold text-[#EB0028] hover:underline cursor-pointer"
+                    className="text-xs font-semibold text-[#9A7B38] hover:underline cursor-pointer"
                   >
                     Back
                   </button>
                 </div>
 
-                {/* Gateway Mode Badge */}
-                <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-zinc-700 font-medium">
-                      Razorpay Gateway Status: <strong className="text-zinc-950 uppercase">{gatewayConfig.mode} Mode</strong>
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-zinc-500 font-mono">
-                    Currency: {gatewayConfig.currency}
-                  </span>
-                </div>
-
                 {/* Payment Option Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('upi')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'upi'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <QrCode className="w-5 h-5 text-[#EB0028]" />
+                    <QrCode className="w-5 h-5 text-[#9A7B38]" />
                     <div className="text-center">
-                      <div>Instant UPI</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">GPay, PhonePe, Paytm, QR</div>
+                      <div className="font-serif font-bold text-stone-900">Instant UPI</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">GPay, PhonePe, Paytm, QR</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('card')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'card'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <CreditCard className="w-5 h-5 text-emerald-600" />
+                    <CreditCard className="w-5 h-5 text-stone-800" />
                     <div className="text-center">
-                      <div>Indian Cards</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">Visa, Master, RuPay, Maestro</div>
+                      <div className="font-serif font-bold text-stone-900">Credit / Debit Cards</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">Visa, Master, RuPay, Amex</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('netbanking')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'netbanking'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <Building className="w-5 h-5 text-blue-600" />
+                    <Building className="w-5 h-5 text-stone-800" />
                     <div className="text-center">
-                      <div>Net Banking</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">50+ Indian Banks</div>
+                      <div className="font-serif font-bold text-stone-900">Net Banking</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">50+ Indian Banks</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('wallet')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'wallet'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <Wallet className="w-5 h-5 text-purple-600" />
+                    <Wallet className="w-5 h-5 text-stone-800" />
                     <div className="text-center">
-                      <div>Digital Wallets</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">Mobikwik, Freecharge, etc.</div>
+                      <div className="font-serif font-bold text-stone-900">Digital Wallets</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">Mobikwik, Freecharge, etc.</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('international_card')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'international_card'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <Globe className="w-5 h-5 text-indigo-600" />
+                    <Globe className="w-5 h-5 text-stone-800" />
                     <div className="text-center">
-                      <div>International Cards</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">Global Visa/Master/Amex</div>
+                      <div className="font-serif font-bold text-stone-900">International Cards</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">USD, EUR, GBP, AED</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('cod')}
-                    className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center space-y-2 transition-all cursor-pointer ${
+                    className={`p-4 rounded-2xl border text-xs font-medium flex flex-col items-center space-y-2 transition-all cursor-pointer ${
                       paymentMethod === 'cod'
-                        ? 'bg-red-50/80 border-[#EB0028] text-[#EB0028] shadow-sm'
-                        : 'bg-[#F8F9FA] border-zinc-200 text-zinc-600 hover:text-zinc-950'
+                        ? 'bg-[#FAF8F5] border-[#9A7B38] text-[#9A7B38] shadow-xs'
+                        : 'bg-white border-[#E8E2D9] text-stone-600 hover:text-stone-950'
                     }`}
                   >
-                    <Banknote className="w-5 h-5 text-amber-600" />
+                    <Banknote className="w-5 h-5 text-stone-800" />
                     <div className="text-center">
-                      <div>Pay on Delivery</div>
-                      <div className="text-[10px] font-normal text-zinc-500 mt-0.5">Cash / QR on Doorstep</div>
+                      <div className="font-serif font-bold text-stone-900">Pay on Delivery</div>
+                      <div className="text-[10px] font-normal text-stone-500 mt-0.5">Doorstep Cash / QR</div>
                     </div>
                   </button>
                 </div>
-
-                {/* Sub-panel details */}
-                {paymentMethod === 'upi' && (
-                  <div className="p-4 bg-[#F8F9FA] rounded-2xl border border-zinc-200 space-y-2 text-xs">
-                    <div className="font-bold text-zinc-900 flex items-center space-x-2">
-                      <QrCode className="w-4 h-4 text-[#EB0028]" />
-                      <span>Instant UPI Payment</span>
-                    </div>
-                    <p className="text-zinc-600 text-[11px] leading-relaxed">
-                      Clicking <strong>Pay Now</strong> will open the official Razorpay Checkout where you can approve via Google Pay, PhonePe, Paytm, Cred, or scan a live dynamic UPI QR code.
-                    </p>
-                  </div>
-                )}
-
-                {paymentMethod === 'card' && (
-                  <div className="p-4 bg-[#F8F9FA] rounded-2xl border border-zinc-200 space-y-2 text-xs">
-                    <div className="font-bold text-zinc-900 flex items-center space-x-2">
-                      <CreditCard className="w-4 h-4 text-emerald-600" />
-                      <span>Domestic Credit & Debit Cards</span>
-                    </div>
-                    <p className="text-zinc-600 text-[11px] leading-relaxed">
-                      Supports Visa, Mastercard, RuPay, and Maestro. Secured with Bank 3D Secure OTP authorization.
-                    </p>
-                  </div>
-                )}
-
-                {paymentMethod === 'netbanking' && (
-                  <div className="p-4 bg-[#F8F9FA] rounded-2xl border border-zinc-200 space-y-2 text-xs">
-                    <div className="font-bold text-zinc-900 flex items-center space-x-2">
-                      <Building className="w-4 h-4 text-blue-600" />
-                      <span>Direct Net Banking</span>
-                    </div>
-                    <p className="text-zinc-600 text-[11px] leading-relaxed">
-                      Supports 50+ Indian commercial & retail banking portals including HDFC, ICICI, SBI, Axis, Kotak, and PNB.
-                    </p>
-                  </div>
-                )}
-
-                {paymentMethod === 'international_card' && (
-                  <div className="p-4 bg-indigo-50/60 border border-indigo-200 rounded-2xl space-y-2 text-xs text-indigo-950">
-                    <div className="font-bold flex items-center space-x-2 text-indigo-900">
-                      <Globe className="w-4 h-4 text-indigo-600" />
-                      <span>International Cards & Currencies</span>
-                    </div>
-                    <p className="text-indigo-800 text-[11px] leading-relaxed">
-                      Foreign cards are converted transparently according to current RBI and Razorpay multi-currency settlement standards.
-                    </p>
-                  </div>
-                )}
-
-                {paymentMethod === 'cod' && (
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs space-y-1 text-amber-900">
-                    <div className="font-bold flex items-center space-x-1.5">
-                      <Banknote className="w-4 h-4 text-amber-700" />
-                      <span>Cash / UPI on Doorstep Delivery</span>
-                    </div>
-                    <p className="text-[11px] text-amber-700">
-                      You can pay via Cash or scan the BlueDart delivery agent's dynamic UPI QR code upon parcel arrival.
-                    </p>
-                  </div>
-                )}
 
                 {/* Primary Payment Trigger Button */}
                 <button
                   id="checkout-confirm-pay-btn"
                   onClick={handlePlaceOrder}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-[#EB0028] hover:bg-[#c90023] disabled:bg-zinc-400 text-white font-extrabold text-sm sm:text-base rounded-xl shadow-md flex items-center justify-center space-x-2 transition-all hover:scale-[1.005] cursor-pointer"
+                  className="w-full py-4 bg-[#111111] hover:bg-[#9A7B38] disabled:bg-stone-400 text-white font-semibold text-xs uppercase tracking-widest rounded-full shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
                   {isProcessing ? (
                     <>
@@ -873,17 +800,17 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                       <Lock className="w-4 h-4" />
                       <span>
                         {paymentMethod === 'cod'
-                          ? `Confirm Order (₹${cartTotal.toLocaleString('en-IN')})`
-                          : `Pay with Razorpay (₹${cartTotal.toLocaleString('en-IN')})`}
+                          ? `Confirm Atelier Order (₹${cartTotal.toLocaleString('en-IN')})`
+                          : `Authorize with Razorpay (₹${cartTotal.toLocaleString('en-IN')})`}
                       </span>
                     </>
                   )}
                 </button>
 
                 {/* Security Footnote */}
-                <div className="pt-2 text-center text-[11px] text-zinc-400 flex items-center justify-center space-x-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>PCI-DSS Level 1 Compliant • Zero Card Storage • Instant BlueDart Dispatch</span>
+                <div className="pt-2 text-center text-[11px] text-stone-500 flex items-center justify-center space-x-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#9A7B38]" />
+                  <span>PCI-DSS Level 1 Encryption • Insured Courier Dispatch • 14-Day Fitting Guarantee</span>
                 </div>
               </div>
             )}
@@ -891,27 +818,29 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
           {/* Right Column: Order Summary */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white border border-zinc-200 rounded-2xl p-6 space-y-4 sticky top-24 shadow-sm">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 border-b border-zinc-200 pb-3">
-                Order Review ({cart.length} items)
+            <div className="bg-white border border-[#E8E2D9] rounded-2xl p-6 space-y-4 sticky top-24 shadow-xs">
+              <h3 className="text-xs font-serif font-bold uppercase tracking-wider text-stone-900 border-b border-[#EAE4D8] pb-3">
+                Atelier Order Summary ({cart.length} items)
               </h3>
 
               {/* Items preview */}
               <div className="space-y-3 max-h-64 overflow-y-auto no-scrollbar">
                 {cart.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3 text-xs">
-                    <img
-                      src={item.product.images[0]}
-                      alt=""
-                      className="w-12 h-12 object-contain rounded-lg bg-[#F8F9FA] p-1 border border-zinc-200 shrink-0"
-                    />
+                    <div className="w-12 h-16 aspect-[3/4] bg-[#FAF8F5] rounded-lg overflow-hidden border border-[#EAE4D8] shrink-0">
+                      <img
+                        src={item.product.images[0]}
+                        alt=""
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h5 className="text-zinc-900 font-bold truncate">{item.product.name}</h5>
-                      <div className="text-[11px] text-zinc-500">
-                        Qty: {item.quantity} {item.selectedColor && `• ${item.selectedColor.name}`}
+                      <h5 className="text-stone-900 font-serif font-bold truncate">{item.product.name}</h5>
+                      <div className="text-[11px] text-stone-500">
+                        Qty: {item.quantity} {item.selectedSize && `• Size ${item.selectedSize}`} {item.selectedColor && `• ${item.selectedColor.name}`}
                       </div>
                     </div>
-                    <div className="font-bold text-zinc-950">
+                    <div className="font-bold text-stone-900">
                       ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                     </div>
                   </div>
@@ -919,45 +848,45 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
               </div>
 
               {/* Price Breakdown */}
-              <div className="pt-3 border-t border-zinc-200 space-y-2 text-xs text-zinc-600">
+              <div className="pt-3 border-t border-[#EAE4D8] space-y-2 text-xs text-stone-600">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="text-zinc-900 font-semibold">₹{cartSubtotal.toLocaleString('en-IN')}</span>
+                  <span className="text-stone-900 font-semibold">₹{cartSubtotal.toLocaleString('en-IN')}</span>
                 </div>
 
                 {cartDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-600 font-medium">
-                    <span>Discount ({appliedCoupon?.code})</span>
+                  <div className="flex justify-between text-[#9A7B38] font-medium">
+                    <span>Privilege Savings ({appliedCoupon?.code})</span>
                     <span>-₹{cartDiscount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between">
-                  <span>Express Courier Shipping</span>
-                  <span className="text-emerald-600 font-bold">
-                    {cartShippingFee === 0 ? 'FREE' : `₹${cartShippingFee}`}
+                  <span>Insured Express Courier</span>
+                  <span className="text-[#9A7B38] font-bold">
+                    {cartShippingFee === 0 ? 'COMPLIMENTARY' : `₹${cartShippingFee}`}
                   </span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span>GST (18% Included)</span>
-                  <span className="text-zinc-500">₹{Math.round(cartTotal * 0.18).toLocaleString('en-IN')}</span>
+                  <span>GST (12% Included)</span>
+                  <span className="text-stone-500">₹{Math.round(cartTotal * 0.12).toLocaleString('en-IN')}</span>
                 </div>
 
-                <div className="pt-3 border-t border-zinc-200 flex justify-between text-base font-extrabold text-zinc-950">
-                  <span>Grand Total</span>
-                  <span className="font-display text-lg text-[#EB0028]">
+                <div className="pt-3 border-t border-[#EAE4D8] flex justify-between text-base font-serif font-bold text-stone-900">
+                  <span>Total Amount</span>
+                  <span className="text-[#9A7B38]">
                     ₹{cartTotal.toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>
 
-              <div className="p-3 bg-[#F8F9FA] rounded-xl border border-zinc-200 space-y-1 text-[11px] text-zinc-600">
-                <div className="flex items-center text-emerald-600 font-bold space-x-1">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>2-Year NovaCare™ Automatic Registration</span>
+              <div className="p-3.5 bg-[#FAF8F5] rounded-xl border border-[#E8E2D9] space-y-1 text-[11px] text-stone-600">
+                <div className="flex items-center text-stone-900 font-serif font-bold space-x-1.5">
+                  <Scissors className="w-3.5 h-3.5 text-[#9A7B38]" />
+                  <span>1-Year Atelier Guarantee & 14-Day Doorstep Fitting</span>
                 </div>
-                <p>Doorstep pickup and replacement warranty activated automatically upon order placement.</p>
+                <p className="font-normal">Doorstep courier pickup and size exchange service included with every order.</p>
               </div>
             </div>
           </div>

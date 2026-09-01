@@ -66,13 +66,13 @@ export const Product360Viewer: React.FC = () => {
 
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-red-50 border border-[#EB0028]/20 text-[#EB0028] text-[11px] font-bold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] text-[11px] font-bold uppercase tracking-wider mb-2">
               <RotateCw className="w-3.5 h-3.5 animate-spin" />
-              <span>Interactive 360° Studio View</span>
+              <span>Interactive 360° Runway Silhouette View</span>
             </div>
-            <h3 className="text-xl font-bold text-zinc-950">{viewer360Product.name}</h3>
-            <p className="text-xs text-zinc-500 mt-1">
-              Drag horizontally or swipe to spin and inspect all manufacturing tolerances
+            <h3 className="text-xl font-serif font-bold text-stone-900">{viewer360Product.name}</h3>
+            <p className="text-xs text-stone-500 mt-1">
+              Drag horizontally or swipe to inspect tailoring, drape, seam precision, and material luster
             </p>
           </div>
 
@@ -80,12 +80,12 @@ export const Product360Viewer: React.FC = () => {
           <div
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
-            className={`w-full h-72 sm:h-80 relative flex items-center justify-center rounded-2xl bg-[#F8F9FA] border border-zinc-200 cursor-grab ${
+            className={`w-full h-80 sm:h-96 relative flex items-center justify-center rounded-2xl bg-[#FAF8F5] border border-[#E8E2D9] cursor-grab ${
               isDragging ? 'cursor-grabbing' : ''
             } overflow-hidden shadow-inner`}
           >
             {/* Tech grid perspective backdrop */}
-            <div className="absolute inset-0 bg-[radial-gradient(#CBD5E1_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(#D6C7B2_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
             
             {/* Rotating Product Canvas with smooth CSS 3D transform */}
             <div
@@ -94,26 +94,26 @@ export const Product360Viewer: React.FC = () => {
                 transformStyle: 'preserve-3d',
                 transition: isDragging ? 'none' : 'transform 0.1s ease-out',
               }}
-              className="relative w-56 h-56 flex items-center justify-center pointer-events-none"
+              className="relative w-56 h-72 flex items-center justify-center pointer-events-none"
             >
               <img
                 src={viewer360Product.images[0]}
                 alt={viewer360Product.name}
-                className="w-full h-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)]"
+                className="w-full h-full object-cover object-top rounded-xl filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)]"
               />
 
               {/* Spec overlay beacon pins */}
               <div
                 style={{ transform: 'translateZ(30px)' }}
-                className="absolute -top-2 right-4 px-2.5 py-1 rounded-md bg-[#EB0028] text-white text-[9px] font-bold shadow-md"
+                className="absolute -top-2 right-4 px-2.5 py-1 rounded-md bg-[#111111] text-[#D4AF37] border border-[#9A7B38]/40 text-[9px] font-bold shadow-md"
               >
-                GaN III Core
+                Haute Atelier Craft
               </div>
             </div>
 
             {/* Drag Hint Indicator */}
-            <div className="absolute bottom-3 flex items-center space-x-2 text-[11px] text-zinc-700 bg-white/95 px-3 py-1.5 rounded-full border border-zinc-200 shadow-sm">
-              <MoveHorizontal className="w-3.5 h-3.5 text-[#EB0028]" />
+            <div className="absolute bottom-3 flex items-center space-x-2 text-[11px] text-stone-800 bg-white/95 px-3.5 py-1.5 rounded-full border border-[#E0D8C8] shadow-xs">
+              <MoveHorizontal className="w-3.5 h-3.5 text-[#9A7B38]" />
               <span>Drag to rotate • Angle: {Math.round(((rotationAngle % 360) + 360) % 360)}°</span>
             </div>
           </div>
@@ -122,27 +122,27 @@ export const Product360Viewer: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
             <button
               onClick={() => setRotationAngle(0)}
-              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs text-zinc-700 font-medium transition-colors"
+              className="px-3.5 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-xs text-stone-800 font-medium transition-colors"
             >
-              Front Angle
+              Front Stance (0°)
             </button>
             <button
               onClick={() => setRotationAngle(90)}
-              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs text-zinc-700 font-medium transition-colors"
+              className="px-3.5 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-xs text-stone-800 font-medium transition-colors"
             >
-              Side Profile (90°)
+              Profile Drape (90°)
             </button>
             <button
               onClick={() => setRotationAngle(180)}
-              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs text-zinc-700 font-medium transition-colors"
+              className="px-3.5 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-xs text-stone-800 font-medium transition-colors"
             >
-              Rear Ports (180°)
+              Back Tailoring (180°)
             </button>
             <button
               onClick={() => setRotationAngle(270)}
-              className="px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs text-zinc-700 font-medium transition-colors"
+              className="px-3.5 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-xs text-stone-800 font-medium transition-colors"
             >
-              Opposite (270°)
+              Opposite Profile (270°)
             </button>
           </div>
         </motion.div>

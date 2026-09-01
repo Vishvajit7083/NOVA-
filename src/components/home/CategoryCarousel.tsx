@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Zap, Shield, Cpu, Headphones, Watch, Sparkles, Car, Briefcase, Layers } from 'lucide-react';
+import { ArrowRight, Sparkles, Shirt, Scissors, Footprints, Watch, ShoppingBag, Eye, Flame, Layers } from 'lucide-react';
 import { CATEGORIES } from '../../data/categories';
 
 interface CategoryCarouselProps {
@@ -9,46 +9,52 @@ interface CategoryCarouselProps {
 export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ onNavigate }) => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Zap':
-        return <Zap className="w-5 h-5 text-[#EB0029]" />;
-      case 'Shield':
-        return <Shield className="w-5 h-5 text-emerald-400" />;
-      case 'Cpu':
-        return <Cpu className="w-5 h-5 text-cyan-400" />;
-      case 'Headphones':
-        return <Headphones className="w-5 h-5 text-rose-400" />;
-      case 'Watch':
-        return <Watch className="w-5 h-5 text-amber-400" />;
+      case 'Shirt':
+      case 'Scissors':
+        return <Shirt className="w-4 h-4 text-[#9A7B38]" />;
       case 'Sparkles':
-        return <Sparkles className="w-5 h-5 text-purple-400" />;
-      case 'Car':
-        return <Car className="w-5 h-5 text-blue-400" />;
-      case 'Briefcase':
-        return <Briefcase className="w-5 h-5 text-orange-400" />;
+        return <Sparkles className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Layers':
+        return <Layers className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Footprints':
+        return <Footprints className="w-4 h-4 text-[#9A7B38]" />;
+      case 'ShoppingBag':
+        return <ShoppingBag className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Watch':
+        return <Watch className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Eye':
+        return <Eye className="w-4 h-4 text-[#9A7B38]" />;
+      case 'Flame':
+        return <Flame className="w-4 h-4 text-[#9A7B38]" />;
       default:
-        return <Layers className="w-5 h-5 text-zinc-400" />;
+        return <Layers className="w-4 h-4 text-[#9A7B38]" />;
     }
   };
 
   return (
-    <section id="categories-carousel-section" className="py-20 bg-white border-b border-gray-100">
+    <section id="categories-carousel-section" className="py-20 bg-[#FDFBF7] border-b border-[#E8E2D9]">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 pb-4 border-b border-gray-100 gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 pb-5 border-b border-[#E0D8C8] gap-4">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.25em] text-[#EB0028] uppercase">
-              Curated Collections
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight mt-1">
-              Explore By Category
+            <div className="flex items-center space-x-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+              <span className="text-[10px] font-bold tracking-[0.25em] text-[#9A7B38] uppercase">
+                Curated Departements
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-[#111111] tracking-tight mt-1.5">
+              Explore Atelier Collections
             </h2>
           </div>
+
           <button
-            onClick={() => onNavigate('store')}
-            className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black flex items-center space-x-1 group"
+            onClick={() => onNavigate('shop')}
+            className="text-xs font-semibold uppercase tracking-widest text-stone-600 hover:text-[#111111] flex items-center space-x-1.5 group transition-colors"
           >
-            <span>All Categories</span>
-            <ArrowRight className="w-4 h-4 text-[#EB0028] group-hover:translate-x-1 transition-transform" />
+            <span>View All Collections</span>
+            <ArrowRight className="w-4 h-4 text-[#9A7B38] group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
@@ -57,41 +63,50 @@ export const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ onNavigate }
           {CATEGORIES.map((cat) => (
             <div
               key={cat.id}
-              onClick={() => onNavigate('store', { category: cat.id })}
-              className="group relative bg-gray-50 border border-gray-200 hover:border-black rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between h-52 sm:h-56 overflow-hidden"
+              onClick={() => onNavigate('shop', { category: cat.id })}
+              className="group relative bg-white border border-[#E8E2D9] hover:border-[#9A7B38] rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between h-64 sm:h-72 overflow-hidden"
             >
-              {/* Subtle background category image */}
-              <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                <img src={cat.image} alt="" className="w-full h-full object-cover" />
+              {/* Category Background Image */}
+              <div className="absolute inset-0 overflow-hidden">
+                <img 
+                  src={cat.image} 
+                  alt={cat.name} 
+                  className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 opacity-20 group-hover:opacity-30" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent" />
               </div>
 
-              {/* Icon & Count */}
+              {/* Icon & Item Count */}
               <div className="relative z-10 flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-white border border-gray-200 group-hover:border-[#EB0028]/40 transition-colors shadow-sm">
+                <div className="p-2.5 rounded-xl bg-white/90 backdrop-blur-sm border border-[#E5DFD5] group-hover:border-[#9A7B38] transition-colors shadow-xs">
                   {getIcon(cat.iconName)}
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-white px-2.5 py-0.5 rounded-full border border-gray-200 shadow-xs">
-                  {cat.itemCount} Items
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-600 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full border border-[#E0D8C8] shadow-xs">
+                  {cat.itemCount} Pieces
                 </span>
               </div>
 
               {/* Title & Info */}
-              <div className="relative z-10 space-y-1">
-                <h3 className="text-sm sm:text-base font-black uppercase tracking-tight text-black group-hover:text-[#EB0028] transition-colors">
+              <div className="relative z-10 space-y-1.5 pt-6">
+                <h3 className="text-base sm:text-lg font-serif font-bold text-stone-900 group-hover:text-[#9A7B38] transition-colors">
                   {cat.name}
                 </h3>
-                <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed font-normal">
+                <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed font-normal">
                   {cat.description}
                 </p>
-              </div>
 
-              {/* Hover indicator */}
-              <div className="relative z-10 flex items-center text-[10px] font-bold uppercase tracking-widest text-[#EB0028] opacity-0 group-hover:opacity-100 transition-opacity">
-                <span>Shop Category &rarr;</span>
+                {/* Hover CTA Indicator */}
+                <div className="pt-2 flex items-center text-[10px] font-bold uppercase tracking-widest text-[#9A7B38] opacity-80 group-hover:opacity-100 transition-opacity">
+                  <span className="flex items-center space-x-1">
+                    <span>Discover</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
