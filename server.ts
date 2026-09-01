@@ -5,6 +5,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import Razorpay from 'razorpay';
 import { createServer as createViteServer } from 'vite';
+import { paymentRouter } from './src/api/payment';
 
 dotenv.config();
 const envExamplePath = path.join(process.cwd(), '.env.example');
@@ -86,8 +87,11 @@ async function startServer() {
   );
   app.use(express.urlencoded({ extended: true }));
 
-  // Global CORS & OPTIONS Preflight Middleware
-  app.use((req, res, next) => {
+  // Create dedicated router for all /api endpoints
+  const apiRouter = express.Router();
+
+  // Router-level CORS & OPTIONS Preflight Middleware
+  apiRouter.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -102,7 +106,7 @@ async function startServer() {
   // ----------------------------------------------------
 
   // 1. Healthcheck
-  app.all(['/api/health', '/api/health/'], (_req: Request, res: Response) => {
+  apiRouter.all(['/health', '/health/'], (_req: Request, res: Response) => {
     res.json({
       status: 'ok',
       service: 'NOVA Hardware Commerce API',
@@ -111,7 +115,7 @@ async function startServer() {
   });
 
   // 2. Gateway Configuration & Diagnostics
-  app.all(['/api/payment/config', '/api/payment/config/'], (_req: Request, res: Response) => {
+  apiRouter.all(['/payment/config', '/payment/config/'], (_req: Request, res: Response) => {
     const rawKeyId = process.env.RAZORPAY_KEY_ID;
     const isConfigured = Boolean(rawKeyId && process.env.RAZORPAY_KEY_SECRET);
     const keyId = rawKeyId || 'rzp_test_51NOVAStoreDemoKey';
@@ -130,148 +134,11 @@ async function startServer() {
     });
   });
 
-  // 3. Create Gateway Order (Server-Authoritative Price Calculation)
-  app.all(['/api/payment/create-order', '/api/payment/create-order/'], async (req: Request, res: Response) => {
-    try {
-      let body = req.body || {};
-      if (typeof body === 'string') {
-        try { body = JSON.parse(body); } catch (e) { body = {}; }
-      }
-
-      const {
-        items = [],
-        shippingFee = 0,
-        couponCode,
-        deliveryMethod = 'standard',
-        shippingAddress,
-        contactEmail,
-        contactPhone,
-        orderId,
-        orderNumber,
-        userUid,
-      } = body;
-
-      if (!items || !Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ success: false, error: 'Cart items are required to create a payment order.' });
-      }
-
-      // Server-side subtotal calculation
-      let calculatedSubtotal = 0;
-      for (const item of items) {
-        const itemPrice = Number(item.price) || 0;
-        const itemQty = Math.max(1, Number(item.quantity) || 1);
-        calculatedSubtotal += itemPrice * itemQty;
-      }
-
-      // Calculate coupon discount server-side if coupon code passed
-      let calculatedDiscount = 0;
-      if (couponCode) {
-        const codeClean = String(couponCode).trim().toUpperCase();
-        if (codeClean === 'NOVA10') {
-          calculatedDiscount = Math.round(calculatedSubtotal * 0.10);
-        } else if (codeClean === 'FLAGSHIP20' && calculatedSubtotal >= 4999) {
-          calculatedDiscount = Math.round(calculatedSubtotal * 0.20);
-        } else if (codeClean === 'PROAUDIO' && calculatedSubtotal >= 2999) {
-          calculatedDiscount = 500;
-        } else if (codeClean === 'FIRST100' && calculatedSubtotal >= 999) {
-          calculatedDiscount = 100;
-        }
-      }
-
-      const calculatedShipping = deliveryMethod === 'express_priority' ? 199 : (calculatedSubtotal >= 999 ? 0 : 99);
-      const calculatedTax = Math.round((calculatedSubtotal - calculatedDiscount) * 0.18);
-      const calculatedTotal = Math.max(1, calculatedSubtotal - calculatedDiscount + calculatedShipping + calculatedTax);
-
-      const generatedOrderId = orderId || `NV-${Date.now().toString().slice(-6)}`;
-      const generatedOrderNumber = orderNumber || generatedOrderId;
-      const currency = 'INR';
-      const amountInPaise = Math.round(calculatedTotal * 100);
-
-      const razorpay = getRazorpayClient();
-      let razorpayOrderId = '';
-
-      if (razorpay) {
-        try {
-          // Create official Razorpay Order
-          const rzpOrder = await razorpay.orders.create({
-            amount: amountInPaise,
-            currency,
-            receipt: `rcpt_${generatedOrderId.slice(-10)}`,
-            notes: {
-              orderId: generatedOrderId,
-              orderNumber: generatedOrderNumber,
-              email: contactEmail || '',
-              phone: contactPhone || '',
-              customerName: shippingAddress?.fullName || 'Valued Customer',
-              shippingCity: shippingAddress?.city || '',
-            },
-          });
-          razorpayOrderId = rzpOrder.id;
-        } catch (rzpErr: any) {
-          console.error('Razorpay API orders.create error:', rzpErr);
-          const rzpErrMsg = rzpErr?.error?.description || rzpErr?.description || rzpErr?.message || 'Gateway order creation failed';
-          
-          // If live credentials failed, check fallback or return clean JSON error
-          if (process.env.RAZORPAY_KEY_ID?.startsWith('rzp_live')) {
-            return res.status(400).json({
-              success: false,
-              error: `Razorpay Live Gateway Error: ${rzpErrMsg}`,
-            });
-          }
-          // Fallback to test order ID if test keys have network issues
-          razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-        }
-      } else {
-        // Fallback test order ID when server keys are in test sandbox mode
-        razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      }
-
-      // Record transaction
-      const txnRecord: ServerTransactionRecord = {
-        id: `txn_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-        orderId: generatedOrderId,
-        orderNumber: generatedOrderNumber,
-        gateway: 'razorpay',
-        gatewayOrderId: razorpayOrderId,
-        amount: calculatedTotal,
-        currency,
-        method: 'pending_selection',
-        status: 'created',
-        userUid: userUid || undefined,
-        userEmail: contactEmail || undefined,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      serverTransactions.unshift(txnRecord);
-
-      return res.json({
-        success: true,
-        razorpayOrderId,
-        amount: amountInPaise,
-        totalInRupees: calculatedTotal,
-        currency,
-        keyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_51NOVAStoreDemoKey',
-        orderId: generatedOrderId,
-        orderNumber: generatedOrderNumber,
-        breakdown: {
-          subtotal: calculatedSubtotal,
-          discount: calculatedDiscount,
-          shippingFee: calculatedShipping,
-          tax: calculatedTax,
-          total: calculatedTotal,
-        },
-      });
-    } catch (error: any) {
-      console.error('Error creating Razorpay order:', error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to create payment order on gateway.',
-      });
-    }
-  });
+  // 3. Mount modular Payment Router (handles POST /payment/create-order, validation, Razorpay SDK & JSON response)
+  apiRouter.use('/payment', paymentRouter);
 
   // 4. Verify Payment Cryptographic Signature & Capture Details
-  app.all(['/api/payment/verify', '/api/payment/verify/'], async (req: Request, res: Response) => {
+  apiRouter.post(['/payment/verify', '/payment/verify/'], async (req: Request, res: Response) => {
     try {
       let body = req.body || {};
       if (typeof body === 'string') {
@@ -419,8 +286,20 @@ async function startServer() {
     }
   });
 
+  // Handle non-POST requests to /payment/verify gracefully with a valid JSON 405 error
+  apiRouter.all(['/payment/verify', '/payment/verify/'], (req: Request, res: Response) => {
+    return res.status(405).json({
+      success: false,
+      verified: false,
+      error: `Method ${req.method} Not Allowed. Endpoint /api/payment/verify expects an HTTP POST request containing payment verification parameters in the JSON body.`,
+      endpoint: '/api/payment/verify',
+      requiredMethod: 'POST',
+      allowedMethods: ['POST', 'OPTIONS'],
+    });
+  });
+
   // 5. Razorpay Webhook Handler
-  app.all(['/api/payment/webhook', '/api/payment/webhook/'], async (req: any, res: Response) => {
+  apiRouter.all(['/payment/webhook', '/payment/webhook/'], async (req: any, res: Response) => {
     try {
       const webhookSignature = req.headers['x-razorpay-signature'] as string;
       const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -485,7 +364,7 @@ async function startServer() {
   });
 
   // 6. Admin Gateway Refund Execution
-  app.all(['/api/admin/refund', '/api/admin/refund/'], async (req: Request, res: Response) => {
+  apiRouter.all(['/admin/refund', '/admin/refund/'], async (req: Request, res: Response) => {
     try {
       const body = req.method === 'GET' ? req.query : req.body;
       const { paymentId, amount, reason, orderId, adminEmail } = body as any;
@@ -550,7 +429,7 @@ async function startServer() {
   });
 
   // 7. Admin Reconciliation Transactions List
-  app.all(['/api/admin/transactions', '/api/admin/transactions/'], (_req: Request, res: Response) => {
+  apiRouter.all(['/admin/transactions', '/admin/transactions/'], (_req: Request, res: Response) => {
     res.json({
       success: true,
       count: serverTransactions.length,
@@ -558,13 +437,16 @@ async function startServer() {
     });
   });
 
-  // 8. Catch-all for unmatched /api routes (prevents HTML or 405 fallback)
-  app.all(['/api/*', '/api'], (req: Request, res: Response) => {
+  // 8. API Router Catch-All (Guarantees JSON 404 response for unhandled /api requests, never 405)
+  apiRouter.use((req: Request, res: Response) => {
     res.status(404).json({
       success: false,
-      error: `API endpoint not found: ${req.method} ${req.path}`,
+      error: `API endpoint not found: ${req.method} ${req.originalUrl}`,
     });
   });
+
+  // Mount API router to handle all /api requests
+  app.use(['/api', '/api/'], apiRouter);
 
   // 9. Prevent serve-static from returning HTTP 405 Method Not Allowed for unhandled POST/PUT requests
   app.use((req: Request, res: Response, next: NextFunction) => {
