@@ -411,7 +411,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
         {mobileMenuOpen && (
           <div
             id="mobile-drawer-menu"
-            className="lg:hidden bg-white border-b border-[#E8E2D9] px-6 py-6 space-y-4 shadow-xl max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
+            className="mobile-nav-drawer lg:hidden bg-white border-b border-[#E8E2D9] px-6 py-6 space-y-4 shadow-xl h-[100dvh] max-h-[calc(100dvh-4.5rem)] overflow-y-auto [overscroll-behavior-y:contain]"
           >
             <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#F0EBE1]">
               <button
