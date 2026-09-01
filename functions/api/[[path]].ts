@@ -46,11 +46,11 @@ export async function onRequest(context: EventContext<Env, any, any>): Promise<R
 
   // Route 1: GET /api/payment/config
   if (pathname === '/api/payment/config' || pathname === '/api/payment/config/') {
-    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_51NOVAStoreDemoKey';
+    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
     return jsonResponse({
       success: true,
       keyId,
-      isConfigured: true,
+      isConfigured: Boolean(env.RAZORPAY_KEY_ID),
       mode: keyId.startsWith('rzp_live') ? 'live' : 'test',
       currency: env.DEFAULT_CURRENCY || 'INR',
       enableInternational: true,
@@ -147,53 +147,57 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const currency = env.DEFAULT_CURRENCY || 'INR';
     const amountInPaise = Math.round(calculatedTotal * 100);
 
-    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_51NOVAStoreDemoKey';
+    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
     const keySecret = env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return jsonResponse({
+        success: false,
+        error: 'Razorpay API credentials (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) are missing or not configured on the Pages environment.',
+      }, 400);
+    }
+
     let razorpayOrderId = '';
-
-    if (keyId && keySecret) {
-      try {
-        const authHeader = 'Basic ' + btoa(`${keyId}:${keySecret}`);
-        const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
-          method: 'POST',
-          headers: {
-            'Authorization': authHeader,
-            'Content-Type': 'application/json',
+    try {
+      const authHeader = 'Basic ' + btoa(`${keyId}:${keySecret}`);
+      const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
+        method: 'POST',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: amountInPaise,
+          currency,
+          receipt: `rcpt_${generatedOrderId.slice(-10)}`,
+          notes: {
+            orderId: generatedOrderId,
+            orderNumber: generatedOrderNumber,
+            email: contactEmail || '',
+            phone: contactPhone || '',
+            customerName: shippingAddress?.fullName || 'Valued Customer',
+            shippingCity: shippingAddress?.city || '',
           },
-          body: JSON.stringify({
-            amount: amountInPaise,
-            currency,
-            receipt: `rcpt_${generatedOrderId.slice(-10)}`,
-            notes: {
-              orderId: generatedOrderId,
-              orderNumber: generatedOrderNumber,
-              email: contactEmail || '',
-              phone: contactPhone || '',
-              customerName: shippingAddress?.fullName || 'Valued Customer',
-              shippingCity: shippingAddress?.city || '',
-            },
-          }),
-        });
+        }),
+      });
 
-        const rzpData: any = await rzpResponse.json();
-        if (rzpResponse.ok && rzpData && rzpData.id) {
-          razorpayOrderId = rzpData.id;
-        } else {
-          console.error('Razorpay REST order creation error:', rzpData);
-          if (keyId.startsWith('rzp_live')) {
-            return jsonResponse({
-              success: false,
-              error: `Razorpay Live Gateway Error: ${rzpData?.error?.description || 'Failed to create live Razorpay order'}`,
-            }, 400);
-          }
-          razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-        }
-      } catch (err: any) {
-        console.error('Fetch to Razorpay API failed:', err);
-        razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const rzpData: any = await rzpResponse.json();
+      if (rzpResponse.ok && rzpData && rzpData.id) {
+        razorpayOrderId = rzpData.id;
+      } else {
+        console.error('Razorpay API error:', rzpData);
+        const errMsg = rzpData?.error?.description || 'Failed to create order on Razorpay API';
+        return jsonResponse({
+          success: false,
+          error: `Razorpay Gateway Error: ${errMsg}`,
+        }, 400);
       }
-    } else {
-      razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    } catch (err: any) {
+      console.error('Razorpay fetch error:', err);
+      return jsonResponse({
+        success: false,
+        error: `Razorpay connection error: ${err.message || 'Failed to communicate with Razorpay API'}`,
+      }, 500);
     }
 
     return jsonResponse({
@@ -239,45 +243,47 @@ async function handleVerifyPayment(request: Request, env: Env): Promise<Response
       razorpay_signature,
     } = body;
 
-    if (!razorpay_order_id || !razorpay_payment_id) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return jsonResponse({
         success: false,
         verified: false,
-        error: 'Missing required payment verification parameters (razorpay_order_id or razorpay_payment_id).',
+        error: 'Missing required payment verification parameters (razorpay_order_id, razorpay_payment_id, or razorpay_signature).',
       }, 400);
     }
 
     const keySecret = env.RAZORPAY_KEY_SECRET;
-    let isVerified = false;
+    if (!keySecret) {
+      return jsonResponse({
+        success: false,
+        verified: false,
+        error: 'RAZORPAY_KEY_SECRET environment variable is missing on Pages environment.',
+      }, 400);
+    }
 
-    if (keySecret && razorpay_signature) {
-      const encoder = new TextEncoder();
-      const keyData = encoder.encode(keySecret);
-      const msgData = encoder.encode(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(keySecret);
+    const msgData = encoder.encode(`${razorpay_order_id}|${razorpay_payment_id}`);
 
-      const cryptoKey = await crypto.subtle.importKey(
-        'raw',
-        keyData,
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-      );
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
 
-      const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
-      const hashArray = Array.from(new Uint8Array(signatureBuffer));
-      const expectedSignature = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
+    const hashArray = Array.from(new Uint8Array(signatureBuffer));
+    const expectedSignature = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
-      isVerified = expectedSignature.toLowerCase() === razorpay_signature.toLowerCase();
+    const isVerified = expectedSignature.toLowerCase() === razorpay_signature.toLowerCase();
 
-      if (!isVerified) {
-        return jsonResponse({
-          success: false,
-          verified: false,
-          error: 'Payment signature verification failed. HMAC mismatch.',
-        }, 400);
-      }
-    } else {
-      isVerified = true;
+    if (!isVerified) {
+      return jsonResponse({
+        success: false,
+        verified: false,
+        error: 'Payment signature verification failed. HMAC mismatch.',
+      }, 400);
     }
 
     return jsonResponse({
@@ -287,7 +293,8 @@ async function handleVerifyPayment(request: Request, env: Env): Promise<Response
         gateway: 'razorpay',
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
-        razorpaySignature: razorpay_signature || 'verified_test_signature',
+        razorpaySignature: razorpay_signature,
+        paidAt: new Date().toISOString(),
       },
     });
   } catch (err: any) {

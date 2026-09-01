@@ -125,7 +125,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
   const generatedOrderNumber = orderNumber || generatedOrderId;
   const currency = process.env.DEFAULT_CURRENCY || 'INR';
   const amountInPaise = Math.round(calculatedTotal * 100);
-  const keyId = defaultKeyId || process.env.RAZORPAY_KEY_ID || 'rzp_test_51NOVAStoreDemoKey';
+  const keyId = defaultKeyId || process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
 
   return {
     isValid: true,
@@ -154,11 +154,11 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
  * GET /api/payment/config Express handler
  */
 export function configHandler(req: Request, res: Response) {
-  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_51NOVAStoreDemoKey';
+  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
   return res.status(200).json({
     success: true,
     keyId,
-    isConfigured: true,
+    isConfigured: Boolean(process.env.RAZORPAY_KEY_ID),
     mode: keyId.startsWith('rzp_live') ? 'live' : 'test',
     currency: process.env.DEFAULT_CURRENCY || 'INR',
     enableInternational: true,
@@ -192,31 +192,35 @@ export async function createOrderHandler(req: Request, res: Response) {
     }
 
     const razorpay = getRazorpayClient();
+    if (!razorpay) {
+      return res.status(400).json({
+        success: false,
+        error: 'Razorpay API credentials (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) are missing or not configured on the server.',
+      });
+    }
+
     let razorpayOrderId = '';
-
-    if (razorpay) {
-      try {
-        const rzpOrder = await razorpay.orders.create({
-          amount: calcResult.amountInPaise,
-          currency: calcResult.currency,
-          receipt: `rcpt_${calcResult.generatedOrderId.slice(-10)}`,
-          notes: calcResult.notes,
+    try {
+      const rzpOrder = await razorpay.orders.create({
+        amount: calcResult.amountInPaise,
+        currency: calcResult.currency,
+        receipt: `rcpt_${calcResult.generatedOrderId.slice(-10)}`,
+        notes: calcResult.notes,
+      });
+      if (!rzpOrder || !rzpOrder.id) {
+        return res.status(400).json({
+          success: false,
+          error: 'Razorpay Orders API failed to return a valid order ID.',
         });
-        razorpayOrderId = rzpOrder.id;
-      } catch (rzpErr: any) {
-        console.error('Razorpay API orders.create error:', rzpErr);
-        const rzpErrMsg = rzpErr?.error?.description || rzpErr?.description || rzpErr?.message || 'Gateway order creation failed';
-
-        if (process.env.RAZORPAY_KEY_ID?.startsWith('rzp_live')) {
-          return res.status(400).json({
-            success: false,
-            error: `Razorpay Live Gateway Error: ${rzpErrMsg}`,
-          });
-        }
-        razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       }
-    } else {
-      razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      razorpayOrderId = rzpOrder.id;
+    } catch (rzpErr: any) {
+      console.error('Razorpay API orders.create error:', rzpErr);
+      const rzpErrMsg = rzpErr?.error?.description || rzpErr?.description || rzpErr?.message || 'Gateway order creation failed';
+      return res.status(400).json({
+        success: false,
+        error: `Razorpay Gateway Error: ${rzpErrMsg}`,
+      });
     }
 
     return res.status(200).json({
@@ -262,29 +266,36 @@ export async function verifyHandler(req: Request, res: Response) {
       razorpay_signature,
     } = body;
 
-    if (!razorpay_order_id || !razorpay_payment_id) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({
         success: false,
         verified: false,
-        error: 'Missing required payment verification parameters (razorpay_order_id or razorpay_payment_id).',
+        error: 'Missing required payment verification parameters (razorpay_order_id, razorpay_payment_id, or razorpay_signature).',
       });
     }
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    let isVerified = false;
+    if (!keySecret) {
+      return res.status(400).json({
+        success: false,
+        verified: false,
+        error: 'RAZORPAY_KEY_SECRET environment variable is missing on server for signature verification.',
+      });
+    }
 
-    if (keySecret && razorpay_signature) {
-      isVerified = await verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature, keySecret);
-      if (!isVerified) {
-        return res.status(400).json({
-          success: false,
-          verified: false,
-          error: 'Payment signature verification failed.',
-        });
-      }
-    } else {
-      // In sandbox/test mode without secret configured, verify basic order/payment ID presence
-      isVerified = true;
+    const isVerified = await verifyRazorpaySignature(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      keySecret
+    );
+
+    if (!isVerified) {
+      return res.status(400).json({
+        success: false,
+        verified: false,
+        error: 'Payment signature verification failed. Invalid Razorpay HMAC-SHA256 signature.',
+      });
     }
 
     return res.status(200).json({
@@ -294,7 +305,8 @@ export async function verifyHandler(req: Request, res: Response) {
         gateway: 'razorpay',
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
-        razorpaySignature: razorpay_signature || 'verified_test_signature',
+        razorpaySignature: razorpay_signature,
+        paidAt: new Date().toISOString(),
       },
     });
   } catch (error: any) {
