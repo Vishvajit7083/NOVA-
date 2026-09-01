@@ -46,13 +46,13 @@ export async function onRequest(context: EventContext<Env, any, any>): Promise<R
 
   // Route 1: GET /api/payment/config
   if (pathname === '/api/payment/config' || pathname === '/api/payment/config/') {
-    const keyId = env.RAZORPAY_KEY_ID || '';
+    const keyId = env.RAZORPAY_KEY_ID || 'rzp_live_TWNW4QLaIecxI5';
     const rawCurrency = String(env.DEFAULT_CURRENCY || 'INR').replace(/[^a-zA-Z]/g, '').toUpperCase().trim();
     const currency = rawCurrency.length === 3 ? rawCurrency : 'INR';
     return jsonResponse({
       success: true,
       keyId,
-      isConfigured: Boolean(env.RAZORPAY_KEY_ID),
+      isConfigured: Boolean(keyId),
       mode: keyId.startsWith('rzp_live') ? 'live' : 'test',
       currency,
       enableInternational: true,
@@ -150,8 +150,8 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const currency = rawCurrency.length === 3 ? rawCurrency : 'INR';
     const amountInPaise = Math.round(calculatedTotal * 100);
 
-    const keyId = env.RAZORPAY_KEY_ID;
-    const keySecret = env.RAZORPAY_KEY_SECRET;
+    const keyId = env.RAZORPAY_KEY_ID || 'rzp_live_TWNW4QLaIecxI5';
+    const keySecret = env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
 
     if (!keyId || !keySecret) {
       return jsonResponse({

@@ -9,6 +9,7 @@
   },
   "vars": {
     "RAZORPAY_KEY_ID": "rzp_live_TWNW4QLaIecxI5",
+    "RAZORPAY_KEY_SECRET": "HP02MHqrsfbaWNza1GXQn3r5",
     "DEFAULT_CURRENCY": "INR"
   }
 }
