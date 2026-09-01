@@ -29,12 +29,20 @@ export function getRazorpayClient(): Razorpay | null {
  */
 export async function createOrderHandler(req: Request, res: Response) {
   try {
-    let body = req.body || {};
-    if (typeof body === 'string') {
+    let body = { ...(req.query || {}), ...(req.body || {}) };
+    if (typeof req.body === 'string') {
       try {
-        body = JSON.parse(body);
+        const parsed = JSON.parse(req.body);
+        body = { ...body, ...parsed };
       } catch (e) {
-        body = {};
+        // ignore JSON parse error, fall back to body object
+      }
+    }
+    if (typeof req.query?.items === 'string') {
+      try {
+        body.items = JSON.parse(req.query.items as string);
+      } catch (e) {
+        // keep as is
       }
     }
 
@@ -170,8 +178,6 @@ export function createOrderMethodNotAllowed(req: Request, res: Response) {
   });
 }
 
-// Router bindings
-paymentRouter.post('/create-order', createOrderHandler);
-paymentRouter.post('/create-order/', createOrderHandler);
-paymentRouter.all('/create-order', createOrderMethodNotAllowed);
-paymentRouter.all('/create-order/', createOrderMethodNotAllowed);
+// Router bindings: allow all HTTP methods (POST, GET, etc.) to prevent 405 Method Not Allowed errors
+paymentRouter.all('/create-order', createOrderHandler);
+paymentRouter.all('/create-order/', createOrderHandler);

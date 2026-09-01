@@ -446,7 +446,7 @@ async function startServer() {
   });
 
   // Mount API router to handle all /api requests
-  app.use(['/api', '/api/'], apiRouter);
+  app.use('/api', apiRouter);
 
   // 9. Prevent serve-static from returning HTTP 405 Method Not Allowed for unhandled POST/PUT requests
   app.use((req: Request, res: Response, next: NextFunction) => {
