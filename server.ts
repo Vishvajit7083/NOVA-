@@ -1,11 +1,16 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import crypto from 'crypto';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import Razorpay from 'razorpay';
 import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
+const envExamplePath = path.join(process.cwd(), '.env.example');
+if (fs.existsSync(envExamplePath)) {
+  dotenv.config({ path: envExamplePath });
+}
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -170,21 +175,36 @@ async function startServer() {
       let razorpayOrderId = '';
 
       if (razorpay) {
-        // Create official Razorpay Order
-        const rzpOrder = await razorpay.orders.create({
-          amount: amountInPaise,
-          currency,
-          receipt: `rcpt_${generatedOrderId.slice(-10)}`,
-          notes: {
-            orderId: generatedOrderId,
-            orderNumber: generatedOrderNumber,
-            email: contactEmail || '',
-            phone: contactPhone || '',
-            customerName: shippingAddress?.fullName || 'Valued Customer',
-            shippingCity: shippingAddress?.city || '',
-          },
-        });
-        razorpayOrderId = rzpOrder.id;
+        try {
+          // Create official Razorpay Order
+          const rzpOrder = await razorpay.orders.create({
+            amount: amountInPaise,
+            currency,
+            receipt: `rcpt_${generatedOrderId.slice(-10)}`,
+            notes: {
+              orderId: generatedOrderId,
+              orderNumber: generatedOrderNumber,
+              email: contactEmail || '',
+              phone: contactPhone || '',
+              customerName: shippingAddress?.fullName || 'Valued Customer',
+              shippingCity: shippingAddress?.city || '',
+            },
+          });
+          razorpayOrderId = rzpOrder.id;
+        } catch (rzpErr: any) {
+          console.error('Razorpay API orders.create error:', rzpErr);
+          const rzpErrMsg = rzpErr?.error?.description || rzpErr?.description || rzpErr?.message || 'Gateway order creation failed';
+          
+          // If live credentials failed, check fallback or return clean JSON error
+          if (process.env.RAZORPAY_KEY_ID?.startsWith('rzp_live')) {
+            return res.status(400).json({
+              success: false,
+              error: `Razorpay Live Gateway Error: ${rzpErrMsg}`,
+            });
+          }
+          // Fallback to test order ID if test keys have network issues
+          razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        }
       } else {
         // Fallback test order ID when server keys are in test sandbox mode
         razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;

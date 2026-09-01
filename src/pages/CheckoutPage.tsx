@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { Address, Order } from '../types';
-import { openRazorpayCheckout, loadRazorpayScript } from '../lib/razorpay';
+import { openRazorpayCheckout, loadRazorpayScript, safeFetchJson } from '../lib/razorpay';
 import { savePaymentTransactionInDB, updateOrderPaymentInDB } from '../lib/db';
 
 interface CheckoutPageProps {
@@ -86,10 +86,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     loadRazorpayScript();
 
     // Fetch gateway configuration from backend
-    fetch('/api/payment/config')
-      .then((res) => res.json())
+    safeFetchJson('/api/payment/config')
       .then((data) => {
-        if (data.success) {
+        if (data && data.success) {
           setGatewayConfig(data);
         }
       })
@@ -243,7 +242,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
       const generatedOrderNumber = generatedOrderId;
 
       // 1. Call backend server to create official Razorpay order with server-calculated total
-      const orderCreateRes = await fetch('/api/payment/create-order', {
+      const orderCreateData = await safeFetchJson('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -264,8 +263,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           userUid: currentUser?.id,
         }),
       });
-
-      const orderCreateData = await orderCreateRes.json();
 
       if (!orderCreateData.success) {
         throw new Error(orderCreateData.error || 'Failed to initialize payment gateway.');
@@ -312,7 +309,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
             try {
               // 4. Send signature to backend server for HMAC-SHA256 verification
-              const verifyRes = await fetch('/api/payment/verify', {
+              const verifyData = await safeFetchJson('/api/payment/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -325,8 +322,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
                   userEmail: email,
                 }),
               });
-
-              const verifyData = await verifyRes.json();
 
               if (!verifyData.success || !verifyData.verified) {
                 throw new Error(verifyData.error || 'Payment signature verification failed.');

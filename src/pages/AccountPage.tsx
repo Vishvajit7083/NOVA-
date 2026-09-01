@@ -31,7 +31,7 @@ import { useShop } from '../context/ShopContext';
 import { Address, Order, CartItem, ReturnRequest, SupportTicket } from '../types';
 import { OrderInvoiceModal } from '../components/common/OrderInvoiceModal';
 import { ReturnRequestModal } from '../components/common/ReturnRequestModal';
-import { openRazorpayCheckout } from '../lib/razorpay';
+import { openRazorpayCheckout, safeFetchJson } from '../lib/razorpay';
 import { updateOrderPaymentInDB, savePaymentTransactionInDB } from '../lib/db';
 
 interface AccountPageProps {
@@ -208,7 +208,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
       showToast('Connecting', 'Initializing Razorpay secure gateway...', 'info');
 
       // 1. Create order on backend
-      const res = await fetch('/api/payment/create-order', {
+      const data = await safeFetchJson('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -230,7 +230,6 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
         }),
       });
 
-      const data = await res.json();
       if (!data.success) {
         throw new Error(data.error || 'Failed to initialize payment gateway.');
       }
@@ -265,7 +264,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
           handler: async (response) => {
             try {
               // 3. Verify signature on backend
-              const verifyRes = await fetch('/api/payment/verify', {
+              const verifyData = await safeFetchJson('/api/payment/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -279,7 +278,6 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 }),
               });
 
-              const verifyData = await verifyRes.json();
               if (!verifyData.success || !verifyData.verified) {
                 throw new Error(verifyData.error || 'Payment verification failed on server.');
               }

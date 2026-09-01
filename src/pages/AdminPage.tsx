@@ -37,6 +37,7 @@ import {
 import { useShop } from '../context/ShopContext';
 import { Product, Order, Review, Coupon, OrderStatus, CategoryId, PaymentTransaction } from '../types';
 import { ADMIN_EMAIL } from '../lib/firebase';
+import { safeFetchJson } from '../lib/razorpay';
 import {
   getProductsFromDB,
   saveProductToDB,
@@ -139,9 +140,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
 
       // Fetch payment gateway live status
       try {
-        const configRes = await fetch('/api/payment/config');
-        const configData = await configRes.json();
-        if (configData.success) {
+        const configData = await safeFetchJson('/api/payment/config');
+        if (configData && configData.success) {
           setGatewayConfig(configData);
         }
       } catch (cErr) {
@@ -276,7 +276,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
 
     setIsRefunding(true);
     try {
-      const res = await fetch('/api/admin/refund', {
+      const data = await safeFetchJson('/api/admin/refund', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -286,8 +286,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
           reason: refundReason,
         }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
+
+      if (!data.success) {
         throw new Error(data.error || 'Refund initiation failed on server');
       }
 

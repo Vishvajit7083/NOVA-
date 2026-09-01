@@ -95,3 +95,33 @@ export async function openRazorpayCheckout(
 
   rzp.open();
 }
+
+/**
+ * Safely fetches JSON from API endpoints, preventing "Unexpected end of JSON input" errors.
+ */
+export async function safeFetchJson<T = any>(url: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(url, options);
+  const text = await response.text();
+
+  let data: any = null;
+  if (text && text.trim().length > 0) {
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      console.error(`Non-JSON response received from ${url} (Status ${response.status}):`, text);
+      const isHtml = text.trim().startsWith('<');
+      const preview = isHtml ? 'Received non-JSON HTML response from server' : text.slice(0, 100);
+      throw new Error(`Gateway Error (${response.status}): ${preview}`);
+    }
+  } else {
+    data = {};
+  }
+
+  if (!response.ok) {
+    const errorMsg = data?.error || data?.message || `Gateway request failed with status ${response.status}`;
+    throw new Error(errorMsg);
+  }
+
+  return data;
+}
+
