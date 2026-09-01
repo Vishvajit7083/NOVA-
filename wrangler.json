@@ -8,7 +8,7 @@
     "not_found_handling": "single-page-application"
   },
   "vars": {
-    "RAZORPAY_KEY_ID": "rzp_test_TWgKoZyWSSUiG2",
+    "RAZORPAY_KEY_ID": "rzp_live_TWNW4QLaIecxI5",
     "DEFAULT_CURRENCY": "INR"
   }
 }
