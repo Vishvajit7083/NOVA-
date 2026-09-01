@@ -114,27 +114,7 @@ async function startServer() {
     });
   });
 
-  // 2. Gateway Configuration & Diagnostics
-  apiRouter.all(['/payment/config', '/payment/config/'], (_req: Request, res: Response) => {
-    const rawKeyId = process.env.RAZORPAY_KEY_ID;
-    const isConfigured = Boolean(rawKeyId && process.env.RAZORPAY_KEY_SECRET);
-    const keyId = rawKeyId || 'rzp_test_51NOVAStoreDemoKey';
-    const isLive = Boolean(rawKeyId && rawKeyId.startsWith('rzp_live'));
-
-    res.json({
-      success: true,
-      keyId,
-      isConfigured,
-      mode: isLive ? 'live' : 'test',
-      currency: process.env.DEFAULT_CURRENCY || 'INR',
-      enableInternational: process.env.ENABLE_INTERNATIONAL_PAYMENTS === 'true',
-      storeName: 'NOVA Flagship Electronics',
-      brandColor: '#EB0028',
-      methodsSupported: ['upi', 'cards', 'netbanking', 'wallets', 'international_cards', 'cod'],
-    });
-  });
-
-  // 3. Mount modular Payment Router (handles POST /payment/create-order, validation, Razorpay SDK & JSON response)
+  // 2. Mount modular Payment Router (handles /payment/config, /payment/create-order, /payment/verify)
   apiRouter.use('/payment', paymentRouter);
 
   // 4. Verify Payment Cryptographic Signature & Capture Details
