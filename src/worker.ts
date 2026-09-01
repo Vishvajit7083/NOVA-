@@ -1,4 +1,10 @@
-// Standalone Cloudflare Worker Entry Point for SPA + API Routes
+interface Env {
+  RAZORPAY_KEY_ID?: string;
+  RAZORPAY_KEY_SECRET?: string;
+  DEFAULT_CURRENCY?: string;
+  ASSETS?: { fetch: (request: Request) => Promise<Response> };
+}
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -6,7 +12,7 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-function jsonResponse(data, status = 200) {
+function jsonResponse(data: any, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: CORS_HEADERS,
@@ -14,7 +20,7 @@ function jsonResponse(data, status = 200) {
 }
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
@@ -68,9 +74,9 @@ export default {
   },
 };
 
-async function handleCreateOrder(request, env) {
+async function handleCreateOrder(request: Request, env: Env): Promise<Response> {
   try {
-    let body = {};
+    let body: any = {};
     const url = new URL(request.url);
 
     url.searchParams.forEach((val, key) => {
@@ -93,7 +99,6 @@ async function handleCreateOrder(request, env) {
 
     const {
       items = [],
-      shippingFee = 0,
       couponCode,
       deliveryMethod = 'standard',
       shippingAddress,
@@ -168,7 +173,7 @@ async function handleCreateOrder(request, env) {
           }),
         });
 
-        const rzpData = await rzpResponse.json();
+        const rzpData: any = await rzpResponse.json();
         if (rzpResponse.ok && rzpData && rzpData.id) {
           razorpayOrderId = rzpData.id;
         } else {
@@ -181,7 +186,7 @@ async function handleCreateOrder(request, env) {
           }
           razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Razorpay fetch error:', err);
         razorpayOrderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       }
@@ -207,14 +212,14 @@ async function handleCreateOrder(request, env) {
         total: calculatedTotal,
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     return jsonResponse({ success: false, error: err.message || 'Worker order error' }, 500);
   }
 }
 
-async function handleVerifyPayment(request, env) {
+async function handleVerifyPayment(request: Request, env: Env): Promise<Response> {
   try {
-    let body = {};
+    let body: any = {};
     try {
       const text = await request.text();
       if (text && text.trim().length > 0) body = JSON.parse(text);
@@ -273,7 +278,7 @@ async function handleVerifyPayment(request, env) {
         razorpaySignature: razorpay_signature || 'verified_test_signature',
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     return jsonResponse({ success: false, verified: false, error: err.message || 'Worker verify error' }, 500);
   }
 }
