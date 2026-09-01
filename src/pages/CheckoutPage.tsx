@@ -52,9 +52,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
   // Gateway Config State
   const [gatewayConfig, setGatewayConfig] = useState<GatewayConfig>({
-    keyId: 'rzp_live_TWNW4QLaIecxI5',
-    isConfigured: true,
-    mode: 'live',
+    keyId: '',
+    isConfigured: false,
+    mode: 'test',
     currency: 'INR',
     enableInternational: true,
     storeName: 'NOVA Flagship Electronics',
