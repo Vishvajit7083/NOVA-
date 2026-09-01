@@ -148,7 +148,7 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const amountInPaise = Math.round(calculatedTotal * 100);
 
     const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
-    const keySecret = env.RAZORPAY_KEY_SECRET;
+    const keySecret = env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
 
     if (!keyId || !keySecret) {
       return jsonResponse({
@@ -251,7 +251,7 @@ async function handleVerifyPayment(request: Request, env: Env): Promise<Response
       }, 400);
     }
 
-    const keySecret = env.RAZORPAY_KEY_SECRET;
+    const keySecret = env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
     if (!keySecret) {
       return jsonResponse({
         success: false,

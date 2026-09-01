@@ -7,8 +7,8 @@ export const paymentRouter = Router();
  * Lazy initializer for Razorpay SDK client using credentials from environment.
  */
 export function getRazorpayClient(keyIdOverride?: string, keySecretOverride?: string): Razorpay | null {
-  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID;
-  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET;
+  const keyId = keyIdOverride || process.env.RAZORPAY_KEY_ID || 'rzp_test_TWNW4QLaIecxI5';
+  const keySecret = keySecretOverride || process.env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
   if (keyId && keySecret) {
     try {
       return new Razorpay({
@@ -274,7 +274,7 @@ export async function verifyHandler(req: Request, res: Response) {
       });
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'HP02MHqrsfbaWNza1GXQn3r5';
     if (!keySecret) {
       return res.status(400).json({
         success: false,
