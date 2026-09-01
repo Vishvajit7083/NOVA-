@@ -154,11 +154,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
  * GET /api/payment/config Express handler
  */
 export function configHandler(req: Request, res: Response) {
-  const keyId = env.RAZORPAY_KEY_ID || 
-  'rzp_test_TWgKoZyWSSUiG2';
-   return jsonResponse({
-     success: true,
-     keyId,
+  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TWgKoZyWSSUiG2';
   return res.status(200).json({
     success: true,
     keyId,
