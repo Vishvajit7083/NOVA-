@@ -150,8 +150,8 @@ async function handleCreateOrder(request: Request, env: Env): Promise<Response> 
     const currency = rawCurrency.length === 3 ? rawCurrency : 'INR';
     const amountInPaise = Math.round(calculatedTotal * 100);
 
-    const keyId = env.RAZORPAY_KEY_ID;
-    const keySecret = env.RAZORPAY_KEY_SECRET;
+    const keyId = env.RAZORPAY_KEY_ID || 'rzp_test_TWgKoZyWSSUiG2';
+    const keySecret = env.RAZORPAY_KEY_SECRET || 'wmybrevCjPcfo7R1LT6hLYR2';
 
     if (!keyId || !keySecret) {
       return jsonResponse({
