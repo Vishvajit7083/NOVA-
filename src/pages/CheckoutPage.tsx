@@ -275,7 +275,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         {
           key: orderCreateData.keyId || gatewayConfig.keyId,
           amount: orderCreateData.amount,
-          currency: orderCreateData.currency || 'INR',
+          currency: (orderCreateData.currency && String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').trim().length === 3)
+            ? String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').toUpperCase().trim()
+            : 'INR',
           name: gatewayConfig.storeName || 'NOVA Flagship Electronics',
           description: `Order ${generatedOrderNumber} • ${cart.length} Item(s)`,
           order_id: orderCreateData.razorpayOrderId,
