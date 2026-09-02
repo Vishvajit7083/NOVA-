@@ -1,9 +1,23 @@
+"use client";
+
 import Image from "next/image";
+import { ProductCard } from "@/components/ProductCard";
+import { products } from "@/data/products";
+import { useFittingRoom } from "@/contexts/FittingRoomContext";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const { isOpen, openFittingRoom, closeFittingRoom } = useFittingRoom();
+
+  const handleFittingRoomClose = () => {
+    closeFittingRoom();
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+      <main
+        className="flex min-h-screen w-full max-w-5xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start"
+      >
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -34,31 +48,26 @@ export default function Home() {
             center.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Products Section */}
+        <div className="mt-12 w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
+
+        {/* Fitting Room Overlay */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            aria-modal="true"
+          >
+            <FittingRoomViewer
+              products={products}
+              onClose={handleFittingRoomClose}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
