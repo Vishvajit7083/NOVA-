@@ -2,83 +2,64 @@ import { CategoryInfo } from '../types';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
-    id: 'men-apparel',
-    name: "Men's Collection & Tailoring",
-    shortName: 'Men',
-    description: 'Bespoke tailoring, Egyptian organic cotton shirts, relaxed linen trousers, and modern luxury essentials.',
-    iconName: 'Shirt',
-    image: 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 12,
-    featuredSubcategories: ['Shirts', 'T-Shirts', 'Trousers', 'Knitwear', 'Formal Suits']
-  },
-  {
-    id: 'women-apparel',
-    name: "Women's Runway & Ready-to-Wear",
-    shortName: 'Women',
-    description: 'Silk slip dresses, structured wool blazers, flowing pleated skirts, and timeless statement pieces.',
+    id: 'sarees',
+    name: 'Sarees',
+    shortName: 'Sarees',
+    description: 'Paithani, Banarasi, Kanjivaram, Chanderi, pure silk, handloom cotton, Karvati Kinara and festive sarees.',
     iconName: 'Sparkles',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 14,
-    featuredSubcategories: ['Dresses', 'Blouses', 'Blazers', 'Skirts', 'Evening Wear']
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 12,
+    featuredSubcategories: ['Paithani Sarees', 'Silk Sarees', 'Cotton Sarees', 'Banarasi Sarees', 'Designer Sarees', 'Festive Sarees', 'Handloom Sarees']
   },
   {
-    id: 'outerwear-jackets',
-    name: 'Outerwear, Coats & Leather Jackets',
-    shortName: 'Outerwear',
-    description: 'Double-breasted cashmere overcoats, Italian lambskin biker jackets, and water-repellent trench coats.',
-    iconName: 'Layers',
-    image: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 9,
-    featuredSubcategories: ['Trench Coats', 'Leather Jackets', 'Wool Overcoats', 'Bombers']
+    id: 'shirts',
+    name: 'Shirts',
+    shortName: 'Shirts',
+    description: 'Pure linen casual shirts, Bandhgala festive kurta-shirts, breathable Supima cotton, and classic chambray overshirts.',
+    iconName: 'Shirt',
+    image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 6,
+    featuredSubcategories: ['Linen Shirts', 'Kurta-Shirts', 'Supima Cotton', 'Chambray Overshirts', 'Formal Poplin']
   },
   {
-    id: 'footwear',
-    name: 'Designer Footwear & Handcrafted Boots',
-    shortName: 'Footwear',
-    description: 'Handmade Italian leather loafers, Goodyear-welted Chelsea boots, and minimalist calfskin sneakers.',
-    iconName: 'Footprints',
-    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 10,
-    featuredSubcategories: ['Loafers', 'Boots', 'Sneakers', 'Dress Shoes', 'Heels']
-  },
-  {
-    id: 'bags-leather',
-    name: 'Luxury Leather Bags & Totes',
-    shortName: 'Bags & Leather',
-    description: 'Full-grain Tuscan leather totes, architectural crossbody bags, and weekender duffels with brass hardware.',
-    iconName: 'ShoppingBag',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 8,
-    featuredSubcategories: ['Tote Bags', 'Crossbody', 'Weekender Bags', 'Backpacks', 'Wallets']
-  },
-  {
-    id: 'watches-timepieces',
-    name: 'Horology & Timepieces',
-    shortName: 'Watches',
-    description: 'Swiss-movement chronographs, automatic sapphire crystal dress watches, and vintage-inspired timepieces.',
-    iconName: 'Watch',
-    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 7,
-    featuredSubcategories: ['Automatic Watches', 'Chronographs', 'Minimalist Dress', 'Steel Bracelets']
-  },
-  {
-    id: 'jewellery-accessories',
-    name: 'Fine Jewellery & Atelier Accessories',
-    shortName: 'Jewellery & Accs',
-    description: '925 Sterling silver signet rings, handcrafted pearl pendants, polarized acetate sunglasses, and silk scarves.',
-    iconName: 'Gem',
-    image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 11,
-    featuredSubcategories: ['Sunglasses', 'Rings & Chains', 'Belts', 'Scarves', 'Hats']
-  },
-  {
-    id: 'streetwear-unisex',
-    name: 'Contemporary Streetwear & Loungewear',
-    shortName: 'Streetwear',
-    description: '500 GSM loopback French terry hoodies, relaxed wide-leg cargos, and genderless minimalist streetwear.',
+    id: 'kokani-tshirts',
+    name: 'T-Shirts',
+    shortName: 'T-Shirts',
+    description: 'Signature 240 GSM heavyweight combed cotton crewneck and graphic t-shirts engineered for durability and clean drape.',
     iconName: 'Flame',
-    image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85',
-    itemCount: 10,
-    featuredSubcategories: ['Heavyweight Hoodies', 'Cargo Trousers', 'Oversized Tees', 'Caps']
+    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 6,
+    featuredSubcategories: ['Heavyweight 240 GSM', 'Graphic Tees', 'Devanagari Prints', 'Solid Essentials', 'Drop Shoulder Fit']
   },
+  {
+    id: 'festive-wear',
+    name: 'Festive Collection',
+    shortName: 'Festive',
+    description: 'Celebratory pure silk drapes, woven zari borders, and refined ceremonial kurta-shirts.',
+    iconName: 'Crown',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 6,
+    featuredSubcategories: ['Festive Silk Sarees', 'Wedding Silk Weaves', 'Zari Brocade', 'Kurta-Shirts']
+  },
+  {
+    id: 'coastal-wear',
+    name: 'Linen & Cotton Collection',
+    shortName: 'Linens & Cottons',
+    description: 'Breathable European flax linens, lightweight textured cottons, and relaxed silhouettes.',
+    iconName: 'Compass',
+    image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 6,
+    featuredSubcategories: ['Flax Linen Shirts', 'Cotton Poplin', 'Handloom Weaves', 'Relaxed Overshirts']
+  },
+  {
+    id: 'maharashtra-heritage',
+    name: 'Heritage Collection',
+    shortName: 'Heritage',
+    description: 'Traditional Paithani motifs, Karvati Kinara weaves, and archival handloom textiles.',
+    iconName: 'Layers',
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1000&q=85',
+    itemCount: 6,
+    featuredSubcategories: ['Paithani Weaves', 'Karvati Kinara', 'Chandrakala Silks', 'Temple Border Cottons']
+  }
 ];
+

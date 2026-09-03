@@ -124,6 +124,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
 
     // Notify listeners that cloth stage is complete so Stage 2 seamlessly takes over
     try {
+      window.dispatchEvent(new CustomEvent('sindhura:cloth-complete'));
       window.dispatchEvent(new CustomEvent('aurelia:cloth-complete'));
     } catch {}
 
@@ -138,7 +139,9 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
     hasFinishedRef.current = true;
 
     try {
+      sessionStorage.setItem('sindhura_intro_shown', 'true');
       sessionStorage.setItem('aurelia_intro_shown', 'true');
+      window.dispatchEvent(new CustomEvent('sindhura:skip-trailer'));
       window.dispatchEvent(new CustomEvent('aurelia:skip-trailer'));
     } catch {}
 
@@ -431,7 +434,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
       uMouse: { value: mouse },
       uPanelWidth: { value: panelWidth },
       uColorCharcoal: { value: new THREE.Color(0x0c0b0a) }, // Deep royal charcoal/black velvet
-      uColorGold: { value: new THREE.Color(0xd4af37) },     // Aurelia champagne gold
+      uColorGold: { value: new THREE.Color(0xd4af37) },     // Sindhudurg champagne gold
       uColorIvory: { value: new THREE.Color(0xf5f2eb) },    // Refined ivory
     };
 
@@ -470,7 +473,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
     scene.add(rightMesh);
 
     // Intentional Fashion Film Timing:
-    // 0.0s – 0.8s: Dramatic closed-stage pause. Fabric breathes naturally. Aurelia logo radiates.
+    // 0.0s – 0.8s: Dramatic closed-stage pause. Fabric breathes naturally. Insignia radiates.
     // 0.8s – 2.8s: Cinematic fabric opening. Fabrics slowly pull away, accelerating; logo scales down & dissolves.
     //              Midpoint exposes bright cinematic glow and reveals real homepage underneath.
     // 2.8s – 3.4s: Fabrics sweep completely beyond viewport edges; final reveal and transition into homepage.
@@ -596,10 +599,10 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
 
   return (
     <div
-      id="aurelia-cloth-intro"
+      id="sindhudurg-cloth-intro"
       style={{ opacity: overlayOpacity }}
       className="fixed inset-0 z-50 pointer-events-auto select-none overflow-hidden transition-opacity duration-300 ease-out"
-      aria-label="Aurelia Haute Couture Fashion Film Opening"
+      aria-label="SINDHUDURG GARMENTS Presentation Opening"
     >
       {/* Three.js GPU Fabric Simulation Canvas */}
       <div ref={containerRef} className="absolute inset-0 w-full h-full" />
@@ -618,9 +621,9 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
       {/* Subtle Cinematic Vignette / Anamorphic Film Atmosphere */}
       <div className="absolute inset-0 pointer-events-none bg-radial from-transparent via-black/15 to-black/75" />
 
-      {/* Center Haute Couture Brand Insignia (Trailer Style) */}
+      {/* Center SINDHUDURG GARMENTS Brand Insignia (Cinematic Reveal) */}
       <div
-        id="aurelia-intro-insignia"
+        id="sindhudurg-intro-insignia"
         style={{
           opacity: brandOpacity,
           transform: `scale(${brandScale})`,
@@ -630,29 +633,32 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
         {/* Ambient Halo behind insignia */}
         <div className="absolute w-80 h-80 rounded-full bg-[#C5A880]/20 blur-[90px] pointer-events-none animate-pulse" />
 
-        {/* Heraldic Crest */}
+        {/* Heraldic Konkan Crest */}
         <div className="relative mb-6 flex items-center justify-center">
           <div className="w-18 h-18 rounded-full bg-[#100F0E]/95 border border-[#C5A880]/70 flex items-center justify-center shadow-[0_0_45px_rgba(197,168,128,0.35)]">
-            <Sparkles className="w-8 h-8 text-[#C5A880]" />
+            <span className="font-serif text-2xl font-bold text-[#C5A880]">सिं</span>
           </div>
           <div className="absolute inset-0 rounded-full border border-[#C5A880]/30 scale-125" />
         </div>
 
         {/* Wordmark with Trailer Typography */}
         <div className="relative space-y-3">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif tracking-[0.38em] text-[#F5F2EB] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-            AURELIA
+          <div className="text-xs font-mono uppercase tracking-[0.45em] text-[#C5A880]/90 font-semibold">
+            सिंधुदुर्ग • KONKAN
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif tracking-[0.22em] text-[#F5F2EB] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+            SINDHUDURG GARMENTS
           </h1>
-          <div className="flex items-center justify-center space-x-4 text-[11px] sm:text-xs font-mono uppercase tracking-[0.46em] text-[#C5A880]">
+          <div className="flex items-center justify-center space-x-4 text-[11px] sm:text-xs font-mono uppercase tracking-[0.38em] text-[#C5A880]">
             <span className="w-8 h-[1px] bg-[#C5A880]/70" />
-            <span>Haute Couture • Atelier</span>
+            <span>Konkan Roots • Maharashtra Soul</span>
             <span className="w-8 h-[1px] bg-[#C5A880]/70" />
           </div>
         </div>
 
         {/* Cinematic Film Subtitle */}
-        <p className="mt-5 text-[11px] sm:text-xs tracking-[0.32em] uppercase text-[#A0988A] font-light max-w-xs drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-          Private Showroom Unveiling
+        <p className="mt-5 text-[11px] sm:text-xs tracking-[0.26em] uppercase text-[#A0988A] font-light max-w-md drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+          Maharashtrian Sarees • Premium Shirts • Kokani T-Shirts
         </p>
       </div>
 

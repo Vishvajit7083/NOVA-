@@ -163,7 +163,7 @@ export const SellerPortalPage: React.FC<SellerPortalPageProps> = ({ onNavigatePr
           {
             group: 'Atelier Specifications',
             items: [
-              { label: 'Maison / Designer', value: sellerProfile?.storeName || 'AURELIA Atelier' },
+              { label: 'Maison / Designer', value: sellerProfile?.storeName || 'SINDHUDURG GARMENTS Atelier' },
               { label: 'Fabric Composition', value: prodFabric || 'Mulberry Silk' },
               { label: 'Care Instructions', value: 'Specialist Dry Clean Only' },
               { label: 'Warranty & Authenticity', value: 'Certificate of Provenance & Lifetime Alteration Service' },
@@ -223,7 +223,7 @@ export const SellerPortalPage: React.FC<SellerPortalPageProps> = ({ onNavigatePr
         <div className="w-16 h-16 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] flex items-center justify-center mx-auto mb-5 shadow-xs">
           <Sparkles className="w-7 h-7" />
         </div>
-        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">AURELIA Designer Atelier & Consignment Maison</h1>
+        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">SINDHUDURG GARMENTS Designer Atelier & Consignment Maison</h1>
         <p className="text-stone-600 mt-3 max-w-lg mx-auto text-xs sm:text-sm leading-relaxed">
           Join our distinguished collective of international fashion houses, couturiers, and luxury ateliers. Sign in to access your consignment atelier dashboard.
         </p>
@@ -249,7 +249,7 @@ export const SellerPortalPage: React.FC<SellerPortalPageProps> = ({ onNavigatePr
                 Maison Consignment Program
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-white">Join the AURELIA Designer Collective</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-white">Join the SINDHUDURG GARMENTS Designer Collective</h1>
             <p className="text-stone-300 text-xs sm:text-sm mt-2 max-w-xl leading-relaxed">
               Showcase your bespoke evening wear, handcrafted leather accessories, silk scarves, and fine jewelry to our global clientele with insured concierge transit.
             </p>
@@ -397,7 +397,7 @@ export const SellerPortalPage: React.FC<SellerPortalPageProps> = ({ onNavigatePr
 
             <div className="pt-4 border-t border-[#EAE4D8] flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-[11px] text-stone-500 max-w-sm">
-                By registering, you commit to AURELIA's Haute Couture Curation Guidelines & Fabric Provenance Standards.
+                By registering, you commit to SINDHUDURG GARMENTS's Handloom Curation Guidelines & Fabric Provenance Standards.
               </p>
               <button
                 type="submit"

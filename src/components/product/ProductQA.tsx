@@ -70,7 +70,7 @@ export const ProductQA: React.FC<ProductQAProps> = ({ product }) => {
             <span>Have a Styling Inquiry about {product.name}?</span>
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            Get verified answers from {product.sellerName || 'AURELIA Atelier Master Stylists'}, certified textile conservators, and clients.
+            Get verified answers from {product.sellerName || 'SINDHUDURG GARMENTS Textile Specialists'}, certified handloom experts, and clients.
           </p>
         </div>
 
@@ -155,7 +155,7 @@ export const ProductQA: React.FC<ProductQAProps> = ({ product }) => {
                         {q.answer.answeredByRole === 'admin' ? (
                           <>
                             <ShieldCheck className="w-3.5 h-3.5 text-[#9A7B38]" />
-                            <span>AURELIA Atelier Concierge</span>
+                            <span>SINDHUDURG GARMENTS Concierge</span>
                           </>
                         ) : q.answer.answeredByRole === 'seller' ? (
                           <>

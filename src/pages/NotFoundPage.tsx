@@ -38,7 +38,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
             className="w-full sm:w-auto px-6 py-3.5 bg-[#111111] hover:bg-[#9A7B38] text-white text-xs font-semibold uppercase tracking-widest rounded-full transition-colors flex items-center justify-center space-x-2 shadow-xs cursor-pointer"
           >
             <Home className="w-4 h-4" />
-            <span>Return to Aurelia</span>
+            <span>Return to Sindhudurg Garments</span>
           </button>
 
           <button

@@ -51,19 +51,19 @@ export const OrderInvoiceModal: React.FC<OrderInvoiceModalProps> = ({ order, onC
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-2xl font-serif font-bold tracking-wider text-stone-950">
-                  AURELIA & CO<span className="text-[#9A7B38]">.</span>
+                  SINDHUDURG GARMENTS<span className="text-[#9A7B38]">.</span>
                 </span>
                 <span className="text-xs uppercase font-medium tracking-[0.2em] text-[#9A7B38] border-l border-stone-300 pl-2">
-                  Haute Couture Atelier
+                  सिंधुदुर्ग • KONKAN
                 </span>
               </div>
               <p className="text-xs text-stone-500 mt-2">
-                AURELIA Maison International Pvt. Ltd. • GSTIN: <span className="font-semibold text-stone-700">29AABCA9876F1Z4</span>
+                SINDHUDURG GARMENTS Pvt. Ltd. • GSTIN: <span className="font-semibold text-stone-700">27AABCS9876M1Z8</span>
               </p>
               <p className="text-xs text-stone-500">
-                18 Boulevard Saint-Honoré / Vittal Mallya Road, Bengaluru, Karnataka 560001, India
+                Heritage Textile Atelier, Near Sindhudurg Fort Road, Malvan, Sindhudurg, Maharashtra 416606, India
               </p>
-              <p className="text-xs text-stone-500">Concierge: concierge@aurelia.couture | +91 (800) 789-0123</p>
+              <p className="text-xs text-stone-500">Concierge: contact@sindhudurggarments.com | +91 98230 45678</p>
             </div>
 
             <div className="sm:text-right">
@@ -191,7 +191,7 @@ export const OrderInvoiceModal: React.FC<OrderInvoiceModalProps> = ({ order, onC
           {/* Footer badge */}
           <div className="text-center pt-6 border-t border-stone-100 flex items-center justify-center space-x-2 text-xs text-stone-500">
             <CheckCircle2 className="w-4 h-4 text-[#9A7B38]" />
-            <span>Thank you for indulging in AURELIA & CO. Haute Couture • Timeless Craftsmanship</span>
+            <span>Thank you for choosing SINDHUDURG GARMENTS • Handcrafted in Sindhudurg, Maharashtra</span>
           </div>
         </div>
       </div>

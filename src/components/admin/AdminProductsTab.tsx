@@ -141,14 +141,18 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-3">
                           <img
-                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=300'}
+                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=300'}
                             alt={prod.name}
                             className="w-12 h-14 rounded-lg object-cover object-top border border-[#E8E2D9] shrink-0 bg-stone-100"
+                            onError={(e) => {
+                              // Fallback on error
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=300';
+                            }}
                           />
                           <div>
                             <div className="font-serif font-bold text-stone-900">{prod.name}</div>
                             <div className="font-mono text-[10px] text-stone-400 mt-0.5">
-                              SKU: {prod.sku || `AUR-${prod.id.slice(-4)}`}
+                              SKU: {prod.sku || `SIN-${prod.id.slice(-4)}`}
                             </div>
                           </div>
                         </div>

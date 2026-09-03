@@ -1,4 +1,11 @@
 export type CategoryId = 
+  | 'sarees'
+  | 'shirts'
+  | 'kokani-tshirts'
+  | 'festive-wear'
+  | 'coastal-wear'
+  | 'maharashtra-heritage'
+  | 'curated-textiles'
   | 'men-apparel'
   | 'women-apparel'
   | 'outerwear-jackets'
@@ -10,15 +17,7 @@ export type CategoryId =
   | 'dresses-gowns'
   | 'shirts-tops'
   | 'denim-trousers'
-  | 'evening-wear'
-  | 'chargers-power'
-  | 'cases-protection'
-  | 'cables-hubs'
-  | 'audio-acoustics'
-  | 'wearables-straps'
-  | 'smart-accessories'
-  | 'car-accessories'
-  | 'lifestyle-gear';
+  | 'evening-wear';
 
 export interface CategoryInfo {
   id: CategoryId;
@@ -141,7 +140,7 @@ export interface Product {
   inStock: boolean;
   stockCount: number;
   lowStockThreshold?: number;
-  badge?: 'FLAGSHIP' | 'NEW' | 'BESTSELLER' | 'PRO DROP' | 'LIMITED' | 'HAUTE' | 'RUNWAY' | 'EXCLUSIVE' | 'ATELIER EXCLUSIVE';
+  badge?: 'FLAGSHIP' | 'NEW' | 'BESTSELLER' | 'PRO DROP' | 'LIMITED' | 'HAUTE' | 'RUNWAY' | 'EXCLUSIVE' | 'ATELIER EXCLUSIVE' | 'FESTIVE' | 'BRIDAL' | 'COTTON' | 'ARTISAN' | 'HEAVYWEIGHT' | 'SUPIMA' | 'ORGANIC' | 'ESSENTIAL' | string;
   status?: ProductStatus;
   sku: string;
   barcode?: string;
@@ -186,7 +185,28 @@ export interface Product {
   warehouseLocation?: string;
   questionsCount?: number;
   outfitPairings?: string[]; // IDs of items that complete this outfit
-  model3dUrl?: string; // Optional GLB/GLTF 3D asset URL for professional virtual fitting room
+  sareeLength?: string; // e.g. "6.3 meters (includes 0.8m running blouse piece)"
+  blousePiece?: string; // e.g. "Included (Unstitched Running Fabric with Zari Border)"
+  weaveType?: string; // e.g. "Paithani Motif Weave", "Karvati Kinara", "Narayan Peth Style"
+  borderDetail?: string; // e.g. "Antique Gold Zari Temple Border", "Muniya Border"
+  palluDetail?: string; // e.g. "Peacock & Floral Zari Motif Pallu"
+  originRegion?: string; // e.g. "Sindhudurg, Maharashtra"
+  collectionType?: string; // e.g. "Kokani Originals", "Konkan Coast", "Sindhudurg Stories", "Maharashtra Heritage"
+  collection?: string; // e.g. "Maharashtrian Sarees", "Paithani Collection", "Traditional Sarees", "Silk Sarees", "Cotton Sarees", "Festive Sarees", "Wedding Sarees", "Daily Wear Sarees", "Designer Sarees", "Printed Sarees", "Konkan Edit"
+  sareeType?: string; // e.g. "Paithani", "Banarasi", "Kanjivaram", "Chanderi", "Nauvari", "Narayan Peth", "Karvati Kinara", "Cotton", "Linen", "Designer"
+  shortDescription?: string;
+  fullDescription?: string;
+  packageContents?: string[];
+  keyFeatures?: string[];
+  hasHumanModelFlag?: boolean; // Flagged in admin system if image contains non-clothing elements
+  seoTitle?: string;
+  seoDescription?: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+  };
+  fabricGsm?: number; // e.g. 240 for heavyweight French Terry
 }
 
 export interface CartItem {

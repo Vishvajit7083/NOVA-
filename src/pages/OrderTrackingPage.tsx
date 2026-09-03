@@ -46,14 +46,14 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({
 
   const checkpoints = [
     {
-      title: 'Order Verified & Quality Inspected by Master Tailor',
-      location: 'AURELIA Bengaluru Atelier & Design Studio',
+      title: 'Order Verified & Quality Inspected by Master Craftsmen',
+      location: 'SINDHUDURG GARMENTS Sindhudurg Atelier & Weaving Studio',
       time: 'Yesterday, 02:40 PM',
       done: true,
     },
     {
-      title: 'Steam-Finished & Sealed in Archival Garment Box',
-      location: 'Bengaluru Fulfillment Facility',
+      title: 'Hand-Inspected & Sealed in Archival Keepsake Packaging',
+      location: 'Sindhudurg Heritage Fulfillment Hub',
       time: 'Yesterday, 08:15 PM',
       done: true,
     },

@@ -29,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       return;
     }
     setSubscribed(true);
-    showToast('Subscribed!', 'Welcome to the AURELIA Atelier. Your 10% code is ATELIER10.');
+    showToast('Subscribed!', 'Welcome to SINDHUDURG GARMENTS. Your 10% code is KONKAN10.');
     setNewsletterEmail('');
   };
 
@@ -91,24 +91,27 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand Col & Newsletter */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-serif font-bold tracking-[0.2em] text-white">
-                AURELIA & CO.
+              <span className="text-xl sm:text-2xl font-serif font-bold tracking-[0.14em] text-white">
+                SINDHUDURG GARMENTS
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+              <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A880]">
+                सिंधुदुर्ग • KONKAN
+              </span>
             </div>
             <p className="text-xs leading-relaxed text-[#8A8275] max-w-sm">
-              An international luxury fashion atelier creating architectural tailoring, pure silk slip dresses, Italian leather accessories, and bespoke contemporary garments with zero synthetic compromise.
+              Handcrafted in Sindhudurg, Maharashtra. Authentic Paithani & Chanderi sarees, artisanal Malvani linen shirts, and Konkan streetwear rooted in coastal heritage and cultural pride.
             </p>
 
             {/* Newsletter Form */}
             <div className="pt-2">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#E8E2D9] block mb-2">
-                Join the Haute Couture Circle
+                Join SINDHUDURG GARMENTS
               </span>
               {subscribed ? (
                 <div className="flex items-center space-x-2 text-xs text-[#9A7B38] bg-[#1A1A1A] border border-[#9A7B38]/30 p-3 rounded-xl">
                   <Check className="w-4 h-4" />
-                  <span>Welcome to the Atelier. Use code ATELIER10 for 10% off.</span>
+                  <span>Welcome to SINDHUDURG GARMENTS. Use code KONKAN10 for 10% off.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex max-w-sm">
@@ -211,13 +214,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom Copyright */}
         <div className="pt-8 mt-8 border-t border-[#2A2A2A] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A8275] gap-4">
           <div className="flex items-center space-x-2">
-            <span>© 2026 AURELIA & CO. Haute Couture & Luxury Fashion. All rights reserved.</span>
+            <span>© 2026 SINDHUDURG GARMENTS. Sindhudurg, Maharashtra, India. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-6 text-[11px]">
             <span>Currency: <strong className="text-white">INR (₹)</strong></span>
             <button
               onClick={() => {
+                sessionStorage.removeItem('sindhura_intro_shown');
                 sessionStorage.removeItem('aurelia_intro_shown');
+                window.dispatchEvent(new CustomEvent('sindhura:replay-intro'));
                 window.dispatchEvent(new CustomEvent('aurelia:replay-intro'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}

@@ -5,10 +5,10 @@ import {
   Sparkles,
   ChevronDown,
   Layers,
-  RotateCw,
   Eye,
   ShoppingBag,
   Compass,
+  Check,
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { useShop } from '../../context/ShopContext';
@@ -20,15 +20,15 @@ interface HeroSectionProps {
 type TrailerStage = 'light' | 'visual' | 'headline' | 'statement' | 'cta' | 'complete';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
-  const { open360Viewer, addToCanvas, isInCanvas, addToCart } = useShop();
+  const { addToCanvas, isInCanvas, addToCart } = useShop();
 
-  // Authentic flagship pieces from Aurelia's actual collection
+  // Authentic flagship pieces from Sindhudurg Garments's real Konkan collection
   const heroProducts = [
-    PRODUCTS.find((p) => p.id === 'nov-w-blazer-01') || PRODUCTS[0],
-    PRODUCTS.find((p) => p.id === 'nov-w-silk-dress-01') || PRODUCTS[1],
-    PRODUCTS.find((p) => p.id === 'nov-out-coat-01') || PRODUCTS[2],
-    PRODUCTS.find((p) => p.id === 'nov-m-trouser-01') || PRODUCTS[3],
-    PRODUCTS.find((p) => p.id === 'nov-m-oxford-01') || PRODUCTS[4],
+    PRODUCTS.find((p) => p.id === 'sindhudurg-saree-01') || PRODUCTS[0],
+    PRODUCTS.find((p) => p.id === 'sindhudurg-shirt-01') || PRODUCTS[1],
+    PRODUCTS.find((p) => p.id === 'sindhudurg-tee-01') || PRODUCTS[2],
+    PRODUCTS.find((p) => p.id === 'sindhudurg-saree-02') || PRODUCTS[3],
+    PRODUCTS.find((p) => p.id === 'sindhudurg-shirt-02') || PRODUCTS[4],
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -41,7 +41,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       if (typeof window === 'undefined') return 'complete';
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reducedMotion) return 'complete';
-      const shown = sessionStorage.getItem('aurelia_intro_shown');
+      const shown = sessionStorage.getItem('sindhudurg_intro_shown') || sessionStorage.getItem('sindhudurg_intro_shown');
       return shown ? 'complete' : 'light';
     } catch {
       return 'complete';
@@ -61,7 +61,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
     clearAllTimers();
     setStage('complete');
     try {
-      sessionStorage.setItem('aurelia_intro_shown', 'true');
+      sessionStorage.setItem('sindhudurg_intro_shown', 'true');
+      sessionStorage.setItem('sindhudurg_intro_shown', 'true');
     } catch {}
   }, [clearAllTimers]);
 
@@ -71,9 +72,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
     setStage('light');
 
     // Timeline:
-    // 0.0s - 2.6s: Phase 1 — Deep obsidian background & atmospheric light (visible through the parting cloth)
-    // 2.6s - 5.2s: Phase 2 — Main fashion visual reveals with slow zoom and campaign light/shadow sweep
-    // 5.2s - 7.6s: Phase 3 — Aurelia Haute Couture headline fades in moving upward
+    // 0.0s - 2.6s: Phase 1 — Deep obsidian background & atmospheric golden aura
+    // 2.6s - 5.2s: Phase 2 — Main fashion visual reveals with slow zoom and studio light sweep
+    // 5.2s - 7.6s: Phase 3 — SINDHUDURG GARMENTS headline and Devanagari script fades in moving upward
     // 7.6s - 10.0s: Phase 4 — Refined brand statement appears
     // 10.0s - 12.2s: Phase 5 — Primary EXPLORE COLLECTION CTA blooms with micro-animation
     // 12.2s+: Phase 6 — Full interactive steady state, carousel active
@@ -112,12 +113,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       completeTrailer();
     };
 
-    window.addEventListener('aurelia:replay-intro', handleReplay);
-    window.addEventListener('aurelia:skip-trailer', handleSkip);
+    window.addEventListener('sindhudurg:replay-intro', handleReplay);
+    window.addEventListener('sindhudurg:replay-intro', handleReplay);
+    window.addEventListener('sindhudurg:skip-trailer', handleSkip);
+    window.addEventListener('sindhudurg:skip-trailer', handleSkip);
 
     return () => {
-      window.removeEventListener('aurelia:replay-intro', handleReplay);
-      window.removeEventListener('aurelia:skip-trailer', handleSkip);
+      window.removeEventListener('sindhudurg:replay-intro', handleReplay);
+      window.removeEventListener('sindhudurg:replay-intro', handleReplay);
+      window.removeEventListener('sindhudurg:skip-trailer', handleSkip);
+      window.removeEventListener('sindhudurg:skip-trailer', handleSkip);
     };
   }, [startTrailerSequence, completeTrailer]);
 
@@ -148,7 +153,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
   };
 
   const scrollToStory = () => {
-    const el = document.getElementById('editorial-collections-section');
+    const el = document.getElementById('konkan-edit-section') || document.getElementById('editorial-collections-section');
     el?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -165,9 +170,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       ref={heroContainerRef}
       onMouseMove={handlePointerMove}
       className="relative min-h-[720px] lg:min-h-[88vh] bg-[#0A0A0A] text-[#F5F2EB] overflow-hidden flex flex-col justify-between border-b border-[#1A1A1A] select-none"
-      aria-label="Aurelia Haute Couture Autumn / Winter Runway Campaign"
+      aria-label="SINDHUDURG GARMENTS — Sindhudurg Konkan Premium Clothing Runway Campaign"
     >
-      {/* 1. ATMOSPHERIC LIGHT: Ambient golden aura breathing continuously (Continuous from Stage 1 cloth parting) */}
+      {/* 1. ATMOSPHERIC LIGHT: Ambient golden aura breathing continuously */}
       <div
         className="absolute top-1/3 right-1/4 w-[620px] h-[620px] bg-[#C5A880]/12 rounded-full blur-[160px] pointer-events-none animate-atmosphere-breathe"
         style={{
@@ -177,10 +182,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       />
       <div className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-[#141414]/60 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* Subtle film grain texture overlay for cinematic runway depth */}
+      {/* Subtle textile texture overlay */}
       <div className="absolute inset-0 opacity-[0.025] pointer-events-none bg-[radial-gradient(#C5A880_1px,transparent_1px)] [background-size:16px_16px]" />
 
-      {/* In-trailer quick skip control (active during Stage 2 reveal) */}
+      {/* In-trailer quick skip control */}
       {!isFullyComplete && (
         <div className="absolute top-4 right-6 z-30 pointer-events-auto">
           <button
@@ -200,9 +205,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       {/* ============================================================ */}
       <div className="hidden lg:flex max-w-7xl mx-auto px-8 lg:px-12 pt-16 pb-10 w-full relative z-10 flex-1 items-center">
         <div className="grid grid-cols-12 gap-12 xl:gap-16 items-center w-full">
-          {/* Left Column: Haute Couture Narrative & Actions (7 columns) */}
+          {/* Left Column: SINDHUDURG GARMENTS Narrative & Actions (7 columns) */}
           <div className="col-span-7 space-y-6 text-left">
-            {/* Atelier Capsule Badge */}
+            {/* Konkan Provenance Badge */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: isHeadlineVisible ? 1 : 0, y: isHeadlineVisible ? 0 : 10 }}
@@ -211,15 +216,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
             >
               <span className="w-2 h-2 rounded-full bg-[#C5A880] animate-pulse" />
               <span className="text-[#C5A880] font-mono font-medium uppercase tracking-[0.25em] text-[10px]">
-                {current.badge || 'AUTUMN / WINTER ATELIER'}
+                {current.badge || 'HERITAGE KONKAN COLLECTION'}
               </span>
               <span className="text-[#444]">•</span>
               <span className="text-[#A0988A] uppercase tracking-widest text-[10px] font-mono">
-                MAISON NO. 26 • MILANO / PARIS
+                सिंधुदुर्ग • कोकण • महाराष्ट्र
               </span>
             </motion.div>
 
-            {/* 3. HEADLINE: Aurelia Haute Couture with upward fade-in */}
+            {/* 3. HEADLINE: SINDHUDURG GARMENTS with upward fade-in */}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: isHeadlineVisible ? 1 : 0, y: isHeadlineVisible ? 0 : 18 }}
@@ -227,11 +232,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               className="space-y-3"
             >
               <div className="text-[11px] font-mono uppercase tracking-[0.42em] text-[#C5A880] font-medium">
-                Haute Couture Runway Showcase
+                Konkan Roots • Maharashtra Soul
               </div>
 
-              <h1 className="text-5xl xl:text-6xl font-serif tracking-tight text-[#F5F2EB] leading-[1.06]">
-                Aurelia Haute Couture
+              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-serif tracking-tight text-[#F5F2EB] leading-[1.06]">
+                SINDHUDURG GARMENTS
               </h1>
 
               {/* Active Curated Garment Name */}
@@ -249,7 +254,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               </AnimatePresence>
             </motion.div>
 
-            {/* 4. BRAND STATEMENT: Refined poetic couture manifesto */}
+            {/* 4. BRAND STATEMENT: Refined poetic manifesto */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: isStatementVisible ? 1 : 0, y: isStatementVisible ? 0 : 14 }}
@@ -259,13 +264,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-0.5 bg-[#C5A880]" />
                 <span className="text-[11px] uppercase tracking-[0.24em] text-[#C5A880] font-mono font-medium">
-                  {current.fabric || 'Super 120s Virgin Wool & Pure Mulberry Silk'}
+                  {current.fabric || 'Pure Paithani Silk with Tested Gold Zari'}
                 </span>
               </div>
 
               <p className="text-[#A0988A] text-base font-normal max-w-xl leading-relaxed">
-                Sculpted silhouettes born from Italian looms and Parisian ateliers. Where classical
-                draping meets timeless modern poise.
+                Handcrafted sarees, authentic linen and khadi shirts, and graphic street apparel rooted in the coastal heritage of Sindhudurg. Designed with deep cultural reverence and modern architectural poise.
               </p>
             </motion.div>
 
@@ -295,9 +299,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               <div className="h-5 w-px bg-[#262626]" />
 
               <div className="flex items-center space-x-2 text-xs text-[#999285]">
-                <span className="font-mono text-[#C5A880]">ATELIER:</span>
+                <span className="font-mono text-[#C5A880]">ORIGIN:</span>
                 <span>
-                  {current.stockCount ? `${current.stockCount} Pieces Available` : 'Small Batch Tailoring'}
+                  {current.originRegion || 'Sindhudurg Atelier'}
                 </span>
               </div>
             </motion.div>
@@ -320,20 +324,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                 type="button"
                 className="group relative px-8 py-4 bg-[#C5A880] hover:bg-[#D4AF37] text-black text-xs font-serif font-bold tracking-[0.2em] uppercase rounded-xl transition-all shadow-[0_0_28px_rgba(197,168,128,0.22)] hover:shadow-[0_0_38px_rgba(197,168,128,0.4)] flex items-center space-x-3 cursor-pointer overflow-hidden active:scale-95"
               >
-                {/* Sophisticated micro-shimmer glint moving across button */}
                 <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
                   <div className="w-12 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-25 animate-cta-glint" />
                 </div>
 
                 <Compass className="w-4 h-4 text-black group-hover:rotate-45 transition-transform duration-300" />
-                <span>EXPLORE COLLECTION</span>
+                <span>EXPLORE SINDHUDURG GARMENTS</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               {/* Inspect Piece Button */}
               <button
                 id="hero-view-garment-btn"
-                onClick={() => onNavigate('product', { id: current.id })}
+                onClick={() => onNavigate('product-detail', { productId: current.id })}
                 type="button"
                 className="px-6 py-4 bg-[#141414] hover:bg-[#1E1E1E] border border-[#2A2A2A] hover:border-[#C5A880]/60 text-[#F5F2EB] text-xs font-serif tracking-widest uppercase rounded-xl transition-all flex items-center space-x-2.5 cursor-pointer shadow-sm active:scale-95"
               >
@@ -356,16 +359,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                 <span>{onCanvas ? 'Collected' : 'Collect to Canvas'}</span>
               </button>
 
-              {/* 360 Studio */}
+              {/* Quick Add to Cart */}
               <button
-                id="hero-360-view-btn"
-                onClick={() => open360Viewer(current)}
+                id="hero-quick-add-btn"
+                onClick={() => addToCart(current)}
                 type="button"
-                className="px-4 py-4 rounded-xl bg-[#141414] hover:bg-[#1E1E1E] border border-[#2A2A2A] text-[#999285] hover:text-[#F5F2EB] text-xs font-mono tracking-wider uppercase transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
-                title="Open 360 Studio"
+                className="px-5 py-4 rounded-xl bg-[#141414] hover:bg-[#1E1E1E] border border-[#2A2A2A] text-[#999285] hover:text-[#F5F2EB] text-xs font-mono tracking-wider uppercase transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
+                title="Add to Shopping Bag"
               >
-                <RotateCw className="w-3.5 h-3.5 text-[#C5A880]" />
-                <span>360° Studio</span>
+                <ShoppingBag className="w-3.5 h-3.5 text-[#C5A880]" />
+                <span>Add to Bag</span>
               </button>
             </motion.div>
 
@@ -377,21 +380,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               className="pt-6 border-t border-[#1C1C1C] grid grid-cols-3 gap-6 max-w-lg text-[11px]"
             >
               <div>
-                <span className="text-[10px] font-mono uppercase text-[#777] block">Provenance</span>
+                <span className="text-[10px] font-mono uppercase text-[#777] block">Origin</span>
                 <span className="font-serif font-medium text-[#D8D2C5] mt-0.5 block truncate">
-                  {current.countryOfOrigin || 'Milan & Biella Mills'}
+                  {current.originRegion || 'Sindhudurg, Konkan'}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] font-mono uppercase text-[#777] block">Fit Silhouette</span>
+                <span className="text-[10px] font-mono uppercase text-[#777] block">Weave / Knit</span>
                 <span className="font-serif font-medium text-[#D8D2C5] mt-0.5 block truncate">
-                  {current.fit || 'Sculpted Regular'}
+                  {current.weaveType || 'Paithani Zari Jacquard'}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] font-mono uppercase text-[#777] block">Seam Precision</span>
+                <span className="text-[10px] font-mono uppercase text-[#777] block">Craft Standard</span>
                 <span className="font-serif font-medium text-[#D8D2C5] mt-0.5 block truncate">
-                  Hand-Finished Stitch
+                  Hand-Inspected Heritage
                 </span>
               </div>
             </motion.div>
@@ -430,7 +433,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                   className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-[#242424] bg-[#141414] group"
                 >
-                  {/* High Resolution Couture Photography with subtle slow zoom */}
+                  {/* High Resolution Studio Photography with subtle slow zoom */}
                   <img
                     src={current.images[0]}
                     alt={current.name}
@@ -447,9 +450,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                     />
                   )}
 
-                  {/* CAMPAIGN STUDIO KEY-LIGHT / MOVING SHADOW SWEEP */}
+                  {/* STUDIO KEY-LIGHT / MOVING SHADOW SWEEP */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-                    {/* Sweeping Diffused Key-Light Beam */}
                     <div
                       className="absolute -inset-full w-[300%] h-[300%] pointer-events-none mix-blend-soft-light animate-studio-light-sweep"
                       style={{
@@ -457,7 +459,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                           'linear-gradient(115deg, transparent 32%, rgba(255,245,230,0.42) 48%, rgba(197,168,128,0.5) 52%, transparent 68%)',
                       }}
                     />
-                    {/* Studio Flag Shadow Vignette */}
                     <div
                       className="absolute inset-0 pointer-events-none opacity-50 mix-blend-multiply"
                       style={{
@@ -467,10 +468,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                     />
                   </div>
 
-                  {/* Floating Atelier Cut Pill */}
+                  {/* Floating Garment Origin Pill */}
                   <div className="absolute top-4 right-4 z-20">
                     <span className="px-3 py-1 rounded-full text-[9px] font-mono uppercase tracking-widest bg-black/85 text-[#C5A880] border border-[#C5A880]/40 backdrop-blur-md shadow-md">
-                      Atelier Cut #{activeIndex + 1}
+                      Sindhudurg Garments #{activeIndex + 1}
                     </span>
                   </div>
 
@@ -496,7 +497,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Runway Carousel Indicators */}
+              {/* Carousel Indicators */}
               <div className="flex items-center justify-center space-x-2 mt-6">
                 {heroProducts.map((p, idx) => (
                   <button
@@ -520,7 +521,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       {/* MOBILE RECOMPOSED PORTRAIT VIEWING (< lg)                    */}
       {/* ============================================================ */}
       <div className="flex lg:hidden flex-col justify-center px-5 sm:px-8 pt-8 pb-10 w-full relative z-10 flex-1">
-        {/* Top Maison Capsule */}
+        {/* Top Capsule */}
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: isHeadlineVisible ? 1 : 0, y: isHeadlineVisible ? 0 : -6 }}
@@ -530,7 +531,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           <div className="inline-flex items-center space-x-2.5 bg-[#121212] border border-[#262626] px-3.5 py-1 rounded-full shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
             <span className="text-[#C5A880] font-mono font-medium uppercase tracking-[0.2em] text-[10px]">
-              AURELIA MAISON NO. 26
+              सिंधुरा • सिंधुदुर्ग
             </span>
           </div>
         </motion.div>
@@ -552,7 +553,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               className="w-full h-full object-cover object-center"
             />
 
-            {/* Campaign Studio Light & Shadow Sweep */}
+            {/* Studio Light & Shadow Sweep */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               <div
                 className="absolute -inset-full w-[300%] h-[300%] pointer-events-none mix-blend-soft-light animate-studio-light-sweep"
@@ -570,7 +571,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               />
             </div>
 
-            {/* Atelier Cut Pill */}
+            {/* Origin Pill */}
             <div className="absolute top-3 right-3 z-10">
               <span className="px-2.5 py-1 rounded-full text-[9px] font-mono uppercase tracking-widest bg-black/85 text-[#C5A880] border border-[#C5A880]/30 backdrop-blur-xs">
                 Piece {activeIndex + 1}/5
@@ -593,7 +594,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           </div>
         </motion.div>
 
-        {/* 3. MOBILE HEADLINE: Aurelia Haute Couture */}
+        {/* 3. MOBILE HEADLINE: SINDHUDURG GARMENTS */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: isHeadlineVisible ? 1 : 0, y: isHeadlineVisible ? 0 : 14 }}
@@ -601,10 +602,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           className="text-center space-y-1.5 mb-3"
         >
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#C5A880]">
-            Haute Couture Atelier
+            Konkan Heritage Clothing
           </div>
           <h1 className="text-3xl sm:text-4xl font-serif tracking-tight text-[#F5F2EB] leading-tight">
-            Aurelia Haute Couture
+            SINDHUDURG GARMENTS
           </h1>
           <p className="text-base font-serif text-[#C5A880] font-light">{current.name}</p>
         </motion.div>
@@ -617,8 +618,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           className="text-center max-w-sm mx-auto mb-4"
         >
           <p className="text-xs sm:text-sm text-[#999285] leading-relaxed">
-            Sculpted silhouettes born from Italian looms and Parisian ateliers. Where classical
-            draping meets timeless modern poise.
+            Authentic Maharashtrian sarees, handcrafted shirts, and graphic street apparel rooted in the coastal heritage of Sindhudurg.
           </p>
 
           <div className="mt-2.5 flex items-center justify-center space-x-3 text-sm font-serif font-bold text-[#F5F2EB]">
@@ -653,7 +653,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               <div className="w-12 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-25 animate-cta-glint" />
             </div>
             <Compass className="w-4 h-4 text-black" />
-            <span>EXPLORE COLLECTION</span>
+            <span>EXPLORE SINDHUDURG GARMENTS</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
@@ -668,12 +668,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               <span>Inspect Piece</span>
             </button>
             <button
-              onClick={() => open360Viewer(current)}
+              onClick={() => addToCart(current)}
               type="button"
-              className="py-3 bg-[#141414] border border-[#282828] text-[#999285] text-[11px] font-mono tracking-wider uppercase rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer"
+              className="py-3 bg-[#141414] border border-[#282828] text-[#C5A880] text-[11px] font-mono tracking-wider uppercase rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer"
             >
-              <RotateCw className="w-3.5 h-3.5 text-[#C5A880]" />
-              <span>360° View</span>
+              <ShoppingBag className="w-3.5 h-3.5 text-[#C5A880]" />
+              <span>Add to Bag</span>
             </button>
           </div>
         </motion.div>
@@ -683,11 +683,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       <div className="relative z-10 border-t border-[#161616] py-3.5 px-6 flex items-center justify-between text-xs text-[#777] bg-[#0C0C0C]">
         <div className="flex items-center space-x-4">
           <span className="font-mono text-[11px] text-[#C5A880] uppercase tracking-widest">
-            AURELIA MAISON NO. 26
+            सिंधुरा • SINDHUDURG GARMENTS SINDHUDURG
           </span>
           <span className="hidden md:inline text-[#333]">•</span>
           <span className="hidden md:inline text-[11px]">
-            Complimentary White-Glove Insured Delivery Across India
+            Complimentary Insured Delivery Across India & Worldwide
           </span>
         </div>
 
@@ -696,7 +696,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           type="button"
           className="inline-flex items-center space-x-1.5 text-[11px] font-mono uppercase tracking-wider text-[#A0988A] hover:text-[#F5F2EB] transition-colors cursor-pointer"
         >
-          <span>Scroll to Unfold Atelier Story</span>
+          <span>Explore Konkan Textile Story</span>
           <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
         </button>
       </div>

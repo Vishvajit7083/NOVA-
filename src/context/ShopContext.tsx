@@ -92,7 +92,6 @@ interface ShopContextType {
   authModalMode: 'signin' | 'signup' | 'forgot';
   quickViewProduct: Product | null;
   imageViewerData: { images: string[]; initialIndex: number } | null;
-  viewer360Product: Product | null;
   toast: ToastData | null;
   reducedMotion: boolean;
   largeText: boolean;
@@ -215,8 +214,6 @@ interface ShopContextType {
   closeQuickView: () => void;
   openImageViewer: (images: string[], initialIndex?: number) => void;
   closeImageViewer: () => void;
-  open360Viewer: (product: Product) => void;
-  close360Viewer: () => void;
   showToast: (title: string, message: string, type?: 'success' | 'info' | 'error') => void;
   hideToast: () => void;
 
@@ -276,7 +273,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fashion Canvas (Personal Digital Wardrobe)
   const [fashionCanvas, setFashionCanvas] = useState<FashionCanvasItem[]>(() => {
     try {
-      const saved = localStorage.getItem('aurelia_fashion_canvas');
+      const saved = localStorage.getItem('sindhudurg_fashion_canvas');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -287,7 +284,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     try {
-      localStorage.setItem('aurelia_fashion_canvas', JSON.stringify(fashionCanvas));
+      localStorage.setItem('sindhudurg_fashion_canvas', JSON.stringify(fashionCanvas));
     } catch (e) {
       console.error(e);
     }
@@ -319,15 +316,15 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [imageViewerData, setImageViewerData] = useState<{ images: string[]; initialIndex: number } | null>(null);
-  const [viewer360Product, setViewer360Product] = useState<Product | null>(null);
   const [toast, setToast] = useState<ToastData | null>(null);
 
   // Discovery History
   const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([
-    'Mulberry Silk Evening Gown',
-    'Double-Breasted Wool Coat',
-    'Tuscan Leather Tote',
+    'Paithani Silk Saree',
+    'Malvani Khadi Shirt',
+    'Sindhudurg Kokani Graphic Tee',
+    'Konkan Chanderi Zari',
   ]);
 
   // Accessibility
@@ -814,10 +811,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initialTracking: OrderTrackingEvent[] = [
       {
         status: 'placed',
-        title: 'Couture Order Confirmed',
-        location: 'AURELIA Central Atelier',
+        title: 'Order Confirmed',
+        location: 'SINDHUDURG GARMENTS Sindhudurg Atelier',
         timestamp: 'Just now',
-        description: 'Payment authorized. Garment reserved for master tailor inspection.',
+        description: 'Payment authorized. Garment reserved for artisan quality inspection.',
         completed: true,
         current: true,
       },
@@ -965,7 +962,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const prod = products.find((p) => p.id === productId);
     const res = await submitReviewToDB({
       productId,
-      productName: prod?.name || 'AURELIA Couture Piece',
+      productName: prod?.name || 'SINDHUDURG GARMENTS Garment',
       author: currentUser.name,
       authorUid: currentUser.id,
       authorEmail: currentUser.email,
@@ -1010,7 +1007,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await updateProfile(cred.user, { displayName: name.trim() });
       }
       setIsAuthModalOpen(false);
-      showToast('Account Created', `Welcome to AURELIA & CO. Haute Couture, ${name}!`);
+      showToast('Account Created', `Welcome to SINDHUDURG GARMENTS, ${name}!`);
       return { success: true };
     } catch (error: any) {
       console.error('Email registration error:', error);
@@ -1228,7 +1225,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     const res = await registerSellerInDB(sellerData);
     if (res.success) {
-      showToast('Partner Store Created', 'Welcome to AURELIA Designer Consignment Hub!');
+      showToast('Partner Store Created', 'Welcome to SINDHUDURG GARMENTS Artisan Collective!');
       await refreshSellerProfile();
       if (currentUser) {
         setCurrentUser({ ...currentUser, role: 'seller', sellerId: res.sellerId });
@@ -1270,9 +1267,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   const closeImageViewer = () => setImageViewerData(null);
 
-  const open360Viewer = (product: Product) => setViewer360Product(product);
-  const close360Viewer = () => setViewer360Product(null);
-
   const addRecentSearch = (query: string) => {
     if (!query.trim()) return;
     setRecentSearches((prev) => [query, ...prev.filter((q) => q !== query)].slice(0, 8));
@@ -1307,7 +1301,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         authModalMode,
         quickViewProduct,
         imageViewerData,
-        viewer360Product,
         toast,
         reducedMotion,
         largeText,
@@ -1411,8 +1404,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeQuickView,
         openImageViewer,
         closeImageViewer,
-        open360Viewer,
-        close360Viewer,
         showToast,
         hideToast,
 

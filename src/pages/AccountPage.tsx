@@ -235,7 +235,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
           key: data.keyId,
           amount: data.amount,
           currency: data.currency || 'INR',
-          name: 'AURELIA & CO. Haute Couture',
+          name: 'SINDHUDURG GARMENTS — Sindhudurg Konkan Clothing',
           description: `Payment for Order ${order.orderNumber || order.id}`,
           order_id: data.razorpayOrderId,
           prefill: {
@@ -365,7 +365,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
               className="p-3 bg-[#181818] hover:bg-[#222222] border border-[#2A2A2A] rounded-full text-[#F5F2EB] font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
             >
               <Store className="w-4 h-4 text-[#C5A880]" />
-              <span>{isSeller ? 'Designer Studio' : 'Partner with AURELIA'}</span>
+              <span>{isSeller ? 'Artisan Studio' : 'Partner with SINDHUDURG GARMENTS'}</span>
             </button>
 
             <div className="p-3 bg-[#181818] border border-[#2A2A2A] rounded-full flex items-center space-x-2.5 px-4">

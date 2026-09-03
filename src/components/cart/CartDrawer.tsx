@@ -31,6 +31,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
     appliedCoupon,
     applyCoupon,
     removeCoupon,
+    currentUser,
+    setIsAuthModalOpen,
+    setAuthModalMode,
   } = useShop();
 
   const [couponInput, setCouponInput] = useState('');
@@ -48,7 +51,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
 
   if (!isCartOpen) return null;
 
-  const freeShippingThreshold = 2500;
+  const freeShippingThreshold = 1999;
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
   const freeShippingProgress = Math.min(100, (cartSubtotal / freeShippingThreshold) * 100);
 
@@ -63,6 +66,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
 
   const handleProceedToCheckout = () => {
     setIsCartOpen(false);
+    if (!currentUser) {
+      setAuthModalMode('signin');
+      setIsAuthModalOpen(true);
+    }
     onNavigate('checkout');
   };
 
@@ -82,7 +89,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
             <div className="flex items-center space-x-2.5">
               <ShoppingBag className="w-5 h-5 text-[#9A7B38]" />
               <h2 className="text-base font-serif font-bold text-stone-900">
-                Atelier Shopping Bag ({cart.reduce((s, i) => s + i.quantity, 0)})
+                Shopping Bag ({cart.reduce((s, i) => s + i.quantity, 0)})
               </h2>
             </div>
             <button
@@ -101,7 +108,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                 <span>
                   {remainingForFreeShipping > 0
                     ? `Add ₹${remainingForFreeShipping.toLocaleString('en-IN')} for Free Insured Courier`
-                    : '✨ Complimentary Insured Courier Unlocked!'}
+                    : '✨ Complimentary Insured Delivery Unlocked!'}
                 </span>
               </span>
               <span className="text-[11px] font-mono text-stone-500">
@@ -125,7 +132,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                 </div>
                 <h4 className="text-base font-serif font-bold text-stone-900">Your shopping bag is empty</h4>
                 <p className="text-xs text-stone-500 max-w-xs font-normal">
-                  Explore tailored silhouettes, Italian wool outerwear, and pure mulberry silk accessories.
+                  Explore pure Paithani silk sarees, coastal linen shirts, and heavyweight Kokani t-shirts.
                 </p>
                 <button
                   onClick={() => {
@@ -207,7 +214,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                   <div className="flex items-center space-x-1.5 font-medium">
                     <Tag className="w-3.5 h-3.5 text-[#9A7B38]" />
                     <span>
-                      Privilege Code <strong>{appliedCoupon.code}</strong> Applied ({appliedCoupon.discountPercent}% Off)
+                      Coupon Code <strong>{appliedCoupon.code}</strong> Applied ({appliedCoupon.discountPercent}% Off)
                     </span>
                   </div>
                   <button onClick={removeCoupon} className="text-stone-400 hover:text-stone-800 cursor-pointer">
@@ -220,7 +227,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                     type="text"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    placeholder="Enter Invitation Code (e.g. ATELIER10)"
+                    placeholder="Enter Coupon Code (e.g. SINDHUDURG10)"
                     className="flex-1 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl px-3 py-2 text-xs text-stone-900 uppercase placeholder-stone-400 focus:outline-none focus:border-[#9A7B38]"
                   />
                   <button
@@ -240,18 +247,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                 </div>
                 {cartDiscount > 0 && (
                   <div className="flex justify-between text-[#9A7B38] font-medium">
-                    <span>Privilege Savings</span>
+                    <span>Coupon Savings</span>
                     <span>-₹{cartDiscount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>Insured Express Courier</span>
+                  <span>Insured Delivery</span>
                   <span className="text-[#9A7B38] font-bold">
                     {cartShippingFee === 0 ? 'COMPLIMENTARY' : `₹${cartShippingFee}`}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-[#EAE4D8] flex justify-between text-base font-serif font-bold text-stone-900">
-                  <span>Estimated Total</span>
+                  <span>Total Amount</span>
                   <span className="text-[#9A7B38]">
                     ₹{cartTotal.toLocaleString('en-IN')}
                   </span>
@@ -264,13 +271,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                 onClick={handleProceedToCheckout}
                 className="w-full py-4 bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-widest rounded-full shadow-md flex items-center justify-center space-x-2 transition-all cursor-pointer"
               >
-                <span>Proceed to Atelier Checkout</span>
+                <span>Proceed to Secure Checkout</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <div className="text-[10px] text-stone-500 text-center flex items-center justify-center space-x-2">
                 <Scissors className="w-3.5 h-3.5 text-[#9A7B38]" />
-                <span>1-Year Atelier Guarantee • 14-Day Doorstep Size Exchange</span>
+                <span>Authentic Quality Guarantee • 14-Day Doorstep Size Exchange</span>
               </div>
             </div>
           )}

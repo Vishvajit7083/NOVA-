@@ -15,7 +15,11 @@ import {
 import { useShop } from '../../context/ShopContext';
 import { ADMIN_EMAIL } from '../../lib/firebase';
 
-export const AuthModal: React.FC = () => {
+interface AuthModalProps {
+  onNavigate?: (view: string, params?: any) => void;
+}
+
+export const AuthModal: React.FC<AuthModalProps> = ({ onNavigate }) => {
   const {
     isAuthModalOpen,
     setIsAuthModalOpen,
@@ -145,14 +149,14 @@ export const AuthModal: React.FC = () => {
             <Sparkles className="w-5 h-5" />
           </div>
           <h2 className="text-2xl font-serif font-bold text-stone-950 tracking-tight">
-            {authModalMode === 'signin' && 'Sign In to AURELIA'}
-            {authModalMode === 'signup' && 'Create Atelier Client Profile'}
-            {authModalMode === 'forgot' && 'Reset Atelier Password'}
+            {authModalMode === 'signin' && 'Sign In to SINDHUDURG GARMENTS'}
+            {authModalMode === 'signup' && 'Create Your Customer Account'}
+            {authModalMode === 'forgot' && 'Reset Password'}
           </h2>
           <p className="text-xs text-stone-500 mt-1 max-w-xs mx-auto font-normal">
-            {authModalMode === 'signin' && 'Access your couture orders, bespoke fitting records, and Privilege balance.'}
-            {authModalMode === 'signup' && 'Indulge in haute couture to unlock 500 welcome Privilege Credits.'}
-            {authModalMode === 'forgot' && 'Enter your client email and we will send a secure password recovery link.'}
+            {authModalMode === 'signin' && 'Access your orders, saved addresses, and secure checkout.'}
+            {authModalMode === 'signup' && 'Register to track orders, save delivery addresses, and enjoy faster checkout.'}
+            {authModalMode === 'forgot' && 'Enter your registered email and we will send a password reset link.'}
           </p>
         </div>
 
@@ -179,7 +183,7 @@ export const AuthModal: React.FC = () => {
           {authModalMode === 'signup' && (
             <div>
               <label className="block text-[11px] font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
-                Client Name
+                Full Name
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -190,7 +194,7 @@ export const AuthModal: React.FC = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Elena Rostova"
+                  placeholder="e.g. Vikram Sharma"
                   className="w-full pl-10 pr-4 py-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]/30 focus:border-[#9A7B38] transition-all"
                 />
               </div>
@@ -210,7 +214,7 @@ export const AuthModal: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="client@aurelia.couture"
+                placeholder="you@example.com"
                 className="w-full pl-10 pr-4 py-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]/30 focus:border-[#9A7B38] transition-all"
               />
             </div>
@@ -267,7 +271,7 @@ export const AuthModal: React.FC = () => {
               <>
                 <span>
                   {authModalMode === 'signin' && 'Sign In'}
-                  {authModalMode === 'signup' && 'Create Atelier Profile'}
+                  {authModalMode === 'signup' && 'Create Account'}
                   {authModalMode === 'forgot' && 'Send Recovery Link'}
                 </span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -322,20 +326,20 @@ export const AuthModal: React.FC = () => {
         <div className="mt-6 pt-4 border-t border-[#EAE4D8] text-center text-xs text-stone-500">
           {authModalMode === 'signin' && (
             <p>
-              New to AURELIA?{' '}
+              New to SINDHUDURG GARMENTS?{' '}
               <button
                 type="button"
                 onClick={() => handleModeSwitch('signup')}
                 className="font-bold text-stone-950 hover:text-[#9A7B38] transition-colors underline"
               >
-                Register client profile
+                Create an account
               </button>
             </p>
           )}
 
           {authModalMode === 'signup' && (
             <p>
-              Already registered?{' '}
+              Already have an account?{' '}
               <button
                 type="button"
                 onClick={() => handleModeSwitch('signin')}
@@ -361,7 +365,7 @@ export const AuthModal: React.FC = () => {
         <div className="mt-4 pt-3 border-t border-dashed border-[#EAE4D8] flex items-center justify-between text-[11px] text-stone-400">
           <span className="flex items-center space-x-1">
             <KeyRound className="w-3 h-3 text-[#9A7B38]" />
-            <span>Maison Admin:</span>
+            <span>Store Admin Demo:</span>
           </span>
           <button
             type="button"

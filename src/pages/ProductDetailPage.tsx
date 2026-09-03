@@ -49,7 +49,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     toggleComparison,
     isInComparison,
     openImageViewer,
-    open360Viewer,
     showToast,
     setIsCartOpen,
     addToCanvas,
@@ -208,7 +207,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-xs text-[#8C867B] font-mono">
           <button onClick={() => onNavigate('home')} className="hover:text-white cursor-pointer transition-colors">
-            Atelier
+            Home
           </button>
           <ChevronRight className="w-3 h-3 text-[#444]" />
           <button onClick={() => onNavigate('shop')} className="hover:text-white cursor-pointer transition-colors">
@@ -238,20 +237,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
           <div className="flex items-center space-x-1.5 flex-wrap">
             {[
-              { id: 'standard', label: 'Lookbook Spec' },
-              { id: 'editorial', label: 'Runway Drama' },
-              { id: 'macro', label: 'Macro Weave' },
-              { id: 'studio360', label: '360° Turntable' },
+              { id: 'standard', label: 'Lookbook View' },
+              { id: 'editorial', label: 'Editorial Drape' },
+              { id: 'macro', label: 'Macro Weave & Texture' },
             ].map((view) => (
               <button
                 key={view.id}
-                onClick={() => {
-                  if (view.id === 'studio360') {
-                    open360Viewer(product);
-                  } else {
-                    setPerspective(view.id as any);
-                  }
-                }}
+                onClick={() => setPerspective(view.id as any)}
                 className={`px-3 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
                   perspective === view.id
                     ? 'bg-[#C5A880] text-black font-bold shadow-md'
@@ -286,13 +278,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               {perspective === 'editorial' && (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-6 sm:p-8 flex flex-col justify-end text-left pointer-events-none">
                   <span className="text-[10px] font-mono text-[#C5A880] uppercase tracking-widest">
-                    Runway Direction • Autumn / Winter
+                    Authentic Handcraft • Maharashtra Heritage
                   </span>
                   <p className="text-xl sm:text-2xl font-serif text-[#F5F2EB] italic mt-1 leading-snug">
                     "{product.tagline || 'Sculptural elegance engineered for effortless natural drape.'}"
                   </p>
                   <p className="text-xs text-[#A0988A] mt-2 font-mono">
-                    Fabric: {product.fabric || product.material} • Made in {product.countryOfOrigin || 'Italy'}
+                    Fabric: {product.fabric || product.material} • Handcrafted in {product.countryOfOrigin || 'Sindhudurg, Maharashtra, India'}
                   </p>
                 </div>
               )}
@@ -311,23 +303,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 )}
               </div>
 
-              {/* Gallery Zoom & 360 Studio Buttons */}
+              {/* Gallery High-Res Inspection Button */}
               <div className="absolute bottom-4 right-4 flex items-center space-x-2">
                 <button
-                  onClick={() => open360Viewer(product)}
-                  className="px-3.5 py-2 rounded-full bg-black/85 hover:bg-[#C5A880] hover:text-black border border-[#222222] backdrop-blur-md text-stone-200 text-xs font-serif font-bold tracking-wider flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
-                  title="Runway 360° View"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
-                  <span>360° Studio</span>
-                </button>
-
-                <button
                   onClick={() => openImageViewer(product.images, selectedImageIdx)}
-                  className="p-2 rounded-full bg-black/85 hover:bg-[#C5A880] hover:text-black border border-[#222222] backdrop-blur-md text-stone-200 transition-all shadow-md cursor-pointer"
-                  title="High-Res Inspection"
+                  className="px-3.5 py-2 rounded-full bg-black/85 hover:bg-[#C5A880] hover:text-black border border-[#222222] backdrop-blur-md text-stone-200 text-xs font-serif font-bold tracking-wider flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
+                  title="High-Res Fabric Inspection"
                 >
-                  <Maximize2 className="w-4 h-4" />
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>Inspect Fabric</span>
                 </button>
               </div>
             </div>
@@ -511,6 +495,53 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </div>
             )}
 
+            {/* Authentic Konkan & Textile Provenance Card */}
+            <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626] space-y-2.5">
+              <div className="flex items-center justify-between text-xs font-serif font-bold uppercase tracking-wider text-[#C5A880]">
+                <span>Provenance & Textile Architecture</span>
+                <span className="text-[10px] font-mono font-normal text-[#8C867B]">{product.originRegion || 'Sindhudurg, Maharashtra'}</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {product.sareeLength && (
+                  <div className="p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Saree Length</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.sareeLength}</span>
+                  </div>
+                )}
+                {product.blousePiece && (
+                  <div className="p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Blouse Piece</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.blousePiece}</span>
+                  </div>
+                )}
+                {product.weaveType && (
+                  <div className="p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Weave / Knit</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.weaveType}</span>
+                  </div>
+                )}
+                {product.fabricGsm && (
+                  <div className="p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Fabric Weight</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.fabricGsm}</span>
+                  </div>
+                )}
+                {product.borderDetail && (
+                  <div className="col-span-2 p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Zari & Border Architecture</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.borderDetail}</span>
+                  </div>
+                )}
+                {product.palluDetail && (
+                  <div className="col-span-2 p-2.5 rounded-xl bg-[#0D0D0D] border border-[#1F1F1F]">
+                    <span className="text-[10px] uppercase font-mono text-[#8C867B] block">Pallu Craftsmanship</span>
+                    <span className="font-medium text-[#F5F2EB]">{product.palluDetail}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Quantity Stepper, Add to Bag & Fashion Canvas Controls */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center space-x-3">
@@ -572,7 +603,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="p-4 rounded-2xl bg-[#121212] border border-[#222222] space-y-3">
               <div className="flex items-center space-x-2 text-xs font-serif font-bold uppercase tracking-wider text-[#A0988A]">
                 <MapPin className="w-3.5 h-3.5 text-[#C5A880]" />
-                <span>Estimate White-Glove Atelier Delivery</span>
+                <span>Estimate Express Doorstep Delivery</span>
               </div>
 
               <form onSubmit={handlePincodeCheck} className="flex space-x-2">
@@ -599,7 +630,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <span>Complimentary Express Delivery to {deliveryResult.city}</span>
                   </div>
                   <p className="text-[#8C867B] text-[11px]">
-                    Expected delivery by <strong className="text-white">{deliveryResult.deliveryDate}</strong> with bespoke garment packaging.
+                    Expected delivery by <strong className="text-white">{deliveryResult.deliveryDate}</strong> with secure tamper-evident packaging.
                   </p>
                 </div>
               )}
@@ -630,11 +661,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         <div className="pt-10 border-t border-[#1C1C1C]">
           <div className="flex items-center space-x-4 border-b border-[#222222] overflow-x-auto no-scrollbar">
             {[
-              { id: 'specs', label: 'Sartorial Specifications' },
-              { id: 'reviews', label: `Client Reviews (${product.reviewCount})` },
-              { id: 'qa', label: 'Atelier Q&A' },
-              { id: 'care', label: 'Fabric & Preservation' },
-              { id: 'box', label: "What's in the Archival Box" },
+              { id: 'specs', label: 'Garment Specifications' },
+              { id: 'reviews', label: `Customer Reviews (${product.reviewCount})` },
+              { id: 'qa', label: 'Questions & Answers' },
+              { id: 'care', label: 'Fabric & Care Guide' },
+              { id: 'box', label: "What's in the Box" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -660,34 +691,34 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   Care & Fabric Preservation Guidelines
                 </h4>
                 <ul className="space-y-2 list-disc list-inside">
-                  <li>Specialist dry cleaning recommended for structured wool and silk fibers.</li>
+                  <li>Specialist dry cleaning recommended for pure silk, Paithani, and Chanderi sarees.</li>
                   <li>Store in breathable cotton garment bag provided with your order.</li>
-                  <li>Use wide-shoulder cedar wood hanger to preserve floating canvas shape.</li>
-                  <li>Steam gently from a 6-inch distance; avoid direct high-heat iron pressure.</li>
+                  <li>Use wide-shoulder hangers for shirts to preserve collar and shoulder shape.</li>
+                  <li>Steam gently from a 6-inch distance; avoid direct high-heat iron pressure on zari.</li>
                 </ul>
               </div>
             )}
             {activeTab === 'box' && (
               <div className="p-6 rounded-2xl bg-[#121212] border border-[#222222] space-y-4 max-w-2xl text-xs text-[#A0988A]">
                 <h4 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
-                  Atelier Packaging Inclusions
+                  Package Inclusions
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="p-4 rounded-xl bg-[#181818] border border-[#262626] space-y-1">
-                    <span className="font-serif font-bold text-white block">1. Archival Keepsake Box</span>
-                    <span className="text-[11px] text-[#8C867B]">Rigid foil-embossed presentation box.</span>
+                    <span className="font-serif font-bold text-white block">1. SINDHUDURG GARMENTS Box</span>
+                    <span className="text-[11px] text-[#8C867B]">Rigid presentation storage box.</span>
                   </div>
                   <div className="p-4 rounded-xl bg-[#181818] border border-[#262626] space-y-1">
                     <span className="font-serif font-bold text-white block">2. Dust Garment Bag</span>
-                    <span className="text-[11px] text-[#8C867B]">Organic unbleached muslin protection bag.</span>
+                    <span className="text-[11px] text-[#8C867B]">Organic unbleached muslin protection cover.</span>
                   </div>
                   <div className="p-4 rounded-xl bg-[#181818] border border-[#262626] space-y-1">
-                    <span className="font-serif font-bold text-white block">3. Certificate of Origin</span>
-                    <span className="text-[11px] text-[#8C867B]">Individually numbered atelier authentication card.</span>
+                    <span className="font-serif font-bold text-white block">3. Certificate of Authenticity</span>
+                    <span className="text-[11px] text-[#8C867B]">Numbered handloom verification card.</span>
                   </div>
                   <div className="p-4 rounded-xl bg-[#181818] border border-[#262626] space-y-1">
-                    <span className="font-serif font-bold text-white block">4. Spare Horn Buttons & Thread</span>
-                    <span className="text-[11px] text-[#8C867B]">Matching natural horn fasteners and fiber spool.</span>
+                    <span className="font-serif font-bold text-white block">4. Care & Styling Leaflet</span>
+                    <span className="text-[11px] text-[#8C867B]">Draping guidelines and preservation tips.</span>
                   </div>
                 </div>
               </div>

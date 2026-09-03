@@ -26,7 +26,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
   const currentOrder = orders.find((o) => o.id === orderId || o.orderNumber === orderId) || orders[0];
 
   const handleDownloadInvoice = () => {
-    showToast('Invoice Downloaded', 'Official Atelier Tax Invoice downloaded to your device.');
+    showToast('Invoice Downloaded', 'Official Sindhudurg Garments Tax Invoice downloaded to your device.');
   };
 
   if (!currentOrder) {
@@ -67,7 +67,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
             </h1>
             
             <p className="text-xs sm:text-sm text-[#A0988A] max-w-md mx-auto font-normal">
-              Your garments are being prepared and steam-finished inside archival tissue packaging at our atelier.
+              Your garments are being prepared, quality-checked, and safely packaged for insured dispatch.
             </p>
           </div>
 
@@ -91,7 +91,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#222222] pb-4">
             <div>
               <span className="text-[10px] font-bold text-[#C5A880] uppercase tracking-[0.25em]">
-                Insured Consignment Dispatch
+                Insured Express Dispatch
               </span>
               <h3 className="text-lg font-serif font-bold text-[#F5F2EB]">
                 Estimated Delivery: {currentOrder.estimatedDeliveryDate}
@@ -113,7 +113,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
               <div className="text-[11px] text-[#A0988A]">Order verified & logged</div>
             </div>
             <div className="p-3.5 bg-[#141414] border border-[#242424] rounded-xl space-y-1">
-              <div className="text-[#F5F2EB] font-serif font-bold">2. Atelier Prep</div>
+              <div className="text-[#F5F2EB] font-serif font-bold">2. Quality Prep</div>
               <div className="text-[11px] text-[#888888]">Inspection & packaging</div>
             </div>
             <div className="p-3.5 bg-[#141414] border border-[#242424] rounded-xl space-y-1">
@@ -208,7 +208,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
             className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#2B2B2B] text-[#F5F2EB] font-semibold text-xs flex items-center justify-center space-x-2 shadow-xs transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4 text-[#C5A880]" />
-            <span>Download Atelier Invoice</span>
+            <span>Download Tax Invoice</span>
           </button>
 
           <button

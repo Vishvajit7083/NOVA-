@@ -79,9 +79,9 @@ export const PackingSlipModal: React.FC<PackingSlipModalProps> = ({
           {/* Slip Header */}
           <div className="flex items-start justify-between border-b border-stone-900 pb-4">
             <div>
-              <h1 className="text-xl font-serif font-bold tracking-tight">AURELIA & CO.</h1>
-              <p className="text-[10px] uppercase tracking-widest text-stone-500 mt-0.5">Haute Couture & Luxury Tailoring</p>
-              <p className="text-[10px] text-stone-400 mt-1">EPIP Luxury Garment Zone, Bengaluru, KA 560066</p>
+              <h1 className="text-xl font-serif font-bold tracking-tight">SINDHUDURG GARMENTS</h1>
+              <p className="text-[10px] uppercase tracking-widest text-stone-500 mt-0.5">Sindhudurg • Maharashtra Handlooms</p>
+              <p className="text-[10px] text-stone-400 mt-1">Heritage Textile Cluster, Malvan, Sindhudurg, MH 416606</p>
             </div>
             <div className="text-right">
               <div className="text-xs font-mono font-bold uppercase tracking-wider">PACKING SLIP & QC SEAL</div>

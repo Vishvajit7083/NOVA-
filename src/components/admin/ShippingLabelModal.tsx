@@ -62,8 +62,8 @@ export const ShippingLabelModal: React.FC<ShippingLabelModalProps> = ({
             {/* Top Bar: Carrier & Routing */}
             <div className="flex items-center justify-between border-b-2 border-black pb-2">
               <div>
-                <span className="font-serif font-black text-sm tracking-tight">AURELIA & CO.</span>
-                <div className="text-[9px] uppercase tracking-widest">Atelier Logistics</div>
+                <span className="font-serif font-black text-sm tracking-tight">SINDHUDURG GARMENTS</span>
+                <div className="text-[9px] uppercase tracking-widest">Sindhudurg Logistics</div>
               </div>
               <div className="text-right">
                 <div className="text-xs font-black uppercase">{carrier.split(' ')[0]} AIR</div>
@@ -105,7 +105,7 @@ export const ShippingLabelModal: React.FC<ShippingLabelModalProps> = ({
             {/* Shipper Address */}
             <div className="border-b-2 border-black pb-2 text-[9px] space-y-0.5">
               <div className="font-black uppercase text-gray-700">RETURN IF UNDELIVERED TO (SHIPPER):</div>
-              <div className="font-bold">AURELIA & CO. Atelier Logistics Hub</div>
+              <div className="font-bold">SINDHUDURG GARMENTS Handloom Logistics Hub</div>
               <div>{shippingConfig.pickupWarehouse.addressLine1}, {shippingConfig.pickupWarehouse.city}, {shippingConfig.pickupWarehouse.pincode}</div>
               <div>TEL: {shippingConfig.pickupWarehouse.phone}</div>
             </div>

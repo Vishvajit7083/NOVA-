@@ -102,9 +102,33 @@ export async function openRazorpayCheckout(
 
 /**
  * Safely fetches JSON from API endpoints, preventing "Unexpected end of JSON input" and 405 status issues.
+ * Automatically attaches Firebase ID Token in Authorization header if user is authenticated.
  */
 export async function safeFetchJson<T = any>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, options);
+  let headers = new Headers(options?.headers || {});
+
+  // Automatically attach auth token if not explicitly provided
+  if (!headers.has('Authorization')) {
+    try {
+      const { auth } = await import('./firebase');
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const token = await currentUser.getIdToken();
+        if (token) {
+          headers.set('Authorization', `Bearer ${token}`);
+        }
+      }
+    } catch (authErr) {
+      // Ignore if auth module is not loaded or during static compilation
+    }
+  }
+
+  const mergedOptions: RequestInit = {
+    ...options,
+    headers,
+  };
+
+  const response = await fetch(url, mergedOptions);
   const text = await response.text();
 
   let data: any = null;
@@ -124,7 +148,11 @@ export async function safeFetchJson<T = any>(url: string, options?: RequestInit)
   if (!response.ok) {
     let errorMsg = data?.error || data?.message;
     if (!errorMsg) {
-      if (response.status === 405) {
+      if (response.status === 401) {
+        errorMsg = data?.error || 'Authentication required. Please sign in to your SINDHUDURG GARMENTS account to proceed.';
+      } else if (response.status === 403) {
+        errorMsg = data?.error || 'Access forbidden. Administrator credentials required.';
+      } else if (response.status === 405) {
         errorMsg = `Gateway Method Not Allowed (${response.status}) at endpoint ${url}. Please verify request method or proxy configuration.`;
       } else if (response.status === 404) {
         errorMsg = `Gateway API endpoint not found (${response.status}) at ${url}.`;

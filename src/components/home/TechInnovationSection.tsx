@@ -59,7 +59,7 @@ export const TechInnovationSection: React.FC<TechInnovationSectionProps> = ({ on
           <div className="w-12 h-0.5 bg-[#9A7B38] mx-auto mt-2" />
           
           <p className="text-sm text-stone-600 leading-relaxed max-w-2xl mx-auto font-normal">
-            We reject synthetic fast-fashion blends and disposable garments. Every AURELIA & CO. creation is constructed by master tailors with natural generational materials designed to last a lifetime.
+            We reject synthetic fast-fashion blends and disposable garments. Every SINDHUDURG GARMENTS creation is constructed by master tailors with natural generational materials designed to last a lifetime.
           </p>
         </div>
 

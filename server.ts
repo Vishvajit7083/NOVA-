@@ -7,6 +7,7 @@ import Razorpay from 'razorpay';
 import { createServer as createViteServer } from 'vite';
 import { paymentRouter } from './src/api/payment';
 import { shippingRouter } from './src/api/shipping';
+import { requireAuth, requireAdmin } from './src/api/authMiddleware';
 
 dotenv.config();
 const envExamplePath = path.join(process.cwd(), '.env.example');
@@ -110,7 +111,7 @@ async function startServer() {
   apiRouter.all(['/health', '/health/'], (_req: Request, res: Response) => {
     res.json({
       status: 'ok',
-      service: 'NOVA Hardware Commerce API',
+      service: 'SINDHUDURG GARMENTS Commerce API',
       timestamp: new Date().toISOString(),
     });
   });
@@ -348,7 +349,7 @@ async function startServer() {
   });
 
   // 6. Admin Gateway Refund Execution
-  apiRouter.all(['/admin/refund', '/admin/refund/'], async (req: Request, res: Response) => {
+  apiRouter.all(['/admin/refund', '/admin/refund/'], requireAdmin, async (req: Request, res: Response) => {
     try {
       const body = req.method === 'GET' ? req.query : req.body;
       const { paymentId, amount, reason, orderId, adminEmail } = body as any;
@@ -371,7 +372,7 @@ async function startServer() {
           notes: {
             orderId: orderId || '',
             reason: reason || 'Customer requested return refund',
-            processedBy: adminEmail || 'Store Admin',
+            processedBy: adminEmail || req.user?.email || 'Store Admin',
           },
         });
       } else {
@@ -413,7 +414,7 @@ async function startServer() {
   });
 
   // 7. Admin Reconciliation Transactions List
-  apiRouter.all(['/admin/transactions', '/admin/transactions/'], (_req: Request, res: Response) => {
+  apiRouter.all(['/admin/transactions', '/admin/transactions/'], requireAdmin, (_req: Request, res: Response) => {
     res.json({
       success: true,
       count: serverTransactions.length,
@@ -472,7 +473,7 @@ async function startServer() {
   }
 
   app.listen(PORT, HOST, () => {
-    console.log(`NOVA Commerce Server is running at http://${HOST}:${PORT}`);
+    console.log(`SINDHUDURG GARMENTS Server is running at http://${HOST}:${PORT}`);
   });
 }
 

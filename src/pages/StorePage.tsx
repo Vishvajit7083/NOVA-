@@ -55,13 +55,13 @@ export const StorePage: React.FC<StorePageProps> = ({
   }, [initialSearch]);
 
   const fabricsList = [
-    'Super 120s Virgin Wool',
-    '22 Momme Mulberry Silk',
-    'Tuscan Full-Grain Leather',
-    '500 GSM Portuguese Cotton',
-    'Grade-A Cashmere',
-    '13.5oz Japanese Selvedge Denim',
-    '18K Gold Vermeil',
+    'Pure Mulberry Silk',
+    'Handloom Cotton',
+    'European Flax Linen',
+    '240 GSM Combed Cotton',
+    'Wild Tussar Silk',
+    'Pure Silk Organza',
+    'Malvani Khadi',
   ];
 
   const sizesList = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '39', '40', '41', '42', '43', '44'];

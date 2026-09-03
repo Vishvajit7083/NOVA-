@@ -20,119 +20,97 @@ service cloud.firestore {
 
     // Products catalog
     match /products/{productId} {
-      allow read: if true;
-      allow create: if true;
-      allow update: if isAdmin() || isAuthenticated();
-      allow delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Categories
     match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if true;
+      allow read, write: if true;
     }
 
     // Coupons
     match /coupons/{couponCode} {
-      allow read: if true;
-      allow write: if true;
+      allow read, write: if true;
     }
 
     // Reviews
     match /reviews/{reviewId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.authorUid == request.auth.uid);
+      allow read, write: if true;
     }
 
     // Orders
     match /orders/{orderId} {
-      allow read: if true; // Allows order tracking lookup by order ID
-      allow create: if true; // Allows guest & authenticated order placement
-      allow update: if isAdmin() || isAuthenticated();
-      allow delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Users profile & addresses
     match /users/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read, write: if true;
     }
 
     // Carts
     match /carts/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read, write: if true;
     }
 
     // Wishlists
     match /wishlists/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read, write: if true;
     }
 
     // Technical Q&A
     match /questions/{questionId} {
-      allow read: if true;
-      allow create: if true;
-      allow update: if isAuthenticated() || isAdmin();
-      allow delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Returns & Refunds
     match /returns/{returnId} {
-      allow read: if isAuthenticated() || isAdmin();
-      allow create: if true;
-      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
+      allow read, write: if true;
     }
 
     // Sellers Marketplace Profiles
     match /sellers/{sellerId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
+      allow read, write: if true;
     }
 
     // User Notifications
     match /notifications/{notifId} {
-      allow read: if isAuthenticated() || isAdmin();
-      allow create: if true;
-      allow update, delete: if isAuthenticated() || isAdmin();
+      allow read, write: if true;
     }
 
     // Support Tickets
     match /tickets/{ticketId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Payment Transactions & Gateway Audits
     match /payment_transactions/{txnId} {
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.userUid == request.auth.uid);
-      allow create: if true;
-      allow update, delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Shipments & Courier Fulfillment
     match /shipments/{shipmentId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin() || isAuthenticated();
+      allow read, write: if true;
     }
 
     // Inventory Logs & Stock Adjustments
     match /inventory_logs/{logId} {
-      allow read: if isAdmin() || isAuthenticated();
-      allow create: if isAdmin() || isAuthenticated();
-      allow update, delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // Shipping & Warehouse Configuration
     match /shipping_config/{configId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
+    }
+
+    // Saved Curations / Fashion Canvas
+    match /saved_curations/{curationId} {
+      allow read, write: if true;
     }
 
     // Audit Logs
     match /audit_logs/{logId} {
-      allow read, write: if isAdmin();
+      allow read, write: if true;
     }
   }
 }

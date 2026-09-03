@@ -105,7 +105,7 @@ export const AdminInventoryTab: React.FC<AdminInventoryTabProps> = ({
         adjustmentQty,
         reason,
         notes,
-        'admin@aureliacouture.com',
+        'admin@sindhura.in',
         'Store Admin'
       );
       await onRefreshProducts();

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Razorpay from 'razorpay';
+import { requireAuth } from './authMiddleware';
 
 export const paymentRouter = Router();
 
@@ -106,9 +107,9 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
   let calculatedDiscount = 0;
   if (couponCode) {
     const codeClean = String(couponCode).trim().toUpperCase();
-    if (codeClean === 'ATELIER10' || codeClean === 'NOVA10') {
+    if (codeClean === 'KONKAN10' || codeClean === 'ATELIER10' || codeClean === 'NOVA10') {
       calculatedDiscount = Math.round(calculatedSubtotal * 0.10);
-    } else if ((codeClean === 'AURELIA20' || codeClean === 'FLAGSHIP20') && calculatedSubtotal >= 4999) {
+    } else if ((codeClean === 'SINDHUR20' || codeClean === 'KONKAN20' || codeClean === 'SINDHUDURG GARMENTS20' || codeClean === 'FLAGSHIP20') && calculatedSubtotal >= 4999) {
       calculatedDiscount = Math.round(calculatedSubtotal * 0.20);
     } else if (codeClean === 'FIRST100' && calculatedSubtotal >= 999) {
       calculatedDiscount = 100;
@@ -119,7 +120,7 @@ export function calculateOrderDetails(body: any, defaultKeyId?: string) {
   const calculatedTax = Math.round((calculatedSubtotal - calculatedDiscount) * 0.18);
   const calculatedTotal = Math.max(1, calculatedSubtotal - calculatedDiscount + calculatedShipping + calculatedTax);
 
-  const generatedOrderId = orderId || `AUR-${Date.now().toString().slice(-6)}`;
+  const generatedOrderId = orderId || `SIN-${Date.now().toString().slice(-6)}`;
   const generatedOrderNumber = orderNumber || generatedOrderId;
   
   // Strict 3-letter currency sanitization
@@ -171,8 +172,8 @@ export function configHandler(req: Request, res: Response) {
     mode: keyId.startsWith('rzp_live') ? 'live' : 'test',
     currency,
     enableInternational: true,
-    storeName: 'AURELIA & CO. Haute Couture',
-    brandColor: '#9A7B38',
+    storeName: 'SINDHUDURG GARMENTS — Sindhudurg Konkan Clothing',
+    brandColor: '#C5A880',
     methodsSupported: ['upi', 'cards', 'netbanking', 'wallets', 'international_cards', 'cod'],
   });
 }
@@ -339,7 +340,13 @@ export async function verifyHandler(req: Request, res: Response) {
 // Register Express Router Endpoints
 paymentRouter.all('/config', configHandler);
 paymentRouter.all('/config/', configHandler);
-paymentRouter.all('/create-order', createOrderHandler);
-paymentRouter.all('/create-order/', createOrderHandler);
-paymentRouter.all('/verify', verifyHandler);
-paymentRouter.all('/verify/', verifyHandler);
+paymentRouter.post('/create-order', requireAuth, createOrderHandler);
+paymentRouter.post('/create-order/', requireAuth, createOrderHandler);
+paymentRouter.all('/create-order', (_req: Request, res: Response) => {
+  res.status(405).json({ success: false, error: 'Method Not Allowed. POST is required.' });
+});
+paymentRouter.post('/verify', requireAuth, verifyHandler);
+paymentRouter.post('/verify/', requireAuth, verifyHandler);
+paymentRouter.all('/verify', (_req: Request, res: Response) => {
+  res.status(405).json({ success: false, error: 'Method Not Allowed. POST is required.' });
+});

@@ -84,38 +84,49 @@ export function sanitizeForFirestore<T = any>(obj: T): T {
   return obj;
 }
 
-// Initial Database Seeding if empty
+// Initial Database Seeding and Sindhudurg Garments Brand Catalog Sync
 export async function seedInitialDatabaseIfEmpty(): Promise<boolean> {
   try {
     const productsSnap = await getDocs(collection(db, PRODUCTS_COLL));
-    if (!productsSnap.empty) {
-      return false; // already populated
+    const needsSync = productsSnap.empty || !productsSnap.docs.some((d) => d.id === 'sindhudurg-saree-01');
+
+    if (!needsSync) {
+      return false; // already populated with Sindhudurg Garments catalog
     }
 
-    console.log('Seeding initial Firestore database with products, categories, coupons...');
+    console.log('Seeding / Syncing Firestore database with authentic Sindhudurg Garments Konkan catalog...');
     const batch = writeBatch(db);
 
-    // 1. Seed Products
+    // If there were old legacy products, clean them up
+    if (!productsSnap.empty) {
+      productsSnap.forEach((docSnap) => {
+        if (!docSnap.id.startsWith('sindhudurg-')) {
+          batch.delete(docSnap.ref);
+        }
+      });
+    }
+
+    // 1. Seed Sindhudurg Garments Products
     for (const prod of PRODUCTS) {
       const prodRef = doc(db, PRODUCTS_COLL, prod.id);
-      batch.set(prodRef, {
+      batch.set(prodRef, sanitizeForFirestore({
         ...prod,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      }));
 
       // Also seed any initial reviews into reviews collection
       if (prod.reviews && prod.reviews.length > 0) {
         for (const rev of prod.reviews) {
           const revRef = doc(db, REVIEWS_COLL, rev.id || `rev-${prod.id}-${Math.random().toString(36).substring(2, 8)}`);
-          batch.set(revRef, {
+          batch.set(revRef, sanitizeForFirestore({
             ...rev,
             productId: prod.id,
             productName: prod.name,
             authorUid: 'seed-user',
             status: 'approved',
             createdAt: new Date().toISOString()
-          });
+          }));
         }
       }
     }
@@ -123,25 +134,25 @@ export async function seedInitialDatabaseIfEmpty(): Promise<boolean> {
     // 2. Seed Categories
     for (const cat of CATEGORIES) {
       const catRef = doc(db, CATEGORIES_COLL, cat.id);
-      batch.set(catRef, cat);
+      batch.set(catRef, sanitizeForFirestore(cat));
     }
 
     // 3. Seed Coupons
     for (const coup of VALID_COUPONS) {
       const coupRef = doc(db, COUPONS_COLL, coup.code);
-      batch.set(coupRef, {
+      batch.set(coupRef, sanitizeForFirestore({
         ...coup,
         active: true,
         usageCount: 0,
         createdAt: new Date().toISOString()
-      });
+      }));
     }
 
     await batch.commit();
-    console.log('Database seeding successfully completed!');
+    console.log('Sindhudurg Garments database sync successfully completed!');
     return true;
   } catch (error) {
-    console.error('Error during initial database seeding:', error);
+    console.error('Error during Sindhudurg Garments database sync:', error);
     return false;
   }
 }
@@ -1317,8 +1328,8 @@ export async function adjustVariantStockInDB(
   adjustedQuantity: number,
   reason: InventoryAdjustmentReason,
   notes: string = '',
-  adminEmail: string = 'admin@aureliacouture.com',
-  adminName: string = 'Master Tailor Logistics'
+  adminEmail: string = 'admin@sindhudurg.in',
+  adminName: string = 'Sindhudurg Handloom Logistics'
 ): Promise<{ success: boolean; newStock: number; message: string }> {
   try {
     const prodRef = doc(db, PRODUCTS_COLL, productId);
@@ -1332,7 +1343,7 @@ export async function adjustVariantStockInDB(
     let previousStock = prod.stockCount || 0;
     let newStock = Math.max(0, previousStock + adjustedQuantity);
     let targetVariantName = 'Base Garment';
-    let targetSku = prod.sku || `AUR-${productId.substring(0, 4).toUpperCase()}`;
+    let targetSku = prod.sku || `SIN-${productId.substring(0, 4).toUpperCase()}`;
     let targetSize = '';
     let targetColor = '';
 
@@ -1416,10 +1427,10 @@ export async function getInventoryAuditLogsFromDB(): Promise<InventoryAuditLog[]
 
 const DEFAULT_DB_SHIPPING_CONFIG: ShippingConfig = {
   pickupWarehouse: {
-    companyName: 'AURELIA & CO. Atelier Logistics',
+    companyName: 'SINDHUDURG GARMENTS Atelier Logistics',
     contactName: 'Master Logistics Director',
     phone: '+91 80 4968 3300',
-    email: 'logistics@aureliacouture.com',
+    email: 'logistics@sindhudurgcouture.com',
     addressLine1: 'Plot 48/B, EPIP Luxury Garment Zone, Phase 1',
     addressLine2: 'Whitefield Commercial Hub',
     city: 'Bengaluru',

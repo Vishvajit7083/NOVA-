@@ -104,10 +104,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
   const [paymentTransactions, setPaymentTransactions] = useState<PaymentTransaction[]>([]);
   const [shippingConfig, setShippingConfig] = useState<ShippingConfig>({
     pickupWarehouse: {
-      companyName: 'AURELIA & CO. Atelier Logistics Hub',
+      companyName: 'SINDHUDURG GARMENTS Atelier Logistics Hub',
       contactName: 'Master Tailor Logistics Director',
       phone: '+91 80 4968 3300',
-      email: 'atelier-logistics@aureliacouture.com',
+      email: 'atelier-logistics@sindhudurgcouture.com',
       addressLine1: 'Plot 48/B, EPIP Luxury Garment Zone, Phase 1',
       addressLine2: 'Whitefield Commercial Hub',
       city: 'Bengaluru',
@@ -451,7 +451,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
               <ShieldAlert className="w-7 h-7" />
             </div>
             <h1 className="text-2xl font-serif font-bold tracking-tight text-white">
-              AURELIA & CO. Maison Admin Gateway
+              SINDHUDURG GARMENTS Maison Admin Gateway
             </h1>
             <p className="text-xs text-stone-400">
               Restricted couture management console. Authorized access only for <strong className="text-stone-200">{ADMIN_EMAIL}</strong>.
@@ -535,14 +535,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8E2D9] px-6 py-3.5 shadow-2xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-stone-900 text-[#E5D7B7] flex items-center justify-center font-serif font-bold text-sm shadow-xs">
-              A
+            <div className="w-9 h-9 rounded-xl bg-stone-900 text-[#C5A880] flex items-center justify-center font-serif font-bold text-sm shadow-xs">
+              S
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-serif font-bold text-sm tracking-tight text-stone-900">AURELIA & CO.</span>
+                <span className="font-serif font-bold text-sm tracking-tight text-stone-900">SINDHUDURG GARMENTS</span>
                 <span className="px-2 py-0.5 rounded-full bg-[#FAF8F5] border border-[#E8E2D9] text-[10px] font-bold text-[#9A7B38] uppercase">
-                  Merchant Console
+                  Sindhudurg Atelier Console
                 </span>
               </div>
               <p className="text-[11px] text-stone-500">
@@ -877,7 +877,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
                   required
                   value={newCoupon.code}
                   onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
-                  placeholder="e.g. AURELIA15"
+                  placeholder="e.g. SINDHUDURG GARMENTS15"
                   className="w-full px-3 py-1.5 text-xs font-mono font-bold border border-[#E8E2D9] rounded-lg bg-[#FAF8F5]"
                 />
               </div>

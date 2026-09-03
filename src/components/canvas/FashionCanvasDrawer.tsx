@@ -62,7 +62,7 @@ export const FashionCanvasDrawer: React.FC<FashionCanvasDrawerProps> = ({ onNavi
     const updated = [newLook, ...savedLooks];
     setSavedLooks(updated);
     try {
-      localStorage.setItem('aurelia_saved_curations', JSON.stringify(updated));
+      localStorage.setItem('sindhura_saved_curations', JSON.stringify(updated));
     } catch (err) {
       console.error(err);
     }

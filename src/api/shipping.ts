@@ -1,21 +1,22 @@
 import express, { Request, Response } from 'express';
 import crypto from 'crypto';
 import { ShippingConfig, ShipmentRecord, ShipmentStatus, OrderTrackingEvent } from '../types';
+import { requireAdmin } from './authMiddleware';
 
 export const shippingRouter = express.Router();
 
 // Default warehouse configuration if not overridden by DB
 export const DEFAULT_SHIPPING_CONFIG: ShippingConfig = {
   pickupWarehouse: {
-    companyName: 'AURELIA & CO. Atelier Logistics',
-    contactName: 'Master Logistics Director',
-    phone: '+91 80 4968 3300',
-    email: 'atelier-logistics@aureliacouture.com',
-    addressLine1: 'Plot 48/B, EPIP Luxury Garment Zone, Phase 1',
-    addressLine2: 'Whitefield Commercial Hub',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560066',
+    companyName: 'SINDHUDURG GARMENTS Handloom Logistics',
+    contactName: 'Heritage Dispatch Director',
+    phone: '+91 98230 45678',
+    email: 'dispatch@sindhudurggarments.com',
+    addressLine1: 'Heritage Handloom Complex, Near Sindhudurg Fort Road',
+    addressLine2: 'Malvan Coastal Heritage Zone',
+    city: 'Sindhudurg',
+    state: 'Maharashtra',
+    pincode: '416606',
     country: 'India',
   },
   connectedProvider: (process.env.SHIPPING_PROVIDER as any) || 'manual',
@@ -26,7 +27,7 @@ export const DEFAULT_SHIPPING_CONFIG: ShippingConfig = {
       ? 'Shiprocket Automated Courier Gateway'
       : process.env.SHIPPING_PROVIDER === 'delhivery'
       ? 'Delhivery Direct Air Cargo API'
-      : 'Atelier Enterprise Dispatch (Manual & Multi-Carrier)',
+      : 'Sindhudurg Enterprise Dispatch (Manual & Multi-Carrier)',
     lastSyncAt: new Date().toISOString(),
   },
   packageDefaults: {
@@ -37,7 +38,7 @@ export const DEFAULT_SHIPPING_CONFIG: ShippingConfig = {
       height: 10,
       unit: 'cm',
     },
-    defaultBoxType: 'Archival Luxury Garment Presentation Box',
+    defaultBoxType: 'SINDHUDURG GARMENTS Presentation Box',
   },
   shippingRules: {
     standardShippingFee: 99,
@@ -72,7 +73,7 @@ export const DEFAULT_SHIPPING_CONFIG: ShippingConfig = {
     returnWindowDays: 14,
     exchangesAllowed: true,
     returnFee: 0,
-    terms: 'Complimentary white-glove doorstep reverse pickup within 14 days for unworn garments with atelier security tags intact.',
+    terms: 'Complimentary doorstep reverse pickup within 14 days for unworn garments with security tags intact.',
   },
 };
 
@@ -229,7 +230,7 @@ shippingRouter.post(['/serviceability', '/serviceability/'], async (req: Request
 });
 
 // 3. POST /api/shipping/create-shipment - Admin create shipment & AWB generation
-shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Request, res: Response) => {
+shippingRouter.post(['/create-shipment', '/create-shipment/'], requireAdmin, async (req: Request, res: Response) => {
   try {
     let body = req.body || {};
     if (typeof body === 'string') {
@@ -239,7 +240,7 @@ shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Reque
     const {
       orderId,
       orderNumber,
-      courierName = 'BlueDart Air Priority',
+      courierName = 'BlueDart Express Air Priority',
       awbNumber: customAwb,
       packageWeightGrams = 850,
       packageDimensions = { length: 38, width: 28, height: 10, unit: 'cm' },
@@ -247,7 +248,7 @@ shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Reque
       deliveryAddress,
       shippingCharge = 0,
       isManual = true,
-      adminEmail = 'admin@aureliacouture.com',
+      adminEmail = 'admin@sindhudurggarments.com',
     } = body;
 
     if (!orderId) {
@@ -258,13 +259,13 @@ shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Reque
     }
 
     // Generate real AWB number if not provided
-    const awbNumber = customAwb || `AUR-${courierName.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
+    const awbNumber = customAwb || `SDG-${courierName.substring(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
     const shipmentId = `ship_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
     const initialEvent: OrderTrackingEvent = {
       status: 'shipment_created',
       title: 'Shipment Manifest Created & AWB Assigned',
-      location: `${pickupAddress.city || 'Bengaluru'} Atelier Logistics Center`,
+      location: `${pickupAddress.city || 'Sindhudurg'} Logistics Center`,
       timestamp: new Date().toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'short',
@@ -296,7 +297,7 @@ shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Reque
         ? `https://shiprocket.co/tracking/${awbNumber}`
         : courierName.toLowerCase().includes('bluedart')
         ? `https://www.bluedart.com/tracking?handler=trak&numbers=${awbNumber}`
-        : `https://aureliacouture.com/track?awb=${awbNumber}`,
+        : `https://sindhudurggarments.com/track?awb=${awbNumber}`,
       isManualEntry: isManual,
       shippingCharge: Number(shippingCharge) || 0,
       events: [initialEvent],
@@ -324,7 +325,7 @@ shippingRouter.post(['/create-shipment', '/create-shipment/'], async (req: Reque
 });
 
 // 4. POST /api/shipping/update-status - Update shipment event (Manual or Webhook)
-shippingRouter.post(['/update-status', '/update-status/'], async (req: Request, res: Response) => {
+shippingRouter.post(['/update-status', '/update-status/'], requireAdmin, async (req: Request, res: Response) => {
   try {
     let body = req.body || {};
     if (typeof body === 'string') {
@@ -338,7 +339,7 @@ shippingRouter.post(['/update-status', '/update-status/'], async (req: Request, 
       newStatus,
       location,
       notes,
-      adminEmail = 'admin@aureliacouture.com',
+      adminEmail = 'admin@sindhudurggarments.com',
     } = body;
 
     if (!newStatus) {
@@ -351,11 +352,11 @@ shippingRouter.post(['/update-status', '/update-status/'], async (req: Request, 
       picked_up: 'Consignment Handed Over to Logistics Courier',
       in_transit: 'In Transit — Departed Source Air Hub',
       reached_destination_hub: 'Arrived at Destination City Logistics Facility',
-      out_for_delivery: 'Out for Doorstep Fitting & Handover',
-      delivered: 'Delivered — Luxury Packaging Intact',
+      out_for_delivery: 'Out for Doorstep Handover',
+      delivered: 'Delivered — Packaging Intact',
       delivery_attempted: 'Delivery Attempted — Customer Unavailable',
       failed_delivery: 'Delivery Exception — Contacting Recipient',
-      returned_to_origin: 'Returned to Atelier Hub',
+      returned_to_origin: 'Returned to Warehouse Hub',
       cancelled: 'Shipment Cancelled by Shipper',
     };
 

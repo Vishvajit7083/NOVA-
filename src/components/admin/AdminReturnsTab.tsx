@@ -72,7 +72,7 @@ export const AdminReturnsTab: React.FC<AdminReturnsTabProps> = ({
           ret.quantity || 1,
           'return_restock',
           `Restocked from approved return #${ret.id} (Order ${ret.orderNumber || ret.orderId})`,
-          'admin@aureliacouture.com',
+          'admin@sindhura.in',
           'Atelier QC Manager'
         );
         await onRefreshProducts();

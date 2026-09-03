@@ -37,46 +37,46 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
     origin: string;
   } | null>(null);
 
-  // Flagship Maison Salons & Atelier Suites
+  // Flagship Regional Ateliers & Studios
   const serviceCenters = [
     {
-      city: 'Paris (Maison Atelier HQ)',
-      address: '14 Rue du Faubourg Saint-Honoré, 75008 Paris, France',
-      hours: 'Mon - Sat: 10:30 AM - 7:30 PM CET',
-      phone: '+33 1 42 68 55 00',
+      city: 'Sindhudurg (Heritage Atelier HQ)',
+      address: 'Near Sindhudurg Fort Road, Malvan, Sindhudurg, Maharashtra 416606',
+      hours: 'Mon - Sat: 9:30 AM - 7:30 PM IST',
+      phone: '+91 98230 45678',
     },
     {
-      city: 'Mumbai (Private Salon)',
-      address: 'The Taj Mahal Palace, Colaba, Mumbai, MH 400001',
+      city: 'Mumbai (Heritage Salon)',
+      address: 'Kala Ghoda Arts Precinct, Fort, Mumbai, Maharashtra 400001',
       hours: 'Mon - Sun: 11:00 AM - 8:30 PM IST',
-      phone: '+91 22 6665 3366',
+      phone: '+91 22 2284 5678',
     },
     {
-      city: 'London (Mayfair Suite)',
-      address: '28 Old Bond Street, Mayfair, London W1S 4QR, UK',
-      hours: 'Mon - Sat: 10:00 AM - 7:00 PM GMT',
-      phone: '+44 20 7499 8811',
+      city: 'Pune (Cultural Lounge)',
+      address: 'Lane 7, Koregaon Park, Pune, Maharashtra 411001',
+      hours: 'Mon - Sat: 10:30 AM - 8:00 PM IST',
+      phone: '+91 20 2615 4321',
     },
     {
-      city: 'Dubai (Downtown Flagship)',
-      address: 'Fashion Avenue, The Dubai Mall, Downtown Dubai, UAE',
-      hours: 'Mon - Sun: 10:00 AM - 11:00 PM GST',
-      phone: '+971 4 362 7500',
+      city: 'Goa (Coastal Studio)',
+      address: 'Fontainhas Heritage Quarter, Panaji, Goa 403001',
+      hours: 'Mon - Sun: 10:00 AM - 8:00 PM IST',
+      phone: '+91 832 242 8899',
     },
   ];
 
   const handleWarrantyCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!serialQuery.trim()) {
-      showToast('Enter Certificate Code', 'Please enter your Certificate of Authenticity or Order ID.', 'error');
+      showToast('Enter Certificate Code', 'Please enter your Silk Mark Certificate or Order ID.', 'error');
       return;
     }
 
     setWarrantyResult({
       valid: true,
-      productName: 'AURELIA Silk Georgette Evening Gown (Limited Edition)',
-      expiresOn: 'Lifetime Fabric Provenance & 1-Year Atelier Tailoring Guarantee Active',
-      origin: 'Archival Workshop Como, Italy • Hand-numbered Atelier Edition',
+      productName: 'SINDHUDURG GARMENTS Royal Yeola Paithani Pure Silk Saree',
+      expiresOn: 'Silk Mark Certified • Tested Gold Zari Authenticity Verified',
+      origin: 'Yeola Handloom Cluster, Maharashtra • Handcrafted by Master Weavers',
     });
   };
 
@@ -96,7 +96,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <div className="inline-flex items-center space-x-2 px-4 py-1 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#C5A880] text-[10px] font-serif uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>AURELIA Client Concierge & Atelier Services</span>
+            <span>SINDHUDURG GARMENTS Patron Concierge & Heritage Services</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#F5F2EB] tracking-tight">
             How May Our Concierge Assist You?
@@ -173,7 +173,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
             <div className="p-5 bg-[#181818] border border-[#2A2A2A] rounded-2xl space-y-1.5 text-xs text-[#F5F2EB] max-w-xl">
               <div className="font-serif font-bold flex items-center text-emerald-300">
                 <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-400" />
-                <span>Certified Genuine AURELIA Atelier Piece</span>
+                <span>Certified Genuine SINDHUDURG GARMENTS Atelier Piece</span>
               </div>
               <p className="font-serif font-bold text-[#F5F2EB] text-sm">{warrantyResult.productName}</p>
               <p className="text-[11px] text-[#A0988A] font-medium">{warrantyResult.origin}</p>

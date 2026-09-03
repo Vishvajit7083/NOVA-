@@ -45,6 +45,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     appliedCoupon,
     placeOrder,
     currentUser,
+    setIsAuthModalOpen,
+    setAuthModalMode,
     showToast,
   } = useShop();
 
@@ -57,8 +59,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     mode: 'test',
     currency: 'INR',
     enableInternational: true,
-    storeName: 'AURELIA & CO. Haute Couture',
-    brandColor: '#9A7B38',
+    storeName: 'SINDHUDURG GARMENTS — Sindhudurg Konkan Clothing',
+    brandColor: '#C5A880',
   });
 
   // Address Form State
@@ -67,8 +69,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
   const [phone, setPhone] = useState(currentUser?.phone || '');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
-  const [state, setState] = useState('Karnataka');
+  const [state, setState] = useState('Maharashtra');
   const [pincode, setPincode] = useState('');
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.name && !fullName) setFullName(currentUser.name);
+      if (currentUser.email && !email) setEmail(currentUser.email);
+      if (currentUser.phone && !phone) setPhone(currentUser.phone);
+    }
+  }, [currentUser]);
 
   // Shipping Method
   const [shippingMethod, setShippingMethod] = useState<'express_priority' | 'standard'>('express_priority');
@@ -165,6 +175,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
 
   const handleAddressSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) {
+      setAuthModalMode('signin');
+      setIsAuthModalOpen(true);
+      showToast('Authentication Required', 'Please sign in or create an account to proceed with checkout.', 'info');
+      return;
+    }
     if (!fullName || !email || !phone || !street || !city || pincode.length !== 6) {
       showToast('Missing Fields', 'Please complete all address fields correctly.', 'error');
       return;
@@ -174,6 +190,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
   };
 
   const handlePlaceOrder = async () => {
+    if (!currentUser) {
+      setAuthModalMode('signin');
+      setIsAuthModalOpen(true);
+      showToast('Authentication Required', 'Please sign in to complete your purchase.', 'error');
+      return;
+    }
+
     setPaymentError(null);
     setIsProcessing(true);
     setProcessingStatus('Creating secure order with Razorpay...');
@@ -238,7 +261,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
     // ----------------------------------------------------
     try {
       const orderTimestamp = Date.now();
-      const generatedOrderId = `AT-${orderTimestamp.toString().slice(-6)}`;
+      const generatedOrderId = `SIN-${orderTimestamp.toString().slice(-6)}`;
       const generatedOrderNumber = generatedOrderId;
 
       // 1. Call backend server to create official Razorpay order with server-calculated total
@@ -278,8 +301,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           currency: (orderCreateData.currency && String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').trim().length === 3)
             ? String(orderCreateData.currency).replace(/[^a-zA-Z]/g, '').toUpperCase().trim()
             : 'INR',
-          name: gatewayConfig.storeName || 'AURELIA & CO. Haute Couture',
-          description: `Order ${generatedOrderNumber} • ${cart.length} Atelier Item(s)`,
+          name: gatewayConfig.storeName || 'SINDHUDURG GARMENTS — Sindhudurg Konkan Clothing',
+          description: `Order ${generatedOrderNumber} • ${cart.length} Sindhudurg Garments Item(s)`,
           order_id: orderCreateData.razorpayOrderId,
           prefill: {
             name: fullName,
@@ -478,12 +501,56 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
             {/* STEP 1: Address Form */}
             {step === 1 && (
               <form onSubmit={handleAddressSubmit} className="bg-[#121212] border border-[#222222] rounded-2xl p-6 sm:p-8 space-y-6 shadow-md">
-                <div className="border-b border-[#222222] pb-4">
-                  <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">1. Client Shipping & Contact Details</h2>
-                  <p className="text-xs text-[#A0988A] mt-0.5 font-normal">
-                    Delivered in tamper-proof archival packaging across all Indian PIN codes.
-                  </p>
+                <div className="border-b border-[#222222] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">1. Shipping & Contact Details</h2>
+                    <p className="text-xs text-[#A0988A] mt-0.5 font-normal">
+                      Insured delivery with doorstep tracking across all verified Indian PIN codes.
+                    </p>
+                  </div>
                 </div>
+
+                {/* Account Status Card */}
+                {currentUser ? (
+                  <div className="p-3.5 rounded-xl bg-[#181818] border border-[#2F2F2F] flex items-center justify-between text-xs">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-7 h-7 rounded-full bg-emerald-950/80 border border-emerald-600/60 text-emerald-400 flex items-center justify-center font-bold">
+                        ✓
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#F5F2EB]">
+                          Signed in as <span className="text-[#C5A880]">{currentUser.name}</span>
+                        </div>
+                        <div className="text-[11px] text-[#A0988A]">{currentUser.email}</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800 text-emerald-300 font-bold">
+                      Verified
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-[#1A1815] border border-[#C5A880]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-start space-x-2.5">
+                      <Lock className="w-4 h-4 text-[#C5A880] shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-bold text-[#F5F2EB]">Have an account with us?</div>
+                        <div className="text-[11px] text-[#A0988A]">
+                          Sign in to use your saved delivery address and speed up checkout.
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthModalMode('signin');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="px-4 py-2 rounded-xl bg-[#C5A880] hover:bg-[#D4AF37] text-black font-bold text-xs uppercase tracking-wider shrink-0 transition-colors cursor-pointer"
+                    >
+                      Sign In / Register
+                    </button>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>

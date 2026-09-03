@@ -7,7 +7,6 @@ import { Footer } from './components/common/Footer';
 import { SearchModal } from './components/common/SearchModal';
 import { QuickViewModal } from './components/common/QuickViewModal';
 import { ImageViewerModal } from './components/common/ImageViewerModal';
-import { Product360Viewer } from './components/common/Product360Viewer';
 import { ToastContainer } from './components/common/ToastContainer';
 import { AccessibilityControls } from './components/common/AccessibilityControls';
 import { CartDrawer } from './components/cart/CartDrawer';
@@ -18,6 +17,7 @@ import { ContextualCursor } from './components/common/ContextualCursor';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { StorePage } from './pages/StorePage';
+import { SareesPage } from './pages/SareesPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
@@ -100,6 +100,39 @@ const AppContent: React.FC = () => {
             onNavigate={handleNavigate}
           />
         );
+
+      case 'sarees':
+      case 'saree':
+      case 'maharashtrian-sarees':
+      case 'paithani':
+        return (
+          <SareesPage
+            initialCollection={viewParams.collection || viewParams.category || 'all'}
+            onNavigate={handleNavigate}
+          />
+        );
+
+      case 'shirts':
+      case 'shirt':
+        return <StorePage initialCategory="shirts" onNavigate={handleNavigate} />;
+
+      case 'kokani-tshirts':
+      case 'tees':
+      case 'tshirts':
+      case 't-shirts':
+        return <StorePage initialCategory="kokani-tshirts" onNavigate={handleNavigate} />;
+
+      case 'festive-wear':
+      case 'festive':
+        return <StorePage initialCategory="festive-wear" onNavigate={handleNavigate} />;
+
+      case 'coastal-wear':
+      case 'konkan-coast':
+        return <StorePage initialCategory="coastal-wear" onNavigate={handleNavigate} />;
+
+      case 'maharashtra-heritage':
+      case 'heritage':
+        return <StorePage initialCategory="maharashtra-heritage" onNavigate={handleNavigate} />;
 
       case 'men':
       case 'men-apparel':
@@ -242,7 +275,6 @@ const AppContent: React.FC = () => {
       <SearchModal onNavigate={handleNavigate} />
       <QuickViewModal onNavigate={handleNavigate} />
       <ImageViewerModal />
-      <Product360Viewer />
       <AccessibilityControls />
       <ToastContainer />
       <ContextualCursor />
