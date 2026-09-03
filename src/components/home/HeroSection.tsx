@@ -41,8 +41,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       if (typeof window === 'undefined') return 'complete';
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reducedMotion) return 'complete';
-      const shown = sessionStorage.getItem('sindhudurg_intro_shown') || sessionStorage.getItem('sindhudurg_intro_shown');
-      return shown ? 'complete' : 'light';
+      return 'light';
     } catch {
       return 'complete';
     }
@@ -60,10 +59,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
   const completeTrailer = useCallback(() => {
     clearAllTimers();
     setStage('complete');
-    try {
-      sessionStorage.setItem('sindhudurg_intro_shown', 'true');
-      sessionStorage.setItem('sindhudurg_intro_shown', 'true');
-    } catch {}
   }, [clearAllTimers]);
 
   // Progressive Stage 2 reveal choreography (coordinated with Stage 1 cloth opening)

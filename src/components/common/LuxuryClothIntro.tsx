@@ -97,12 +97,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
 
   const [isVisible, setIsVisible] = useState(() => {
     if (forceShow) return true;
-    try {
-      const shown = sessionStorage.getItem('aurelia_intro_shown');
-      return !shown;
-    } catch {
-      return true;
-    }
+    return true;
   });
 
   const [overlayOpacity, setOverlayOpacity] = useState(1);
@@ -139,8 +134,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
     hasFinishedRef.current = true;
 
     try {
-      sessionStorage.setItem('sindhura_intro_shown', 'true');
-      sessionStorage.setItem('aurelia_intro_shown', 'true');
+      window.dispatchEvent(new CustomEvent('sindhudurg:skip-trailer'));
       window.dispatchEvent(new CustomEvent('sindhura:skip-trailer'));
       window.dispatchEvent(new CustomEvent('aurelia:skip-trailer'));
     } catch {}

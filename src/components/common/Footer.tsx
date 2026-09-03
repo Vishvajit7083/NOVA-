@@ -41,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer id="main-footer" className="bg-[#111111] text-[#A0988A] border-t border-[#2A2A2A] pt-16 pb-12 mt-20">
       {/* Brand Trust Badges Row */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-14 border-b border-[#2A2A2A]">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 pb-14 border-b border-[#2A2A2A]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-center space-x-4">
             <div className="p-3 rounded-2xl bg-[#1A1A1A] border border-[#333333] text-[#9A7B38] shrink-0">
@@ -86,15 +86,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Col & Newsletter */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-xl sm:text-2xl font-serif font-bold tracking-[0.14em] text-white">
-                SINDHUDURG GARMENTS
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5">
+              <div className="flex items-center space-x-1.5">
+                <span className="text-base sm:text-2xl font-serif font-bold tracking-[0.1em] text-white">
+                  SINDHUDURG GARMENTS
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#9A7B38]" />
+              </div>
               <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A880]">
                 सिंधुदुर्ग • KONKAN
               </span>
@@ -220,8 +222,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <span>Currency: <strong className="text-white">INR (₹)</strong></span>
             <button
               onClick={() => {
-                sessionStorage.removeItem('sindhura_intro_shown');
-                sessionStorage.removeItem('aurelia_intro_shown');
+                window.dispatchEvent(new CustomEvent('sindhudurg:replay-intro'));
                 window.dispatchEvent(new CustomEvent('sindhura:replay-intro'));
                 window.dispatchEvent(new CustomEvent('aurelia:replay-intro'));
                 window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -203,7 +203,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
   return (
     <div id="product-detail-page" className="min-h-screen bg-[#0A0A0A] text-[#F5F2EB] py-8 animate-fade-in">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-12 space-y-10 sm:space-y-12">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-xs text-[#8C867B] font-mono">
           <button onClick={() => onNavigate('home')} className="hover:text-white cursor-pointer transition-colors">

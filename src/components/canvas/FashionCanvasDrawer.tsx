@@ -112,13 +112,13 @@ export const FashionCanvasDrawer: React.FC<FashionCanvasDrawerProps> = ({ onNavi
       />
 
       {/* Drawer Container */}
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+      <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <motion.div
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-          className="w-screen max-w-lg bg-[#0E0E0E] text-[#F5F2EB] border-l border-[#242424] shadow-2xl flex flex-col justify-between"
+          className="w-full sm:w-screen max-w-lg bg-[#0E0E0E] text-[#F5F2EB] border-l border-[#242424] shadow-2xl flex flex-col justify-between"
         >
           {/* Header */}
           <div className="p-6 border-b border-[#222222] bg-[#121212]/90 backdrop-blur-md flex items-center justify-between">

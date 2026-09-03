@@ -248,7 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               {announcements[announcementIndex]}
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-6 text-[#A0988A] shrink-0 text-[10px] uppercase font-semibold tracking-widest">
+          <div className="hidden lg:flex items-center space-x-6 text-[#A0988A] shrink-0 text-[10px] uppercase font-semibold tracking-widest">
             <button
               onClick={() => handleNavClick('tracking')}
               className="hover:text-white transition-colors cursor-pointer"
@@ -269,43 +269,43 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
       {/* Main Sticky Header with Horizontal Scroll Rail */}
       <header
         id="main-navbar"
-        className={`sticky top-0 z-30 transition-all duration-300 w-full overflow-hidden ${
+        className={`sticky top-0 z-30 transition-all duration-300 w-full max-w-full overflow-x-clip ${
           isScrolled
-            ? 'bg-[#0A0A0A]/95 backdrop-blur-md border-b border-[#1F1F1F] shadow-lg py-2.5 sm:py-3.5'
-            : 'bg-[#0A0A0A] border-b border-[#1F1F1F] py-3 sm:py-4'
+            ? 'bg-[#0A0A0A]/95 backdrop-blur-md border-b border-[#1F1F1F] shadow-lg py-2 sm:py-3.5'
+            : 'bg-[#0A0A0A] border-b border-[#1F1F1F] py-2.5 sm:py-4'
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 flex items-center justify-between gap-1.5 sm:gap-4">
           
           {/* Brand Wordmark / Fixed Logo on the left */}
-          <div className="shrink-0 flex items-center">
+          <div className="shrink-0 flex items-center min-w-0">
             <button
               id="navbar-brand-logo"
               onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-2 text-left group focus:outline-none cursor-pointer"
+              className="flex items-center space-x-1.5 text-left group focus:outline-none cursor-pointer min-w-0"
             >
-              <div className="flex flex-col">
-                <div className="flex items-center">
-                  <span className="text-base sm:text-xl lg:text-2xl font-serif font-bold tracking-[0.14em] text-[#F5F2EB] whitespace-nowrap">
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center min-w-0">
+                  <span className="text-[13px] xs:text-sm sm:text-lg lg:text-2xl font-serif font-bold tracking-[0.06em] sm:tracking-[0.14em] text-[#F5F2EB] whitespace-nowrap">
                     SINDHUDURG GARMENTS
                   </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] ml-1.5 mb-1 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] ml-1 mb-0.5 shrink-0" />
                 </div>
-                <span className="text-[7.5px] sm:text-[9px] uppercase tracking-[0.28em] text-[#C5A880] -mt-0.5 font-semibold">
+                <span className="text-[7px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.28em] text-[#C5A880] -mt-0.5 font-semibold">
                   सिंधुदुर्ग • KONKAN
                 </span>
               </div>
             </button>
           </div>
 
-          {/* Horizontal Scrollable Navigation Rail */}
+          {/* Horizontal Scrollable Navigation Rail - Visible on lg and above */}
           <div
             id="navbar-nav-rail-wrapper"
-            className="flex-1 min-w-0 relative px-1 sm:px-2 mx-1 sm:mx-3 flex items-center overflow-hidden group/rail"
+            className="hidden lg:flex flex-1 min-w-0 relative px-1 sm:px-2 mx-1 sm:mx-3 items-center overflow-hidden group/rail"
           >
             {/* Left Fade Indicator with Click Arrow */}
             <div
-              className={`absolute left-0 top-0 bottom-0 w-10 sm:w-14 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent flex items-center justify-start z-10 pointer-events-none transition-opacity duration-200 ${
+              className={`absolute left-0 top-0 bottom-0 w-8 lg:w-10 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent flex items-center justify-start z-10 pointer-events-none transition-opacity duration-200 ${
                 canScrollLeft ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -526,7 +526,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
 
             {/* Right Fade Indicator with Click Arrow */}
             <div
-              className={`absolute right-0 top-0 bottom-0 w-10 sm:w-14 bg-gradient-to-l from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent flex items-center justify-end z-10 pointer-events-none transition-opacity duration-200 ${
+              className={`absolute right-0 top-0 bottom-0 w-8 lg:w-10 bg-gradient-to-l from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent flex items-center justify-end z-10 pointer-events-none transition-opacity duration-200 ${
                 canScrollRight ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -542,7 +542,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           </div>
 
           {/* Right Action Icons */}
-          <div className="shrink-0 flex items-center space-x-1 sm:space-x-2">
+          {/* Right Action Icons Cluster */}
+          <div className="shrink-0 flex items-center space-x-0.5 sm:space-x-2">
             {/* Search Button */}
             <button
               id="navbar-search-btn"
@@ -553,11 +554,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Notifications Button */}
+            {/* Notifications Button - Desktop/Tablet */}
             <button
               id="navbar-notifications-btn"
               onClick={() => setIsNotificationsOpen(true)}
-              className="p-1.5 sm:p-2 rounded-full text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
+              className="hidden sm:flex p-1.5 sm:p-2 rounded-full text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
@@ -583,11 +584,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               )}
             </button>
 
-            {/* Fashion Canvas Button */}
+            {/* Fashion Canvas Button - Desktop/Tablet */}
             <button
               id="navbar-canvas-btn"
               onClick={() => setIsCanvasOpen(true)}
-              className="p-1.5 sm:p-2 rounded-full text-[#C5A880] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
+              className="hidden sm:flex p-1.5 sm:p-2 rounded-full text-[#C5A880] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
               title="Fashion Canvas (Digital Wardrobe)"
             >
               <Layers className="w-4 h-4" />
@@ -598,11 +599,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               )}
             </button>
 
-            {/* Account Button */}
+            {/* Account Button - Desktop/Tablet */}
             <button
               id="navbar-account-btn"
               onClick={() => handleNavClick('account')}
-              className="p-1.5 sm:p-2 rounded-full text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
+              className="hidden sm:flex p-1.5 sm:p-2 rounded-full text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#1A1A1A] transition-colors relative cursor-pointer"
               title={currentUser ? `Account (${currentUser.name})` : 'Account'}
             >
               <User className="w-4 h-4" />
@@ -615,7 +616,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             <button
               id="navbar-cart-btn"
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 sm:p-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4AF37] text-black transition-colors flex items-center justify-center cursor-pointer shadow-md"
+              className="relative p-1.5 sm:p-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4AF37] text-black transition-colors flex items-center justify-center cursor-pointer shadow-md"
               title="Shopping Bag"
             >
               <ShoppingBag className="w-4 h-4 text-black" />
@@ -626,11 +627,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
               )}
             </button>
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Mobile/Tablet Menu Toggle Button */}
             <button
               id="navbar-mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 rounded-lg text-stone-300 hover:bg-[#1A1A1A] transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 rounded-lg text-stone-300 hover:bg-[#1A1A1A] transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -692,11 +693,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           </div>
         )}
 
-        {/* Mobile Slide-down Menu */}
+        {/* Mobile & Tablet Slide-down Menu */}
         {mobileMenuOpen && (
           <div
             id="mobile-drawer-menu"
-            className="mobile-nav-drawer md:hidden bg-[#0A0A0A] border-b border-[#1F1F1F] px-6 py-6 space-y-4 shadow-2xl h-[100dvh] max-h-[calc(100dvh-4.5rem)] overflow-y-auto [overscroll-behavior-y:contain]"
+            className="mobile-nav-drawer lg:hidden bg-[#0A0A0A] border-b border-[#1F1F1F] px-6 py-6 space-y-4 shadow-2xl h-[100dvh] max-h-[calc(100dvh-4.5rem)] overflow-y-auto [overscroll-behavior-y:contain]"
           >
             <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#1F1F1F]">
               <button

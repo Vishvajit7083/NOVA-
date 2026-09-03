@@ -68,7 +68,7 @@ export const LiveWardrobePanel: React.FC<LiveWardrobePanelProps> = ({ onNavigate
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-20 left-6 z-40 w-96 max-w-[calc(100vw-3rem)] bg-[#121212]/95 backdrop-blur-xl border border-[#282828] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px]"
+            className="fixed bottom-20 left-3 sm:left-6 z-40 w-96 max-w-[calc(100vw-1.5rem)] bg-[#121212]/95 backdrop-blur-xl border border-[#282828] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px]"
           >
             {/* Header */}
             <div className="p-4 border-b border-[#222222] flex items-center justify-between bg-[#161616]">

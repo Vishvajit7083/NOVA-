@@ -64,7 +64,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ onNavigate }) =>
 
           {/* Left: Gallery preview */}
           <div className="w-full md:w-1/2 p-6 bg-[#FAF8F5] flex flex-col items-center justify-between border-b md:border-b-0 md:border-r border-[#EAE4D8]">
-            <div className="w-full h-80 sm:h-96 relative flex items-center justify-center rounded-2xl overflow-hidden bg-white border border-[#E8E2D9] shadow-xs">
+            <div className="w-full h-60 sm:h-96 relative flex items-center justify-center rounded-2xl overflow-hidden bg-white border border-[#E8E2D9] shadow-xs">
               <img
                 src={quickViewProduct.images[selectedImageIdx] || quickViewProduct.images[0]}
                 alt={quickViewProduct.name}
