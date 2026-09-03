@@ -49,65 +49,65 @@ export const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({ order, i
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8E2D9] animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between border-b border-[#EAE4D8] pb-4">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-[#121212] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#222222] text-[#F5F2EB] animate-in fade-in zoom-in-95 duration-150">
+        <div className="flex items-center justify-between border-b border-[#222222] pb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-[#181818] border border-[#2B2B2B] text-[#C5A880] flex items-center justify-center">
               <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-serif font-bold text-stone-900 text-base">Request Fitting Exchange or Return</h4>
-              <p className="text-xs text-stone-500">Atelier Order #{order.orderNumber || order.id.slice(0, 8)}</p>
+              <h4 className="font-serif font-bold text-[#F5F2EB] text-base">Request Fitting Exchange or Return</h4>
+              <p className="text-xs text-[#A0988A]">Atelier Order #{order.orderNumber || order.id.slice(0, 8)}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-stone-400 hover:text-stone-700 p-1.5 rounded-full hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+            className="text-[#A0988A] hover:text-[#F5F2EB] p-1.5 rounded-full hover:bg-[#1A1A1A] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Item summary */}
-        <div className="mt-4 p-3.5 bg-[#FAF8F5] rounded-2xl border border-[#EAE4D8] flex items-center space-x-3">
+        <div className="mt-4 p-3.5 bg-[#161616] rounded-2xl border border-[#242424] flex items-center space-x-3">
           <img
             src={item.product?.images?.[0] || 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80'}
             alt=""
-            className="w-12 h-16 object-cover object-top rounded-xl bg-white border border-[#E8E2D9]"
+            className="w-12 h-16 object-cover object-top rounded-xl bg-[#1A1A1A] border border-[#2A2A2A]"
             referrerPolicy="no-referrer"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-serif font-bold text-stone-900 truncate">{item.product?.name || item.productId}</p>
-            <p className="text-[11px] text-stone-500">
+            <p className="text-xs font-serif font-bold text-[#F5F2EB] truncate">{item.product?.name || item.productId}</p>
+            <p className="text-[11px] text-[#A0988A]">
               Qty: {item.quantity} {item.selectedSize && `• Size: ${item.selectedSize}`} • Value:{' '}
-              <strong className="text-stone-900 font-serif">₹{(item.price * item.quantity).toLocaleString('en-IN')}</strong>
+              <strong className="text-[#C5A880] font-mono">₹{(item.price * item.quantity).toLocaleString('en-IN')}</strong>
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-[#A0988A] uppercase tracking-wider mb-1.5">
               Reason for Exchange / Return
             </label>
             <select
               id="select-return-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value as ReturnRequest['reason'])}
-              className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs font-medium text-stone-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
+              className="w-full p-3 bg-[#181818] border border-[#2B2B2B] rounded-xl text-xs font-medium text-[#F5F2EB] focus:outline-none focus:border-[#C5A880]"
             >
-              <option value="defective">Sizing / Fit Adjustment (Need Different Size)</option>
-              <option value="damaged">Garment Damaged or Creased in Transit</option>
-              <option value="wrong_item">Received Incorrect Silhouette or Colorway</option>
-              <option value="missing_parts">Missing Atelier Belt / Brooch / Garment Bag</option>
-              <option value="not_as_described">Drape or Texture Differed from Lookbook</option>
-              <option value="changed_mind">Changed Mind (With Tamper Seal Intact)</option>
+              <option value="defective" className="bg-[#181818] text-[#F5F2EB]">Sizing / Fit Adjustment (Need Different Size)</option>
+              <option value="damaged" className="bg-[#181818] text-[#F5F2EB]">Garment Damaged or Creased in Transit</option>
+              <option value="wrong_item" className="bg-[#181818] text-[#F5F2EB]">Received Incorrect Silhouette or Colorway</option>
+              <option value="missing_parts" className="bg-[#181818] text-[#F5F2EB]">Missing Atelier Belt / Brooch / Garment Bag</option>
+              <option value="not_as_described" className="bg-[#181818] text-[#F5F2EB]">Drape or Texture Differed from Lookbook</option>
+              <option value="changed_mind" className="bg-[#181818] text-[#F5F2EB]">Changed Mind (With Tamper Seal Intact)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-[#A0988A] uppercase tracking-wider mb-1.5">
               Fitting Details / Sizing Needs
             </label>
             <textarea
@@ -116,50 +116,50 @@ export const ReturnRequestModal: React.FC<ReturnRequestModalProps> = ({ order, i
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               placeholder="Describe your desired size exchange (e.g. Need Size L instead of M) or tailor alteration details..."
-              className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
+              className="w-full p-3 bg-[#181818] border border-[#2B2B2B] rounded-xl text-xs text-[#F5F2EB] placeholder-[#666666] focus:outline-none focus:border-[#C5A880]"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-[#A0988A] uppercase tracking-wider mb-1.5">
               Optional Image Link (Garment Fit or Fabric Detail)
             </label>
             <div className="relative">
-              <ImageIcon className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <ImageIcon className="w-4 h-4 text-[#736E65] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 id="input-return-image"
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://images.unsplash.com/... (optional)"
-                className="w-full pl-10 pr-3 py-2.5 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
+                className="w-full pl-10 pr-3 py-2.5 bg-[#181818] border border-[#2B2B2B] rounded-xl text-xs text-[#F5F2EB] placeholder-[#666666] focus:outline-none focus:border-[#C5A880]"
               />
             </div>
           </div>
 
-          <div className="bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#E0D8C8] text-xs text-stone-700 space-y-1">
-            <p className="font-serif font-bold text-stone-900 flex items-center space-x-1.5">
-              <Scissors className="w-3.5 h-3.5 text-[#9A7B38]" />
+          <div className="bg-[#161616] p-3.5 rounded-2xl border border-[#262626] text-xs text-[#A0988A] space-y-1">
+            <p className="font-serif font-bold text-[#F5F2EB] flex items-center space-x-1.5">
+              <Scissors className="w-3.5 h-3.5 text-[#C5A880]" />
               <span>Complimentary Doorstep Exchange:</span>
             </p>
-            <p className="text-[11px] text-stone-600">
+            <p className="text-[11px] text-[#888888]">
               Our bespoke logistics concierge will pick up the garment from your location ({order.shippingAddress.city}, {order.shippingAddress.pincode}) in archival protective packaging.
             </p>
           </div>
 
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#EAE4D8]">
+          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#222222]">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-xs font-semibold text-stone-600 hover:bg-[#FAF8F5] rounded-full transition-colors"
+              className="px-5 py-2.5 text-xs font-semibold text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#181818] rounded-full transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center space-x-2 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-white bg-[#111111] hover:bg-[#9A7B38] rounded-full transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center space-x-2 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black bg-[#C5A880] hover:bg-[#D4AF37] rounded-full transition-all shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <span>{isSubmitting ? 'Processing...' : 'Submit Exchange Request'}</span>
               <ArrowRight className="w-3.5 h-3.5" />

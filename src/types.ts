@@ -186,6 +186,7 @@ export interface Product {
   warehouseLocation?: string;
   questionsCount?: number;
   outfitPairings?: string[]; // IDs of items that complete this outfit
+  model3dUrl?: string; // Optional GLB/GLTF 3D asset URL for professional virtual fitting room
 }
 
 export interface CartItem {
@@ -663,6 +664,38 @@ export interface SupportTicket {
   priority?: 'low' | 'medium' | 'high';
   createdAt: string;
   status: 'open' | 'in_progress' | 'resolved' | 'Open' | 'In Progress' | 'Resolved';
+}
+
+export interface SavedLook {
+  id: string;
+  userId: string;
+  title: string;
+  gender: 'men' | 'women';
+  items: {
+    productId: string;
+    productName: string;
+    productPrice: number;
+    productImage: string;
+    category: string;
+    selectedColor?: ColorOption | null;
+    selectedSize?: string;
+  }[];
+  modelSettings: {
+    pose: string;
+    background: string;
+    viewAngle?: string;
+  };
+  createdAt: string;
+  thumbnailUrl?: string;
+}
+
+export interface FashionCanvasItem {
+  id: string;
+  product: Product;
+  selectedColor?: ColorOption;
+  selectedSize?: string;
+  addedAt: string;
+  categorySlot?: 'top' | 'bottom' | 'outerwear' | 'footwear' | 'accessory' | 'other';
 }
 
 export interface UserProfile {

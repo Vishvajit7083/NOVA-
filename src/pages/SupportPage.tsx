@@ -90,65 +90,65 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
   });
 
   return (
-    <div id="support-portal-page" className="min-h-screen bg-[#FDFBF7] text-stone-900 py-12">
+    <div id="support-portal-page" className="min-h-screen bg-[#0A0A0A] text-[#F5F2EB] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Support Hero */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center space-x-2 px-4 py-1 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] text-[10px] font-serif uppercase tracking-widest">
+          <div className="inline-flex items-center space-x-2 px-4 py-1 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#C5A880] text-[10px] font-serif uppercase tracking-widest">
             <Sparkles className="w-3.5 h-3.5" />
             <span>AURELIA Client Concierge & Atelier Services</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-stone-950 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#F5F2EB] tracking-tight">
             How May Our Concierge Assist You?
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto font-normal leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#A0988A] max-w-xl mx-auto font-normal leading-relaxed">
             From bespoke sizing consultations and door-to-door alteration exchanges to certificate authenticity verification.
           </p>
         </div>
 
         {/* 3 Quick Action Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 bg-white border border-[#E8E2D9] rounded-3xl space-y-3 shadow-xs">
-            <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] flex items-center justify-center text-[#9A7B38]">
+          <div className="p-8 bg-[#121212] border border-[#222222] rounded-3xl space-y-3 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center text-[#C5A880]">
               <Scissors className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-serif font-bold text-stone-950">Atelier Alterations & Sizing</h3>
-            <p className="text-xs text-stone-600 leading-relaxed">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">Atelier Alterations & Sizing</h3>
+            <p className="text-xs text-[#A0988A] leading-relaxed">
               Every couture garment includes complimentary 14-day doorstep size exchanges and master tailor alterations.
             </p>
           </div>
 
-          <div className="p-8 bg-white border border-[#E8E2D9] rounded-3xl space-y-3 shadow-xs">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+          <div className="p-8 bg-[#121212] border border-[#222222] rounded-3xl space-y-3 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-emerald-950/40 border border-emerald-800/50 flex items-center justify-center text-emerald-400">
               <RotateCcw className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-serif font-bold text-stone-950">14-Day Concierge Returns</h3>
-            <p className="text-xs text-stone-600 leading-relaxed">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">14-Day Concierge Returns</h3>
+            <p className="text-xs text-[#A0988A] leading-relaxed">
               Experience the silhouette in your dressing room. If untampered with ribbons intact, enjoy seamless returns.
             </p>
           </div>
 
-          <div className="p-8 bg-white border border-[#E8E2D9] rounded-3xl space-y-3 shadow-xs">
-            <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] flex items-center justify-center text-[#9A7B38]">
+          <div className="p-8 bg-[#121212] border border-[#222222] rounded-3xl space-y-3 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center text-[#C5A880]">
               <Headphones className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-serif font-bold text-stone-950">24/7 Private Stylist Advisory</h3>
-            <p className="text-xs text-stone-600 leading-relaxed">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">24/7 Private Stylist Advisory</h3>
+            <p className="text-xs text-[#A0988A] leading-relaxed">
               Consult directly with our runway stylists for gala dress codes, bespoke bridal fittings, and color harmonies.
             </p>
           </div>
         </div>
 
         {/* Certificate / Order Authenticity Verification Tool */}
-        <div className="bg-white border border-[#E8E2D9] rounded-3xl p-6 sm:p-10 space-y-6 shadow-xs">
+        <div className="bg-[#121212] border border-[#222222] rounded-3xl p-6 sm:p-10 space-y-6 shadow-xs">
           <div className="max-w-xl">
-            <span className="text-[10px] font-serif uppercase tracking-widest text-[#9A7B38]">
+            <span className="text-[10px] font-serif uppercase tracking-widest text-[#C5A880]">
               Provenance Registry
             </span>
-            <h2 className="text-2xl font-serif font-bold text-stone-950 tracking-tight mt-0.5">
+            <h2 className="text-2xl font-serif font-bold text-[#F5F2EB] tracking-tight mt-0.5">
               Verify Garment Provenance & Authenticity
             </h2>
-            <p className="text-xs text-stone-600 mt-1">
+            <p className="text-xs text-[#A0988A] mt-1">
               Enter your Order Number (e.g. AUR-12345) or the 8-digit passport code printed on your Certificate of Authenticity.
             </p>
           </div>
@@ -159,50 +159,50 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
               value={serialQuery}
               onChange={(e) => setSerialQuery(e.target.value)}
               placeholder="e.g. AUR-89230 or CERT-9021-IT"
-              className="flex-1 bg-[#FAF8F5] border border-[#E0D8C8] rounded-full px-5 py-3 text-xs text-stone-900 uppercase placeholder-stone-400 font-mono focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
+              className="flex-1 bg-[#181818] border border-[#2A2A2A] rounded-full px-5 py-3 text-xs text-[#F5F2EB] uppercase placeholder-stone-400 font-mono focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
             />
             <button
               type="submit"
-              className="px-8 py-3 bg-[#111111] hover:bg-[#9A7B38] text-white font-serif uppercase tracking-widest text-xs rounded-full shadow-xs transition-colors cursor-pointer"
+              className="px-8 py-3 bg-[#C5A880] text-black hover:bg-[#C5A880] text-white font-serif uppercase tracking-widest text-xs rounded-full shadow-xs transition-colors cursor-pointer"
             >
               Verify Provenance
             </button>
           </form>
 
           {warrantyResult && (
-            <div className="p-5 bg-[#FAF8F5] border border-[#E0D8C8] rounded-2xl space-y-1.5 text-xs text-stone-900 max-w-xl">
-              <div className="font-serif font-bold flex items-center text-emerald-800">
-                <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-700" />
+            <div className="p-5 bg-[#181818] border border-[#2A2A2A] rounded-2xl space-y-1.5 text-xs text-[#F5F2EB] max-w-xl">
+              <div className="font-serif font-bold flex items-center text-emerald-300">
+                <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-400" />
                 <span>Certified Genuine AURELIA Atelier Piece</span>
               </div>
-              <p className="font-serif font-bold text-stone-950 text-sm">{warrantyResult.productName}</p>
-              <p className="text-[11px] text-stone-600 font-medium">{warrantyResult.origin}</p>
-              <p className="text-[10px] text-[#9A7B38] font-mono">{warrantyResult.expiresOn}</p>
+              <p className="font-serif font-bold text-[#F5F2EB] text-sm">{warrantyResult.productName}</p>
+              <p className="text-[11px] text-[#A0988A] font-medium">{warrantyResult.origin}</p>
+              <p className="text-[10px] text-[#C5A880] font-mono">{warrantyResult.expiresOn}</p>
             </div>
           )}
         </div>
 
         {/* Fashion FAQ Section */}
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#EAE4D8] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#222222] pb-4">
             <div>
-              <span className="text-[10px] font-serif uppercase tracking-widest text-[#9A7B38]">
+              <span className="text-[10px] font-serif uppercase tracking-widest text-[#C5A880]">
                 Atelier Knowledge Base
               </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-950 tracking-tight mt-0.5">
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#F5F2EB] tracking-tight mt-0.5">
                 Frequently Asked Styling & Order Inquiries
               </h2>
             </div>
 
             {/* FAQ Search */}
             <div className="w-full sm:w-72 relative">
-              <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#666666] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search fitting, fabrics..."
-                className="w-full bg-white border border-[#E0D8C8] rounded-full pl-10 pr-4 py-2.5 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
+                className="w-full bg-[#121212] border border-[#2A2A2A] rounded-full pl-10 pr-4 py-2.5 text-xs text-[#F5F2EB] placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#9A7B38]"
               />
             </div>
           </div>
@@ -223,8 +223,8 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
                 onClick={() => setFaqCategory(tab.id)}
                 className={`px-4 py-2 rounded-full text-xs font-serif uppercase tracking-wider whitespace-nowrap transition-colors cursor-pointer ${
                   faqCategory === tab.id
-                    ? 'bg-[#111111] text-white shadow-xs'
-                    : 'bg-white border border-[#E0D8C8] text-stone-600 hover:text-stone-900 hover:bg-[#FAF8F5]'
+                    ? 'bg-[#C5A880] text-black text-white shadow-xs'
+                    : 'bg-[#121212] border border-[#2A2A2A] text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#181818]'
                 }`}
               >
                 {tab.label}
@@ -239,21 +239,21 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
               return (
                 <div
                   key={faq.id}
-                  className="bg-white border border-[#E8E2D9] rounded-2xl overflow-hidden transition-all shadow-xs"
+                  className="bg-[#121212] border border-[#222222] rounded-2xl overflow-hidden transition-all shadow-xs"
                 >
                   <button
                     onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
-                    className="w-full p-5 text-left flex items-center justify-between space-x-4 hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between space-x-4 hover:bg-[#181818] transition-colors cursor-pointer"
                   >
-                    <span className="text-xs sm:text-sm font-serif font-bold text-stone-900">{faq.question}</span>
+                    <span className="text-xs sm:text-sm font-serif font-bold text-[#F5F2EB]">{faq.question}</span>
                     {isOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#9A7B38] shrink-0" />
+                      <ChevronUp className="w-4 h-4 text-[#C5A880] shrink-0" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-stone-400 shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-[#666666] shrink-0" />
                     )}
                   </button>
                   {isOpen && (
-                    <div className="px-5 pb-5 text-xs text-stone-600 leading-relaxed border-t border-[#EAE4D8] pt-3 font-normal">
+                    <div className="px-5 pb-5 text-xs text-[#A0988A] leading-relaxed border-t border-[#222222] pt-3 font-normal">
                       {faq.answer}
                     </div>
                   )}
@@ -266,13 +266,13 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
         {/* Flagship Salons & Atelier Suites */}
         <div className="space-y-6">
           <div>
-            <span className="text-[10px] font-serif uppercase tracking-widest text-[#9A7B38]">
+            <span className="text-[10px] font-serif uppercase tracking-widest text-[#C5A880]">
               Maison Presence
             </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-950 tracking-tight mt-0.5">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#F5F2EB] tracking-tight mt-0.5">
               Flagship Salons & Private Fitting Suites
             </h2>
-            <p className="text-xs text-stone-600 mt-1">
+            <p className="text-xs text-[#A0988A] mt-1">
               Visit our private salons for confidential measurement sessions, champagne tastings, and personalized wardrobe curation.
             </p>
           </div>
@@ -281,17 +281,17 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate }) => {
             {serviceCenters.map((center, idx) => (
               <div
                 key={idx}
-                className="p-6 bg-white border border-[#E8E2D9] rounded-3xl space-y-3 text-xs flex flex-col justify-between shadow-xs"
+                className="p-6 bg-[#121212] border border-[#222222] rounded-3xl space-y-3 text-xs flex flex-col justify-between shadow-xs"
               >
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-stone-950 font-serif font-bold text-sm">
-                    <MapPin className="w-4 h-4 text-[#9A7B38]" />
+                  <div className="flex items-center space-x-2 text-[#F5F2EB] font-serif font-bold text-sm">
+                    <MapPin className="w-4 h-4 text-[#C5A880]" />
                     <span>{center.city}</span>
                   </div>
-                  <p className="text-stone-600 leading-relaxed text-[11px]">{center.address}</p>
-                  <p className="text-[10px] text-stone-400">{center.hours}</p>
+                  <p className="text-[#A0988A] leading-relaxed text-[11px]">{center.address}</p>
+                  <p className="text-[10px] text-[#666666]">{center.hours}</p>
                 </div>
-                <div className="pt-3 border-t border-[#EAE4D8] font-mono text-[11px] text-[#9A7B38] font-semibold">
+                <div className="pt-3 border-t border-[#222222] font-mono text-[11px] text-[#C5A880] font-semibold">
                   {center.phone}
                 </div>
               </div>

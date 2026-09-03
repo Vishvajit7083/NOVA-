@@ -94,14 +94,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
 
   if (!currentUser) {
     return (
-      <div id="account-login-prompt" className="min-h-screen bg-[#FDFBF7] text-[#111111] py-20 px-4 flex flex-col items-center justify-center">
-        <div className="max-w-md w-full bg-white border border-[#E8E2D9] rounded-3xl p-8 text-center space-y-6 shadow-xs">
-          <div className="w-16 h-16 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] flex items-center justify-center text-[#9A7B38] mx-auto shadow-inner">
+      <div id="account-login-prompt" className="min-h-screen bg-[#0A0A0A] text-[#F5F2EB] py-20 px-4 flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-[#121212] border border-[#222222] rounded-3xl p-8 text-center space-y-6 shadow-xs">
+          <div className="w-16 h-16 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center text-[#C5A880] mx-auto shadow-inner">
             <User className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-serif font-bold text-stone-900">Sign In to Your Atelier Account</h1>
-            <p className="text-xs text-stone-500 mt-1 font-normal">
+            <h1 className="text-2xl font-serif font-bold text-[#F5F2EB]">Sign In to Your Atelier Account</h1>
+            <p className="text-xs text-[#888888] mt-1 font-normal">
               Access your couture orders, bespoke fitting requests, client addresses, and Privilege Credits.
             </p>
           </div>
@@ -109,13 +109,13 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
           <div className="space-y-3 pt-2">
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="w-full py-3.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-widest transition-colors shadow-md cursor-pointer"
+              className="w-full py-3.5 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold text-xs uppercase tracking-widest transition-colors shadow-md cursor-pointer"
             >
               Sign In or Register
             </button>
             <button
               onClick={() => onNavigate('shop')}
-              className="w-full py-3 rounded-full bg-[#FAF8F5] hover:bg-stone-200 text-stone-800 font-semibold text-xs transition-colors cursor-pointer"
+              className="w-full py-3 rounded-full bg-[#181818] hover:bg-[#222222] text-[#D4CEBF] font-semibold text-xs transition-colors cursor-pointer"
             >
               Explore Runway Catalog
             </button>
@@ -327,25 +327,25 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
   const savedAddressesList = currentUser.addresses || currentUser.savedAddresses || [];
 
   return (
-    <div id="account-portal-page" className="min-h-screen bg-[#FDFBF7] text-[#111111] py-12">
+    <div id="account-portal-page" className="min-h-screen bg-[#0A0A0A] text-[#F5F2EB] py-12">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-8">
         
         {/* User Hero Bar */}
-        <div className="bg-white border border-[#E8E2D9] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
+        <div className="bg-[#121212] border border-[#222222] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] flex items-center justify-center text-[#9A7B38] text-2xl font-serif font-bold uppercase shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center text-[#C5A880] text-2xl font-serif font-bold uppercase shadow-inner">
               {currentUser?.name?.charAt(0) || 'A'}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#F5F2EB]">
                   {currentUser?.name}
                 </h1>
-                <span className="px-3 py-0.5 rounded-full bg-[#FAF8F5] border border-[#E0D8C8] text-[#9A7B38] text-[10px] font-bold uppercase tracking-wider">
+                <span className="px-3 py-0.5 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#C5A880] text-[10px] font-bold uppercase tracking-wider">
                   {isAdmin ? 'Maison Admin' : isSeller ? 'Verified Designer' : 'Haute Couture Circle'}
                 </span>
               </div>
-              <p className="text-xs text-stone-500 mt-0.5">{currentUser?.email} • {currentUser?.phone || '+91 Client'}</p>
+              <p className="text-xs text-[#888888] mt-0.5">{currentUser?.email} • {currentUser?.phone || '+91 Client'}</p>
             </div>
           </div>
 
@@ -353,34 +353,34 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             {isAdmin && (
               <button
                 onClick={() => onNavigate('admin')}
-                className="p-3 bg-[#111111] hover:bg-[#9A7B38] text-white rounded-full flex items-center space-x-2 font-semibold uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
+                className="p-3 bg-[#111111] hover:bg-[#C5A880] text-white rounded-full flex items-center space-x-2 font-semibold uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
               >
-                <ShieldAlert className="w-4 h-4 text-[#9A7B38]" />
+                <ShieldAlert className="w-4 h-4 text-[#C5A880]" />
                 <span>Admin Console</span>
               </button>
             )}
 
             <button
               onClick={() => onNavigate('seller')}
-              className="p-3 bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] rounded-full text-stone-900 font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
+              className="p-3 bg-[#181818] hover:bg-[#222222] border border-[#2A2A2A] rounded-full text-[#F5F2EB] font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
             >
-              <Store className="w-4 h-4 text-[#9A7B38]" />
+              <Store className="w-4 h-4 text-[#C5A880]" />
               <span>{isSeller ? 'Designer Studio' : 'Partner with AURELIA'}</span>
             </button>
 
-            <div className="p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-full flex items-center space-x-2.5 px-4">
-              <Sparkles className="w-4 h-4 text-[#9A7B38]" />
+            <div className="p-3 bg-[#181818] border border-[#2A2A2A] rounded-full flex items-center space-x-2.5 px-4">
+              <Sparkles className="w-4 h-4 text-[#C5A880]" />
               <div>
-                <div className="font-bold text-stone-900 font-serif text-sm">
+                <div className="font-bold text-[#F5F2EB] font-serif text-sm">
                   {currentUser?.novaCoins?.toLocaleString('en-IN') || 500} Credits
                 </div>
-                <div className="text-[10px] text-stone-500 uppercase font-semibold tracking-wider">Privilege Balance</div>
+                <div className="text-[10px] text-[#888888] uppercase font-semibold tracking-wider">Privilege Balance</div>
               </div>
             </div>
 
             <button
               onClick={() => logoutUser()}
-              className="p-3 bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] rounded-full text-stone-700 font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
+              className="p-3 bg-[#181818] hover:bg-[#222222] border border-[#2A2A2A] rounded-full text-[#D4CEBF] font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -392,7 +392,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
         {/* Tab Navigation & Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Nav */}
-          <div className="lg:col-span-3 space-y-1.5 bg-white border border-[#E8E2D9] rounded-2xl p-4 h-fit shadow-xs">
+          <div className="lg:col-span-3 space-y-1.5 bg-[#121212] border border-[#222222] rounded-2xl p-4 h-fit shadow-xs">
             {[
               { id: 'orders', label: 'My Couture Orders', icon: Package, count: orders.length },
               { id: 'returns', label: 'Returns & Fitting Exchanges', icon: RotateCcw, count: userReturns.length },
@@ -410,7 +410,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                   className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? 'bg-[#111111] text-white shadow-xs'
-                      : 'text-stone-600 hover:text-stone-900 hover:bg-[#FAF8F5]'
+                      : 'text-[#A0988A] hover:text-[#F5F2EB] hover:bg-[#181818]'
                   }`}
                 >
                   <div className="flex items-center space-x-2.5">
@@ -419,7 +419,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                   </div>
                   {tab.count !== undefined && (
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
-                      activeTab === tab.id ? 'bg-[#9A7B38] text-white' : 'bg-stone-100 text-stone-600'
+                      activeTab === tab.id ? 'bg-[#C5A880] text-white' : 'bg-[#1A1A1A] text-[#A0988A]'
                     }`}>
                       {tab.count}
                     </span>
@@ -436,8 +436,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h2 className="text-xl font-serif font-bold text-stone-900">Order History & Invoices</h2>
-                    <p className="text-xs text-stone-500">{orders.length} total orders recorded</p>
+                    <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Order History & Invoices</h2>
+                    <p className="text-xs text-[#888888]">{orders.length} total orders recorded</p>
                   </div>
 
                   {orders.length > 0 && (
@@ -453,12 +453,12 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 </div>
 
                 {orders.length === 0 ? (
-                  <div className="p-12 bg-white border border-[#E8E2D9] rounded-2xl text-center text-xs text-stone-500 shadow-xs space-y-3">
-                    <Package className="w-8 h-8 text-stone-300 mx-auto" />
+                  <div className="p-12 bg-[#121212] border border-[#222222] rounded-2xl text-center text-xs text-[#888888] shadow-xs space-y-3">
+                    <Package className="w-8 h-8 text-[#444444] mx-auto" />
                     <p>No past couture orders found on this client profile.</p>
                     <button
                       onClick={() => onNavigate('shop')}
-                      className="px-6 py-2.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs uppercase tracking-wider transition-colors"
+                      className="px-6 py-2.5 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold text-xs uppercase tracking-wider transition-colors"
                     >
                       Browse Runway Collections
                     </button>
@@ -467,20 +467,20 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                   orders.map((order) => (
                     <div
                       key={order.id}
-                      className="bg-white border border-[#E8E2D9] rounded-2xl p-6 space-y-4 shadow-xs"
+                      className="bg-[#121212] border border-[#222222] rounded-2xl p-6 space-y-4 shadow-xs"
                     >
                       {/* Order Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EAE4D8] pb-4 text-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#222222] pb-4 text-xs">
                         <div>
-                          <div className="text-stone-900 font-mono font-bold text-sm flex items-center space-x-2">
+                          <div className="text-[#F5F2EB] font-mono font-bold text-sm flex items-center space-x-2">
                             <span>#{order.orderNumber || order.id.slice(0, 8)}</span>
                             {order.trackingNumber && (
-                              <span className="text-[11px] font-normal text-stone-500 font-sans">
+                              <span className="text-[11px] font-normal text-[#888888] font-sans">
                                 (AWB: {order.trackingNumber})
                               </span>
                             )}
                           </div>
-                          <div className="text-stone-500 text-[11px] mt-0.5">
+                          <div className="text-[#888888] text-[11px] mt-0.5">
                             Placed on {new Date(order.createdAt).toLocaleDateString('en-IN', {
                               year: 'numeric',
                               month: 'short',
@@ -523,7 +523,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                             <button
                               onClick={() => handleRetryPayment(order)}
                               disabled={retryingOrderId === order.id}
-                              className="px-3.5 py-1.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold text-xs flex items-center space-x-1.5 transition-colors shadow-xs cursor-pointer"
+                              className="px-3.5 py-1.5 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold text-xs flex items-center space-x-1.5 transition-colors shadow-xs cursor-pointer"
                             >
                               <CreditCard className="w-3.5 h-3.5" />
                               <span>{retryingOrderId === order.id ? 'Connecting...' : 'Authorize with Razorpay'}</span>
@@ -532,19 +532,19 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
 
                           <button
                             onClick={() => setSelectedInvoiceOrder(order)}
-                            className="px-3.5 py-1.5 rounded-full bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-stone-800 font-semibold flex items-center space-x-1 transition-colors"
+                            className="px-3.5 py-1.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#2A2A2A] text-[#D4CEBF] font-semibold flex items-center space-x-1 transition-colors"
                             title="Download Atelier Tax Invoice"
                           >
-                            <FileText className="w-3.5 h-3.5 text-stone-600" />
+                            <FileText className="w-3.5 h-3.5 text-[#A0988A]" />
                             <span>Tax Invoice</span>
                           </button>
 
                           {order.status !== 'cancelled' && (
                             <button
                               onClick={() => onNavigate('tracking', { trackingNumber: order.trackingNumber || order.id })}
-                              className="px-3.5 py-1.5 rounded-full bg-[#FAF8F5] hover:bg-stone-200 border border-[#E0D8C8] text-stone-900 font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
+                              className="px-3.5 py-1.5 rounded-full bg-[#181818] hover:bg-[#222222] border border-[#2A2A2A] text-[#F5F2EB] font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
                             >
-                              <Truck className="w-3.5 h-3.5 text-[#9A7B38]" />
+                              <Truck className="w-3.5 h-3.5 text-[#C5A880]" />
                               <span>Track Live</span>
                             </button>
                           )}
@@ -565,7 +565,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                                 deleteOrder(order.id);
                               }
                             }}
-                            className="p-1.5 rounded-full text-stone-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-full text-[#666666] hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
                             title="Remove from Order History"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -576,9 +576,9 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                       {/* Items */}
                       <div className="space-y-3">
                         {order.items.map((item, idx) => (
-                          <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-[#FAF8F5] p-3.5 rounded-xl border border-[#EAE4D8]">
+                          <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-[#181818] p-3.5 rounded-xl border border-[#222222]">
                             <div className="flex items-center space-x-3">
-                              <div className="w-12 h-16 aspect-[3/4] rounded-lg overflow-hidden bg-white border border-[#E8E2D9] shrink-0">
+                              <div className="w-12 h-16 aspect-[3/4] rounded-lg overflow-hidden bg-[#121212] border border-[#222222] shrink-0">
                                 <img
                                   src={item.product?.images?.[0] || 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=600&q=80'}
                                   alt=""
@@ -586,8 +586,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                                 />
                               </div>
                               <div>
-                                <h4 className="text-stone-900 font-serif font-bold">{item.product?.name || item.productId}</h4>
-                                <div className="text-[11px] text-stone-500">
+                                <h4 className="text-[#F5F2EB] font-serif font-bold">{item.product?.name || item.productId}</h4>
+                                <div className="text-[11px] text-[#888888]">
                                   Qty: {item.quantity} {item.selectedSize && `• Size: ${item.selectedSize}`} {item.selectedColor && `• Color: ${item.selectedColor.name}`}
                                 </div>
                               </div>
@@ -595,7 +595,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
 
                             <div className="flex items-center justify-between sm:justify-end sm:space-x-4">
                               <div className="text-left sm:text-right">
-                                <div className="font-bold text-stone-900 font-serif">
+                                <div className="font-bold text-[#F5F2EB] font-serif">
                                   ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                                 </div>
                               </div>
@@ -604,16 +604,16 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                                 {(order.status === 'delivered' || order.status === 'shipped') && (
                                   <button
                                     onClick={() => setReturnModalData({ order, item })}
-                                    className="px-3 py-1 bg-white border border-[#E0D8C8] hover:border-black rounded-full text-[11px] font-semibold text-stone-700 hover:text-black flex items-center space-x-1"
+                                    className="px-3 py-1 bg-[#121212] border border-[#2A2A2A] hover:border-black rounded-full text-[11px] font-semibold text-[#D4CEBF] hover:text-black flex items-center space-x-1"
                                   >
-                                    <RotateCcw className="w-3 h-3 text-[#9A7B38]" />
+                                    <RotateCcw className="w-3 h-3 text-[#C5A880]" />
                                     <span>Exchange / Return</span>
                                   </button>
                                 )}
 
                                 <button
                                   onClick={() => onNavigate('product-detail', { productId: item.productId })}
-                                  className="text-[11px] text-[#9A7B38] hover:underline font-semibold"
+                                  className="text-[11px] text-[#C5A880] hover:underline font-semibold"
                                 >
                                   View Item
                                 </button>
@@ -624,11 +624,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                       </div>
 
                       {/* Footer info */}
-                      <div className="pt-3 border-t border-[#EAE4D8] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                        <div className="text-stone-500">
-                          Total Amount: <strong className="text-stone-950 font-serif font-bold">₹{order.total.toLocaleString('en-IN')}</strong> ({order.paymentMethod.toUpperCase()})
+                      <div className="pt-3 border-t border-[#222222] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                        <div className="text-[#888888]">
+                          Total Amount: <strong className="text-[#F5F2EB] font-serif font-bold">₹{order.total.toLocaleString('en-IN')}</strong> ({order.paymentMethod.toUpperCase()})
                         </div>
-                        <div className="text-[#9A7B38] flex items-center space-x-1.5 font-medium">
+                        <div className="text-[#C5A880] flex items-center space-x-1.5 font-medium">
                           <Scissors className="w-3.5 h-3.5" />
                           <span>1-Year Atelier Craftsmanship Warranty & 14-Day Fitting Guarantee</span>
                         </div>
@@ -643,26 +643,26 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             {activeTab === 'returns' && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-serif font-bold text-stone-900">Fitting Exchanges & Returns</h2>
-                  <p className="text-xs text-stone-500">14-Day Doorstep Complimentary Fitting Service</p>
+                  <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Fitting Exchanges & Returns</h2>
+                  <p className="text-xs text-[#888888]">14-Day Doorstep Complimentary Fitting Service</p>
                 </div>
 
                 {userReturns.length === 0 ? (
-                  <div className="p-12 bg-white border border-[#E8E2D9] rounded-2xl text-center text-xs text-stone-500 shadow-xs space-y-3">
-                    <RotateCcw className="w-8 h-8 text-stone-300 mx-auto" />
+                  <div className="p-12 bg-[#121212] border border-[#222222] rounded-2xl text-center text-xs text-[#888888] shadow-xs space-y-3">
+                    <RotateCcw className="w-8 h-8 text-[#444444] mx-auto" />
                     <p>No active return or alteration requests.</p>
-                    <p className="text-[11px] text-stone-400">
+                    <p className="text-[11px] text-[#666666]">
                       You can initiate a size exchange from any delivered order in the "My Couture Orders" tab.
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {userReturns.map((ret) => (
-                      <div key={ret.id} className="bg-white border border-[#E8E2D9] rounded-2xl p-6 space-y-4 shadow-xs">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EAE4D8] pb-3 text-xs">
+                      <div key={ret.id} className="bg-[#121212] border border-[#222222] rounded-2xl p-6 space-y-4 shadow-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#222222] pb-3 text-xs">
                           <div>
-                            <span className="font-bold text-stone-900 font-mono text-sm">Exchange #{ret.returnNumber}</span>
-                            <p className="text-stone-500 text-[11px]">
+                            <span className="font-bold text-[#F5F2EB] font-mono text-sm">Exchange #{ret.returnNumber}</span>
+                            <p className="text-[#888888] text-[11px]">
                               For Order #{ret.orderNumber} • Requested on {new Date(ret.createdAt).toLocaleDateString('en-IN')}
                             </p>
                           </div>
@@ -682,14 +682,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
 
                         <div className="flex items-center space-x-3 text-xs">
                           {ret.productImage && (
-                            <img src={ret.productImage} alt="" className="w-12 h-16 object-cover rounded-lg border border-[#E8E2D9]" />
+                            <img src={ret.productImage} alt="" className="w-12 h-16 object-cover rounded-lg border border-[#222222]" />
                           )}
                           <div>
-                            <p className="font-serif font-bold text-stone-900">{ret.productName}</p>
-                            <p className="text-stone-500 text-[11px]">
-                              Reason: <strong className="capitalize text-stone-800">{ret.reason.replace('_', ' ')}</strong> — "{ret.reasonDetails}"
+                            <p className="font-serif font-bold text-[#F5F2EB]">{ret.productName}</p>
+                            <p className="text-[#888888] text-[11px]">
+                              Reason: <strong className="capitalize text-[#D4CEBF]">{ret.reason.replace('_', ' ')}</strong> — "{ret.reasonDetails}"
                             </p>
-                            <p className="font-bold text-stone-900 mt-1 font-serif">Refund / Credit Value: ₹{ret.refundAmount.toLocaleString('en-IN')}</p>
+                            <p className="font-bold text-[#F5F2EB] mt-1 font-serif">Refund / Credit Value: ₹{ret.refundAmount.toLocaleString('en-IN')}</p>
                           </div>
                         </div>
 
@@ -709,11 +709,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             {activeTab === 'notifications' && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-serif font-bold text-stone-900">Atelier Notification Center</h2>
+                  <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Atelier Notification Center</h2>
                   {notifications.some((n) => !n.isRead) && (
                     <button
                       onClick={() => markAllNotificationsRead()}
-                      className="text-xs font-semibold text-[#9A7B38] hover:underline cursor-pointer"
+                      className="text-xs font-semibold text-[#C5A880] hover:underline cursor-pointer"
                     >
                       Mark All as Read
                     </button>
@@ -727,14 +727,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                       onClick={() => markNotificationRead(notif.id)}
                       className={`p-4 rounded-2xl border transition-all text-xs flex items-start justify-between gap-4 cursor-pointer ${
                         notif.isRead
-                          ? 'bg-white border-[#E8E2D9] text-stone-600'
-                          : 'bg-[#FAF8F5] border-[#9A7B38] text-stone-900 shadow-xs'
+                          ? 'bg-[#121212] border-[#222222] text-[#A0988A]'
+                          : 'bg-[#181818] border-[#9A7B38] text-[#F5F2EB] shadow-xs'
                       }`}
                     >
                       <div className="space-y-1">
-                        <h4 className="font-serif font-bold text-sm text-stone-900">{notif.title}</h4>
-                        <p className="text-stone-600 leading-relaxed font-normal">{notif.message}</p>
-                        <span className="text-[10px] text-stone-400 block pt-1 font-mono">
+                        <h4 className="font-serif font-bold text-sm text-[#F5F2EB]">{notif.title}</h4>
+                        <p className="text-[#A0988A] leading-relaxed font-normal">{notif.message}</p>
+                        <span className="text-[10px] text-[#666666] block pt-1 font-mono">
                           {new Date(notif.createdAt).toLocaleDateString('en-IN', {
                             month: 'short',
                             day: 'numeric',
@@ -744,7 +744,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                         </span>
                       </div>
                       {!notif.isRead && (
-                        <span className="w-2 h-2 rounded-full bg-[#9A7B38] shrink-0 mt-1.5" />
+                        <span className="w-2 h-2 rounded-full bg-[#C5A880] shrink-0 mt-1.5" />
                       )}
                     </div>
                   ))}
@@ -757,39 +757,39 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-serif font-bold text-stone-900">Client Concierge & Support</h2>
-                    <p className="text-xs text-stone-500">Direct assistance for bespoke orders and runway inquiries.</p>
+                    <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Client Concierge & Support</h2>
+                    <p className="text-xs text-[#888888]">Direct assistance for bespoke orders and runway inquiries.</p>
                   </div>
                   <button
                     onClick={() => setIsTicketModalOpen(true)}
-                    className="px-4 py-2 bg-[#111111] hover:bg-[#9A7B38] text-white text-xs font-semibold rounded-full shadow-xs transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-[#111111] hover:bg-[#C5A880] text-white text-xs font-semibold rounded-full shadow-xs transition-colors cursor-pointer"
                   >
                     Open New Request
                   </button>
                 </div>
 
                 {userTickets.length === 0 ? (
-                  <div className="p-12 bg-white border border-[#E8E2D9] rounded-2xl text-center text-xs text-stone-500 shadow-xs space-y-3">
-                    <HelpCircle className="w-8 h-8 text-stone-300 mx-auto" />
+                  <div className="p-12 bg-[#121212] border border-[#222222] rounded-2xl text-center text-xs text-[#888888] shadow-xs space-y-3">
+                    <HelpCircle className="w-8 h-8 text-[#444444] mx-auto" />
                     <p>No active concierge requests. Our styling team is here whenever you need assistance.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {userTickets.map((t) => (
-                      <div key={t.id} className="p-5 bg-white border border-[#E8E2D9] rounded-2xl space-y-2 text-xs shadow-xs">
+                      <div key={t.id} className="p-5 bg-[#121212] border border-[#222222] rounded-2xl space-y-2 text-xs shadow-xs">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-serif font-bold text-stone-900 text-sm">{t.subject}</h4>
+                          <h4 className="font-serif font-bold text-[#F5F2EB] text-sm">{t.subject}</h4>
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono ${
                             t.status === 'resolved' ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'
                           }`}>
                             {t.status}
                           </span>
                         </div>
-                        <p className="text-stone-600 font-normal">{t.message}</p>
-                        <div className="text-[11px] text-stone-400 pt-1 flex items-center space-x-3">
-                          <span>Category: <strong className="capitalize text-stone-700">{t.category}</strong></span>
+                        <p className="text-[#A0988A] font-normal">{t.message}</p>
+                        <div className="text-[11px] text-[#666666] pt-1 flex items-center space-x-3">
+                          <span>Category: <strong className="capitalize text-[#D4CEBF]">{t.category}</strong></span>
                           <span>•</span>
-                          <span>Priority: <strong className="capitalize text-stone-700">{t.priority}</strong></span>
+                          <span>Priority: <strong className="capitalize text-[#D4CEBF]">{t.priority}</strong></span>
                         </div>
                       </div>
                     ))}
@@ -802,10 +802,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             {activeTab === 'addresses' && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-serif font-bold text-stone-900">Client Delivery Addresses</h2>
+                  <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Client Delivery Addresses</h2>
                   <button
                     onClick={() => setIsAddAddressOpen(true)}
-                    className="px-4 py-2 bg-[#111111] hover:bg-[#9A7B38] text-white text-xs font-semibold rounded-full shadow-xs transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-[#111111] hover:bg-[#C5A880] text-white text-xs font-semibold rounded-full shadow-xs transition-colors cursor-pointer"
                   >
                     Add Address
                   </button>
@@ -815,28 +815,28 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                   {savedAddressesList.map((addr) => (
                     <div
                       key={addr.id}
-                      className="p-5 bg-white border border-[#E8E2D9] rounded-2xl space-y-3 text-xs shadow-xs flex flex-col justify-between"
+                      className="p-5 bg-[#121212] border border-[#222222] rounded-2xl space-y-3 text-xs shadow-xs flex flex-col justify-between"
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <span className="font-serif font-bold text-stone-950 text-sm">{addr.fullName}</span>
+                          <span className="font-serif font-bold text-[#F5F2EB] text-sm">{addr.fullName}</span>
                           {addr.isDefault && (
-                            <span className="text-[10px] font-bold bg-[#FAF8F5] text-[#9A7B38] border border-[#E0D8C8] px-2 py-0.5 rounded-full">
+                            <span className="text-[10px] font-bold bg-[#181818] text-[#C5A880] border border-[#2A2A2A] px-2 py-0.5 rounded-full">
                               Default Destination
                             </span>
                           )}
                         </div>
-                        <p className="text-stone-700 leading-relaxed font-normal">
+                        <p className="text-[#D4CEBF] leading-relaxed font-normal">
                           {addr.street}, {addr.city}, {addr.state} - {addr.pincode}
                         </p>
-                        <p className="text-stone-500">Phone: {addr.phone}</p>
+                        <p className="text-[#888888]">Phone: {addr.phone}</p>
                       </div>
 
-                      <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
+                      <div className="pt-2 border-t border-[#222222] flex items-center justify-between">
                         {!addr.isDefault ? (
                           <button
                             onClick={() => setDefaultAddress(addr.id)}
-                            className="text-[11px] text-stone-600 hover:text-black font-semibold underline"
+                            className="text-[11px] text-[#A0988A] hover:text-black font-semibold underline"
                           >
                             Set as default
                           </button>
@@ -845,7 +845,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                         )}
                         <button
                           onClick={() => removeAddress(addr.id)}
-                          className="text-stone-400 hover:text-rose-600 p-1"
+                          className="text-[#666666] hover:text-rose-600 p-1"
                           title="Delete address"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -860,20 +860,20 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             {/* REWARDS TAB */}
             {activeTab === 'rewards' && (
               <div className="space-y-6">
-                <h2 className="text-xl font-serif font-bold text-stone-900">Atelier Privilege Credits & Tier</h2>
-                <div className="p-6 bg-gradient-to-br from-[#FAF8F5] to-white border border-[#E0D8C8] rounded-2xl space-y-3 shadow-xs">
+                <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Atelier Privilege Credits & Tier</h2>
+                <div className="p-6 bg-gradient-to-br from-[#FAF8F5] to-white border border-[#2A2A2A] rounded-2xl space-y-3 shadow-xs">
                   <div className="flex items-center space-x-3">
-                    <Sparkles className="w-8 h-8 text-[#9A7B38]" />
+                    <Sparkles className="w-8 h-8 text-[#C5A880]" />
                     <div>
-                      <div className="text-2xl font-serif font-bold text-stone-900">
+                      <div className="text-2xl font-serif font-bold text-[#F5F2EB]">
                         {currentUser?.novaCoins || 500} Credits Available
                       </div>
-                      <div className="text-xs text-[#9A7B38] font-semibold">
+                      <div className="text-xs text-[#C5A880] font-semibold">
                         Equivalent to ₹{currentUser?.novaCoins || 500} Instant Savings on your next atelier order
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-stone-600 leading-relaxed pt-2 font-normal">
+                  <p className="text-xs text-[#A0988A] leading-relaxed pt-2 font-normal">
                     Earn 100 Privilege Credits for every verified garment review, bespoke size profile completion, and 5% back on every haute couture order.
                   </p>
                 </div>
@@ -882,11 +882,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
 
             {/* PROFILE TAB */}
             {activeTab === 'profile' && (
-              <div className="bg-white border border-[#E8E2D9] rounded-2xl p-6 sm:p-8 space-y-6 text-xs shadow-xs">
+              <div className="bg-[#121212] border border-[#222222] rounded-2xl p-6 sm:p-8 space-y-6 text-xs shadow-xs">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-serif font-bold text-stone-900">Client Profile & Bespoke Measurements</h2>
-                    <p className="text-xs text-stone-500 mt-0.5">Manage your personal credentials and tailored preferences.</p>
+                    <h2 className="text-xl font-serif font-bold text-[#F5F2EB]">Client Profile & Bespoke Measurements</h2>
+                    <p className="text-xs text-[#888888] mt-0.5">Manage your personal credentials and tailored preferences.</p>
                   </div>
                   {!isEditingProfile && (
                     <button
@@ -895,7 +895,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                         setProfilePhone(currentUser.phone);
                         setIsEditingProfile(true);
                       }}
-                      className="px-4 py-2 rounded-full bg-[#FAF8F5] hover:bg-stone-200 text-stone-800 font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
+                      className="px-4 py-2 rounded-full bg-[#181818] hover:bg-[#222222] text-[#D4CEBF] font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       <span>Edit Profile</span>
@@ -906,36 +906,36 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 {isEditingProfile ? (
                   <form onSubmit={handleSaveProfile} className="space-y-4 max-w-md">
                     <div>
-                      <label className="text-stone-700 font-semibold block mb-1">Full Name</label>
+                      <label className="text-[#D4CEBF] font-semibold block mb-1">Full Name</label>
                       <input
                         type="text"
                         required
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
-                        className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
+                        className="w-full bg-[#181818] border border-[#2A2A2A] rounded-xl p-3 text-[#F5F2EB] focus:outline-none focus:border-[#9A7B38]"
                       />
                     </div>
                     <div>
-                      <label className="text-stone-700 font-semibold block mb-1">Phone Number</label>
+                      <label className="text-[#D4CEBF] font-semibold block mb-1">Phone Number</label>
                       <input
                         type="tel"
                         value={profilePhone}
                         onChange={(e) => setProfilePhone(e.target.value)}
                         placeholder="+91 98765 43210"
-                        className="w-full bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl p-3 text-stone-900 focus:outline-none focus:border-[#9A7B38]"
+                        className="w-full bg-[#181818] border border-[#2A2A2A] rounded-xl p-3 text-[#F5F2EB] focus:outline-none focus:border-[#9A7B38]"
                       />
                     </div>
                     <div className="flex items-center space-x-3 pt-2">
                       <button
                         type="button"
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-5 py-2.5 rounded-full bg-[#FAF8F5] text-stone-700 font-semibold"
+                        className="px-5 py-2.5 rounded-full bg-[#181818] text-[#D4CEBF] font-semibold"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold uppercase tracking-wider"
+                        className="px-6 py-2.5 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold uppercase tracking-wider"
                       >
                         Save Changes
                       </button>
@@ -944,20 +944,20 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 ) : (
                   <div className="space-y-4 max-w-md">
                     <div>
-                      <label className="text-stone-500 font-semibold block mb-1">Client Name</label>
-                      <div className="font-serif font-bold text-stone-950 text-sm p-3.5 bg-[#FAF8F5] border border-[#E8E2D9] rounded-xl">
+                      <label className="text-[#888888] font-semibold block mb-1">Client Name</label>
+                      <div className="font-serif font-bold text-[#F5F2EB] text-sm p-3.5 bg-[#181818] border border-[#222222] rounded-xl">
                         {currentUser?.name}
                       </div>
                     </div>
                     <div>
-                      <label className="text-stone-500 font-semibold block mb-1">Email Address</label>
-                      <div className="font-serif font-bold text-stone-950 text-sm p-3.5 bg-[#FAF8F5] border border-[#E8E2D9] rounded-xl">
+                      <label className="text-[#888888] font-semibold block mb-1">Email Address</label>
+                      <div className="font-serif font-bold text-[#F5F2EB] text-sm p-3.5 bg-[#181818] border border-[#222222] rounded-xl">
                         {currentUser?.email}
                       </div>
                     </div>
                     <div>
-                      <label className="text-stone-500 font-semibold block mb-1">Phone Number</label>
-                      <div className="font-serif font-bold text-stone-950 text-sm p-3.5 bg-[#FAF8F5] border border-[#E8E2D9] rounded-xl">
+                      <label className="text-[#888888] font-semibold block mb-1">Phone Number</label>
+                      <div className="font-serif font-bold text-[#F5F2EB] text-sm p-3.5 bg-[#181818] border border-[#222222] rounded-xl">
                         {currentUser?.phone || 'Not provided'}
                       </div>
                     </div>
@@ -990,18 +990,18 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
       {/* Cancel Order Modal */}
       {cancelModalOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-xs animate-in fade-in zoom-in-95">
-            <h3 className="text-base font-serif font-bold text-stone-900">Cancel Atelier Order #{cancelModalOrder.orderNumber || cancelModalOrder.id.slice(0, 8)}</h3>
-            <p className="text-stone-500 font-normal">
+          <div className="bg-[#121212] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-xs animate-in fade-in zoom-in-95">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">Cancel Atelier Order #{cancelModalOrder.orderNumber || cancelModalOrder.id.slice(0, 8)}</h3>
+            <p className="text-[#888888] font-normal">
               Are you sure you want to cancel this order? If already paid, the full refund of ₹{cancelModalOrder.total.toLocaleString('en-IN')} will be initiated back to your original payment method.
             </p>
 
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Reason for Cancellation</label>
+              <label className="block font-semibold text-[#D4CEBF] mb-1">Reason for Cancellation</label>
               <select
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl font-medium"
+                className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl font-medium"
               >
                 <option value="Changed styling preference">Changed styling preference</option>
                 <option value="Need to change sizing / fit details">Need to change sizing / fit details</option>
@@ -1014,7 +1014,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
             <div className="flex items-center justify-end space-x-2 pt-2">
               <button
                 onClick={() => setCancelModalOrder(null)}
-                className="px-4 py-2 rounded-full text-stone-600 hover:bg-[#FAF8F5] font-semibold"
+                className="px-4 py-2 rounded-full text-[#A0988A] hover:bg-[#181818] font-semibold"
               >
                 Keep Order
               </button>
@@ -1033,28 +1033,28 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
       {/* Support Ticket Modal */}
       {isTicketModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs animate-in fade-in zoom-in-95">
-            <h3 className="text-base font-serif font-bold text-stone-900">Contact Atelier Concierge</h3>
+          <div className="bg-[#121212] rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs animate-in fade-in zoom-in-95">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">Contact Atelier Concierge</h3>
             <form onSubmit={handleSubmitTicket} className="space-y-3">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Subject</label>
+                <label className="block font-semibold text-[#D4CEBF] mb-1">Subject</label>
                 <input
                   type="text"
                   required
                   value={ticketSubject}
                   onChange={(e) => setTicketSubject(e.target.value)}
                   placeholder="e.g. Sizing inquiry regarding Mulberry Silk Evening Gown"
-                  className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                  className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">Category</label>
+                  <label className="block font-semibold text-[#D4CEBF] mb-1">Category</label>
                   <select
                     value={ticketCategory}
                     onChange={(e) => setTicketCategory(e.target.value as any)}
-                    className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                    className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                   >
                     <option value="order">Order & Insured Dispatch</option>
                     <option value="warranty">Bespoke Alteration & Fitting</option>
@@ -1064,11 +1064,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">Priority</label>
+                  <label className="block font-semibold text-[#D4CEBF] mb-1">Priority</label>
                   <select
                     value={ticketPriority}
                     onChange={(e) => setTicketPriority(e.target.value as any)}
-                    className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                    className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                   >
                     <option value="low">Standard</option>
                     <option value="medium">Priority</option>
@@ -1078,14 +1078,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Detailed Inquiry</label>
+                <label className="block font-semibold text-[#D4CEBF] mb-1">Detailed Inquiry</label>
                 <textarea
                   rows={4}
                   required
                   value={ticketMessage}
                   onChange={(e) => setTicketMessage(e.target.value)}
                   placeholder="Please describe your styling request, order numbers, or measurement questions..."
-                  className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                  className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                 />
               </div>
 
@@ -1093,14 +1093,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={() => setIsTicketModalOpen(false)}
-                  className="px-4 py-2 rounded-full text-stone-600 hover:bg-[#FAF8F5] font-semibold"
+                  className="px-4 py-2 rounded-full text-[#A0988A] hover:bg-[#181818] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingTicket}
-                  className="px-6 py-2 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold disabled:opacity-50"
+                  className="px-6 py-2 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold disabled:opacity-50"
                 >
                   {isSubmittingTicket ? 'Submitting...' : 'Submit to Concierge'}
                 </button>
@@ -1113,60 +1113,60 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
       {/* Add Address Modal */}
       {isAddAddressOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-[#E8E2D9] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
-            <h3 className="text-base font-serif font-bold text-stone-900">Add New Delivery Destination</h3>
+          <div className="bg-[#121212] rounded-3xl border border-[#222222] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
+            <h3 className="text-base font-serif font-bold text-[#F5F2EB]">Add New Delivery Destination</h3>
             <form onSubmit={handleAddAddressSubmit} className="space-y-3">
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Recipient Name</label>
+                <label className="block font-semibold text-[#D4CEBF] mb-1">Recipient Name</label>
                 <input
                   type="text"
                   required
                   value={newAddrFullName}
                   onChange={(e) => setNewAddrFullName(e.target.value)}
                   placeholder="e.g. Vishwajit Pawar"
-                  className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                  className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Contact Phone</label>
+                <label className="block font-semibold text-[#D4CEBF] mb-1">Contact Phone</label>
                 <input
                   type="tel"
                   required
                   value={newAddrPhone}
                   onChange={(e) => setNewAddrPhone(e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                  className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Flat / Villa / Street / Landmark</label>
+                <label className="block font-semibold text-[#D4CEBF] mb-1">Flat / Villa / Street / Landmark</label>
                 <input
                   type="text"
                   required
                   value={newAddrStreet}
                   onChange={(e) => setNewAddrStreet(e.target.value)}
                   placeholder="Villa 4B, Palm Avenue, Koramangala"
-                  className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                  className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">City</label>
+                  <label className="block font-semibold text-[#D4CEBF] mb-1">City</label>
                   <input
                     type="text"
                     required
                     value={newAddrCity}
                     onChange={(e) => setNewAddrCity(e.target.value)}
                     placeholder="Bengaluru"
-                    className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl"
+                    className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">PIN Code</label>
+                  <label className="block font-semibold text-[#D4CEBF] mb-1">PIN Code</label>
                   <input
                     type="text"
                     maxLength={6}
@@ -1174,7 +1174,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                     value={newAddrPincode}
                     onChange={(e) => setNewAddrPincode(e.target.value)}
                     placeholder="560034"
-                    className="w-full p-3 bg-[#FAF8F5] border border-[#E0D8C8] rounded-xl font-mono"
+                    className="w-full p-3 bg-[#181818] border border-[#2A2A2A] rounded-xl font-mono"
                   />
                 </div>
               </div>
@@ -1183,13 +1183,13 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={() => setIsAddAddressOpen(false)}
-                  className="px-4 py-2 rounded-full bg-[#FAF8F5] text-stone-700 font-semibold"
+                  className="px-4 py-2 rounded-full bg-[#181818] text-[#D4CEBF] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-full bg-[#111111] hover:bg-[#9A7B38] text-white font-semibold uppercase tracking-wider"
+                  className="px-6 py-2 rounded-full bg-[#111111] hover:bg-[#C5A880] text-white font-semibold uppercase tracking-wider"
                 >
                   Save Address
                 </button>
@@ -1201,13 +1201,13 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
       {/* Clear History Confirmation Modal */}
       {isClearModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#E8E2D9] rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl text-center">
+          <div className="bg-[#121212] border border-[#222222] rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl text-center">
             <div className="w-14 h-14 rounded-full bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
               <Trash2 className="w-7 h-7" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-serif font-bold text-stone-900">Clear Order History?</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-normal">
+              <h3 className="text-xl font-serif font-bold text-[#F5F2EB]">Clear Order History?</h3>
+              <p className="text-xs text-[#A0988A] leading-relaxed font-normal">
                 Are you sure you want to permanently clear all recorded orders and tax invoices from your account profile? This action cannot be undone.
               </p>
             </div>
@@ -1216,7 +1216,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigate }) => {
               <button
                 onClick={() => setIsClearModalOpen(false)}
                 disabled={isClearing}
-                className="flex-1 py-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-3 rounded-full bg-[#1A1A1A] hover:bg-[#222222] text-[#D4CEBF] font-semibold text-xs transition-colors cursor-pointer"
               >
                 Cancel
               </button>

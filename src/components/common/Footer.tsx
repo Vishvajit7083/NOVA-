@@ -215,6 +215,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
           <div className="flex items-center space-x-6 text-[11px]">
             <span>Currency: <strong className="text-white">INR (₹)</strong></span>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('aurelia_intro_shown');
+                window.dispatchEvent(new CustomEvent('aurelia:replay-intro'));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-[#C5A880] hover:text-[#D4AF37] transition-colors cursor-pointer flex items-center space-x-1"
+              title="Experience the signature cloth opening curtain intro"
+            >
+              <span>✦ Replay Intro</span>
+            </button>
             <button onClick={() => handleNav('support')} className="hover:text-white cursor-pointer">
               Privacy Policy
             </button>

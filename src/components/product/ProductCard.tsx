@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingBag, Eye, Star, Check, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Heart, ShoppingBag, Eye, Star, Check, SlidersHorizontal, Sparkles, Layers } from 'lucide-react';
 import { Product, ColorOption } from '../../types';
 import { useShop } from '../../context/ShopContext';
 
@@ -16,6 +16,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
     openQuickView,
     toggleComparison,
     isInComparison,
+    addToCanvas,
+    isInCanvas,
   } = useShop();
 
   const [selectedColor, setSelectedColor] = useState<ColorOption>(product.colors[0] || { name: 'Default', hex: '#000000' });
@@ -26,6 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
 
   const inWishlist = isInWishlist(product.id);
   const inCompare = isInComparison(product.id);
+  const onCanvas = isInCanvas(product.id);
 
   const hasSecondaryImage = product.images && product.images.length > 1;
   const primaryImg = product.images && product.images[0] ? product.images[0] : '';
@@ -61,14 +64,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
         setIsHovered(false);
         setShowQuickSizes(false);
       }}
-      className="group relative bg-white border border-[#EAE6DF] hover:border-[#9A7B38]/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 flex flex-col cursor-pointer"
+      className="group relative bg-[#121212] border border-[#222222] hover:border-[#C5A880]/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 flex flex-col cursor-pointer"
     >
       {/* Top Floating Badges & Action Toolbar */}
       <div className="absolute top-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between pointer-events-none">
         {/* Left Badges */}
         <div className="flex flex-col gap-1 items-start pointer-events-auto">
           {product.badge && (
-            <span className="px-3 py-1 rounded-full bg-[#111111]/90 backdrop-blur-md text-white text-[9px] font-bold tracking-[0.18em] uppercase shadow-sm border border-stone-800">
+            <span className="px-3 py-1 rounded-full bg-[#C5A880] text-black text-[9px] font-bold tracking-[0.18em] uppercase shadow-sm">
               {product.badge}
             </span>
           )}
@@ -79,8 +82,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
           )}
         </div>
 
-        {/* Right Action Icons (Wishlist & Comparison) */}
+        {/* Right Action Icons (Wishlist, Canvas & Comparison) */}
         <div className="flex items-center space-x-1.5 pointer-events-auto">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCanvas(product, selectedColor, selectedSize);
+            }}
+            className={`p-2.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xs cursor-pointer ${
+              onCanvas
+                ? 'bg-[#C5A880] text-black border-[#C5A880] scale-105'
+                : 'bg-black/70 hover:bg-[#C5A880] hover:text-black text-stone-300 border-[#222222] hover:border-[#C5A880]'
+            }`}
+            title={onCanvas ? 'Collected to Fashion Canvas' : 'Collect to Fashion Canvas'}
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </button>
+
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -88,8 +106,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
             }}
             className={`p-2.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xs cursor-pointer ${
               inCompare
-                ? 'bg-[#111111] text-white border-[#111111] scale-105'
-                : 'bg-white/85 hover:bg-[#111111] hover:text-white text-stone-700 border-stone-200/80 hover:border-[#111111]'
+                ? 'bg-[#C5A880] text-black border-[#C5A880] scale-105'
+                : 'bg-black/70 hover:bg-[#C5A880] hover:text-black text-stone-300 border-[#222222] hover:border-[#C5A880]'
             }`}
             title={inCompare ? 'Remove from Comparison' : 'Add to Comparison'}
           >
@@ -103,18 +121,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
             }}
             className={`p-2.5 rounded-full backdrop-blur-md border transition-all duration-300 shadow-xs cursor-pointer ${
               inWishlist
-                ? 'bg-[#9A7B38] text-white border-[#9A7B38] scale-105'
-                : 'bg-white/85 hover:bg-[#9A7B38] hover:text-white text-stone-700 border-stone-200/80 hover:border-[#9A7B38]'
+                ? 'bg-[#C5A880] text-black border-[#C5A880] scale-105'
+                : 'bg-black/70 hover:bg-[#C5A880] hover:text-black text-stone-300 border-[#222222] hover:border-[#C5A880]'
             }`}
             title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
-            <Heart className={`w-3.5 h-3.5 transition-transform ${inWishlist ? 'fill-white scale-110' : ''}`} />
+            <Heart className={`w-3.5 h-3.5 transition-transform ${inWishlist ? 'fill-black scale-110' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Editorial Photography Canvas (3:4 Ratio with Dual Layer Crossfade) */}
-      <div className="relative w-full aspect-[3/4] bg-[#F7F5F0] overflow-hidden flex items-center justify-center">
+      <div className="relative w-full aspect-[3/4] bg-[#181818] overflow-hidden flex items-center justify-center">
         {/* Primary Image Layer */}
         <img
           src={primaryImg}
@@ -138,54 +156,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
         )}
 
         {/* Ambient Gradient Vignette on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Floating Fabric/Atelier Label */}
         {product.fabric && (
-          <div className="absolute top-3.5 left-3.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[9px] uppercase tracking-widest font-semibold text-stone-800 border border-stone-200/80 pointer-events-none line-clamp-1 max-w-[65%] shadow-xs">
+          <div className="absolute top-3.5 left-3.5 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-md text-[9px] uppercase tracking-widest font-semibold text-[#C5A880] border border-[#222222] pointer-events-none line-clamp-1 max-w-[65%] shadow-xs">
             {product.fabric}
           </div>
         )}
 
         {/* Slide-Up Quick Action Floating Overlay */}
-        <div className="absolute bottom-3 inset-x-3 z-20 flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-300 ease-out">
+        <div className="absolute bottom-3 inset-x-3 z-20 flex items-center space-x-2 opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-300 ease-out">
           <button
             onClick={(e) => {
               e.stopPropagation();
               openQuickView(product);
             }}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-white/90 hover:bg-[#111111] text-stone-900 hover:text-white text-[10px] font-bold uppercase tracking-widest border border-stone-200 backdrop-blur-md flex items-center justify-center space-x-1.5 transition-all shadow-lg cursor-pointer"
+            className="w-full py-2 px-2.5 rounded-xl bg-black/85 hover:bg-[#202020] text-stone-200 hover:text-white text-[10px] font-bold uppercase tracking-wider border border-[#222222] backdrop-blur-md flex items-center justify-center space-x-1 transition-all shadow-lg cursor-pointer"
           >
-            <Eye className="w-3.5 h-3.5" />
+            <Eye className="w-3 h-3" />
             <span>Quick Look</span>
           </button>
-
-          {product.sizes && product.sizes.length > 0 ? (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowQuickSizes(!showQuickSizes);
-              }}
-              className="py-2.5 px-3.5 rounded-xl bg-[#111111] hover:bg-[#9A7B38] text-white text-[10px] font-bold uppercase tracking-widest flex items-center space-x-1.5 transition-all shadow-lg cursor-pointer"
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Select Size</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleQuickAdd}
-              className="py-2.5 px-3.5 rounded-xl bg-[#111111] hover:bg-[#9A7B38] text-white text-[10px] font-bold uppercase tracking-widest flex items-center space-x-1.5 transition-all shadow-lg cursor-pointer"
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Add</span>
-            </button>
-          )}
         </div>
 
         {/* Quick Size Selector Dropdown Overlay */}
         {showQuickSizes && product.sizes && (
-          <div className="absolute inset-x-3 bottom-14 z-30 bg-white/95 backdrop-blur-md border border-[#E0D8C8] rounded-2xl p-3 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-2 text-center">
+          <div className="absolute inset-x-3 bottom-14 z-30 bg-[#121212]/95 backdrop-blur-md border border-[#222222] rounded-2xl p-3 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-2 text-center">
               Choose Garment Size
             </div>
             <div className="grid grid-cols-4 gap-1.5">
@@ -193,7 +190,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
                 <button
                   key={sz}
                   onClick={(e) => handleQuickAdd(e, sz)}
-                  className="py-1.5 text-xs font-bold rounded-lg border border-stone-200 hover:border-[#9A7B38] hover:bg-[#9A7B38] hover:text-white text-stone-800 transition-colors cursor-pointer"
+                  className="py-1.5 text-xs font-bold rounded-lg border border-[#222222] hover:border-[#C5A880] hover:bg-[#C5A880] hover:text-black text-stone-300 transition-colors cursor-pointer"
                 >
                   {sz}
                 </button>
@@ -204,27 +201,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
       </div>
 
       {/* Card Information Section */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3 bg-white">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3 bg-[#121212]">
         <div>
           {/* Eyebrow Collection Label & Rating */}
           <div className="flex items-center justify-between text-[10px] font-bold tracking-[0.18em] uppercase">
-            <span className="text-[#9A7B38]">
+            <span className="text-[#C5A880]">
               {product.fit || (product.gender ? `${product.gender} COLLECTION` : 'ATELIER')}
             </span>
-            <div className="flex items-center space-x-1 text-amber-500">
-              <Star className="w-3 h-3 fill-amber-500" />
-              <span className="font-bold text-stone-900">{product.rating}</span>
+            <div className="flex items-center space-x-1 text-[#C5A880]">
+              <Star className="w-3 h-3 fill-[#C5A880] stroke-[#C5A880]" />
+              <span className="font-bold text-white">{product.rating}</span>
               <span className="text-stone-400 font-normal">({product.reviewCount})</span>
             </div>
           </div>
 
           {/* Product Title */}
-          <h3 className="text-base sm:text-lg font-serif font-bold text-stone-900 group-hover:text-[#9A7B38] transition-colors line-clamp-1 mt-1">
+          <h3 className="text-base sm:text-lg font-serif font-bold text-[#F5F2EB] group-hover:text-[#C5A880] transition-colors line-clamp-1 mt-1">
             {product.name}
           </h3>
 
           {/* Tagline / Materials */}
-          <p className="text-xs text-stone-500 line-clamp-1 mt-0.5 font-normal tracking-wide">
+          <p className="text-xs text-stone-400 line-clamp-1 mt-0.5 font-normal tracking-wide">
             {product.tagline || product.materials}
           </p>
 
@@ -243,8 +240,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
                     style={{ backgroundColor: c.hex }}
                     className={`w-3.5 h-3.5 rounded-full border transition-all cursor-pointer ${
                       selectedColor.name === c.name
-                        ? 'ring-2 ring-[#9A7B38] ring-offset-1 border-white scale-110'
-                        : 'border-stone-300 opacity-80 hover:opacity-100 hover:scale-105'
+                        ? 'ring-2 ring-[#C5A880] ring-offset-1 border-[#121212] scale-110'
+                        : 'border-[#222222] opacity-80 hover:opacity-100 hover:scale-105'
                     }`}
                     title={c.name}
                   />
@@ -260,15 +257,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
                     key={size}
                     className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors ${
                       selectedSize === size
-                        ? 'bg-stone-900 text-white border-stone-900'
-                        : 'bg-[#FAF8F5] text-stone-600 border-[#E5DFD5]'
+                        ? 'bg-[#C5A880] text-black border-[#C5A880]'
+                        : 'bg-[#181818] text-stone-300 border-[#222222]'
                     }`}
                   >
                     {size}
                   </span>
                 ))}
                 {product.sizes.length > 4 && (
-                  <span className="text-[9px] text-stone-400 font-medium">+{product.sizes.length - 4}</span>
+                  <span className="text-[9px] text-stone-500 font-medium">+{product.sizes.length - 4}</span>
                 )}
               </div>
             )}
@@ -276,13 +273,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
         </div>
 
         {/* Pricing & Add to Bag Footer */}
-        <div className="pt-3 border-t border-[#F0EBE1] flex items-center justify-between">
+        <div className="pt-3 border-t border-[#222222] flex items-center justify-between">
           <div>
-            <div className="text-lg sm:text-xl font-serif font-bold text-stone-900 tracking-tight">
+            <div className="text-lg sm:text-xl font-serif font-bold text-white tracking-tight">
               ₹{product.price.toLocaleString('en-IN')}
             </div>
             {product.originalPrice > product.price && (
-              <div className="text-[11px] text-stone-400 line-through">
+              <div className="text-[11px] text-stone-500 line-through">
                 ₹{product.originalPrice.toLocaleString('en-IN')}
               </div>
             )}
@@ -293,11 +290,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate })
             className={`p-2.5 rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer shadow-md ${
               isAddedAnim
                 ? 'bg-emerald-700 text-white scale-110'
-                : 'bg-[#111111] hover:bg-[#9A7B38] text-white hover:scale-105'
+                : 'bg-[#1a1a1a] border border-[#222222] hover:bg-[#C5A880] hover:text-black text-[#C5A880] hover:scale-105'
             }`}
             title="Add to Shopping Bag"
           >
-            {isAddedAnim ? <Check className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
+            {isAddedAnim ? <Check className="w-4 h-4 text-white" /> : <ShoppingBag className="w-4 h-4" />}
           </button>
         </div>
       </div>

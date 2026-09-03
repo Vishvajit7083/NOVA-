@@ -1662,3 +1662,50 @@ export async function updateReturnRequestInDB(
     console.error('Error updating return request in DB:', error);
   }
 }
+
+// ---------------- SAVED FITTING LOOKS ----------------
+const SAVED_LOOKS_COLL = 'saved_looks';
+
+export async function saveLookToDB(look: Omit<import('../types').SavedLook, 'id' | 'createdAt'> & { id?: string; createdAt?: string }): Promise<import('../types').SavedLook | null> {
+  try {
+    const lookId = look.id || `look-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+    const fullLook: import('../types').SavedLook = {
+      ...look,
+      id: lookId,
+      createdAt: look.createdAt || new Date().toISOString(),
+    };
+
+    const docRef = doc(db, SAVED_LOOKS_COLL, lookId);
+    await setDoc(docRef, sanitizeForFirestore(fullLook));
+    return fullLook;
+  } catch (error) {
+    console.error('Error saving look to DB:', error);
+    return null;
+  }
+}
+
+export async function getUserSavedLooksFromDB(userId: string): Promise<import('../types').SavedLook[]> {
+  try {
+    const q = query(
+      collection(db, SAVED_LOOKS_COLL),
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data() as import('../types').SavedLook);
+  } catch (error) {
+    console.error('Error fetching user saved looks from DB:', error);
+    return [];
+  }
+}
+
+export async function deleteSavedLookFromDB(lookId: string): Promise<boolean> {
+  try {
+    const docRef = doc(db, SAVED_LOOKS_COLL, lookId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error('Error deleting saved look from DB:', error);
+    return false;
+  }
+}

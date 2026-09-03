@@ -1,6 +1,427 @@
 import { Product } from '../types';
 
 export const PRODUCTS: Product[] = [
+  // REFERENCE IMAGE PRODUCTS - MENSWEAR & READY-TO-WEAR
+  {
+    id: 'aurelia-m-linen-shirt-01',
+    name: 'Linen Shirt',
+    slug: 'aurelia-linen-shirt',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: '100% French flax linen shirt tailored with a relaxed collar and natural mother-of-pearl buttons.',
+    description: 'A benchmark in breezy summer sophistication. Spun from pure Normandy flax linen for superior breathability and an effortless natural drape. Pre-washed for a soft hand-feel that only improves with age.',
+    category: 'men-apparel',
+    gender: 'men',
+    subCategory: 'Shirts',
+    price: 2499,
+    originalPrice: 3499,
+    discountPercent: 28,
+    rating: 4.9,
+    reviewCount: 56,
+    inStock: true,
+    stockCount: 35,
+    badge: 'BESTSELLER',
+    images: [
+      'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1588117260148-b47818741c74?auto=format&fit=crop&w=1200&q=85',
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'Black', hex: '#111111', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'White', hex: '#F8F9FA', image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Navy', hex: '#1C2833', image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Olive Green', hex: '#556B2F', image: 'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Beige', hex: '#D2B48C', image: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Indigo', hex: '#2E4053', image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Brown', hex: '#5D4037', image: 'https://images.unsplash.com/photo-1588117260148-b47818741c74?auto=format&fit=crop&w=1200&q=85', inStock: true },
+    ],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    fabric: '100% Pure Normandy Flax Linen',
+    fit: 'Regular Fit',
+    pattern: 'Solid Plain Weave',
+    occasion: 'Resort & Casual',
+    season: 'Spring/Summer',
+    careInstructions: ['Machine wash gentle at 30°C', 'Hang dry in shade', 'Warm iron if desired'],
+    countryOfOrigin: 'Crafted in Portugal',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: 'M' },
+    compatibility: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    outfitPairings: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    features: [
+      { title: '100% Pure French Flax', description: 'Exceptional airflow and cooling with a relaxed, sophisticated texture.' },
+      { title: 'Mother of Pearl Buttons', description: 'Subtle luster with reinforced cross-stitching for longevity.' }
+    ],
+    specifications: [
+      {
+        group: 'Material & Craftsmanship',
+        items: [
+          { label: 'Composition', value: '100% Normandy Flax Linen' },
+          { label: 'Weave', value: 'Lightweight Breathable Plain Weave' }
+        ]
+      }
+    ],
+    whatsInTheBox: ['1x Linen Shirt', '1x Aurelia Atelier Garment Bag', '1x Authenticity Card'],
+    warranty: '2-Year Haute Couture Craftsmanship Guarantee',
+    shippingTime: 'Dispatched within 24-48 hours. Express complimentary delivery.',
+    reviews: [
+      {
+        id: 'rev-lin-1',
+        author: 'Julian V.',
+        rating: 5,
+        date: '2026-02-14',
+        title: 'Impeccable drape and comfort',
+        comment: 'The French linen is exceptionally soft yet holds its shape effortlessly. Perfect for resort and evening wear.',
+        verified: true,
+        helpfulCount: 19
+      }
+    ],
+    sku: 'AUR-M-LIN-01',
+    isFeatured: true,
+    isNewArrival: false,
+    questionsCount: 5
+  },
+  {
+    id: 'aurelia-m-oxford-shirt-02',
+    name: 'Oxford Shirt',
+    slug: 'aurelia-oxford-shirt',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: 'Classic 2-ply pinpoint oxford weave tailored with a pristine button-down collar.',
+    description: 'Timeless American tailoring meets European sartorial finesse. Woven from 100% long-staple cotton for unmatched drape, structure, and year-round comfort.',
+    category: 'men-apparel',
+    gender: 'men',
+    subCategory: 'Shirts',
+    price: 2499,
+    originalPrice: 3299,
+    discountPercent: 24,
+    rating: 4.8,
+    reviewCount: 44,
+    inStock: true,
+    stockCount: 29,
+    images: [
+      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1200&q=85'
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'Navy', hex: '#1B263B', image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'White', hex: '#F8F9FA', image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Sky Blue', hex: '#A9CCE3', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1200&q=85', inStock: true }
+    ],
+    sizes: ['S', 'M', 'L', 'XL'],
+    fabric: '100% Two-Ply Cotton Oxford',
+    fit: 'Tailored Fit',
+    pattern: 'Pinpoint Oxford',
+    occasion: 'Business & Smart Casual',
+    season: 'All-Season',
+    careInstructions: ['Machine wash cold at 30°C', 'Warm iron'],
+    countryOfOrigin: 'Tailored in Italy',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: 'M' },
+    compatibility: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    outfitPairings: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    features: [
+      { title: 'Two-Ply Pinpoint Weave', description: 'Structured durability with an immaculate silk-like sheen.' },
+      { title: 'Sartorial Button-Down Collar', description: 'Engineered arch roll for perfect presentation under jackets.' }
+    ],
+    specifications: [
+      {
+        group: 'Material & Fit',
+        items: [
+          { label: 'Composition', value: '100% Long-Staple Cotton' },
+          { label: 'Fit', value: 'Tailored Fit' }
+        ]
+      }
+    ],
+    whatsInTheBox: ['1x Oxford Shirt', '1x Aurelia Garment Box'],
+    warranty: '2-Year Craftsmanship Warranty',
+    shippingTime: 'Dispatched within 24-48 hours.',
+    reviews: [
+      {
+        id: 'rev-oxf-1',
+        author: 'David H.',
+        rating: 5,
+        date: '2026-02-18',
+        title: 'The definitive oxford shirt',
+        comment: 'Outstanding weave and collar roll. Looks brilliant under blazers.',
+        verified: true,
+        helpfulCount: 12
+      }
+    ],
+    sku: 'AUR-M-OXF-02',
+    isFeatured: true
+  },
+  {
+    id: 'aurelia-m-casual-shirt-03',
+    name: 'Casual Shirt',
+    slug: 'aurelia-casual-shirt',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: 'Garment-dyed cotton poplin shirt with a soft spread collar and curved hem.',
+    description: 'Designed for effortless versatility, cut from washed cotton poplin with a silky hand feel and relaxed silhouette.',
+    category: 'men-apparel',
+    gender: 'men',
+    subCategory: 'Shirts',
+    price: 2499,
+    originalPrice: 3499,
+    discountPercent: 28,
+    rating: 4.7,
+    reviewCount: 31,
+    inStock: true,
+    stockCount: 22,
+    images: [
+      'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=85'
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'Olive Green', hex: '#4B5320', image: 'https://images.unsplash.com/photo-1620012253295-c15c429f66bf?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Khaki', hex: '#C3B091', image: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Slate', hex: '#708090', image: 'https://images.unsplash.com/photo-1589310243389-96a5483213a8?auto=format&fit=crop&w=1200&q=85', inStock: true }
+    ],
+    sizes: ['S', 'M', 'L', 'XL'],
+    fabric: '100% Organic Washed Cotton',
+    fit: 'Regular Fit',
+    pattern: 'Solid Poplin',
+    occasion: 'Casual & Weekend',
+    season: 'All-Season',
+    careInstructions: ['Machine wash 30°C', 'Hang dry'],
+    countryOfOrigin: 'Crafted in Portugal',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: 'M' },
+    compatibility: ['aurelia-m-chino-pants-01'],
+    outfitPairings: ['aurelia-m-chino-pants-01'],
+    features: [
+      { title: 'Garment Dyed Finish', description: 'Rich tonal depth and ultra-soft pre-shrunk cotton feel.' }
+    ],
+    specifications: [
+      {
+        group: 'Material',
+        items: [{ label: 'Fabric', value: '100% Washed Cotton Poplin' }]
+      }
+    ],
+    whatsInTheBox: ['1x Casual Shirt'],
+    warranty: '2-Year Warranty',
+    shippingTime: 'Dispatched within 24-48 hours.',
+    reviews: [
+      {
+        id: 'rev-cas-1',
+        author: 'Marcus K.',
+        rating: 5,
+        date: '2026-02-11',
+        title: 'Perfect casual fit',
+        comment: 'Soft fabric and versatile olive shade.',
+        verified: true,
+        helpfulCount: 7
+      }
+    ],
+    sku: 'AUR-M-CAS-03'
+  },
+  {
+    id: 'aurelia-m-denim-shirt-04',
+    name: 'Denim Shirt',
+    slug: 'aurelia-denim-shirt',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: '7 oz Japanese denim shirt with mother-of-pearl snap buttons and western yokes.',
+    description: 'Woven in Okayama, Japan from ring-spun selvedge yarns. Finished with vintage washing that highlights natural fades and authentic texture.',
+    category: 'men-apparel',
+    gender: 'men',
+    subCategory: 'Shirts',
+    price: 2999,
+    originalPrice: 4299,
+    discountPercent: 30,
+    rating: 4.9,
+    reviewCount: 38,
+    inStock: true,
+    stockCount: 18,
+    images: [
+      'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1588117260148-b47818741c74?auto=format&fit=crop&w=1200&q=85'
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1588117260148-b47818741c74?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'Indigo', hex: '#283747', image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Washed Blue', hex: '#5DADE2', image: 'https://images.unsplash.com/photo-1588117260148-b47818741c74?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Raw Denim', hex: '#1B2631', image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=85', inStock: true }
+    ],
+    sizes: ['S', 'M', 'L', 'XL'],
+    fabric: '100% Japanese Cotton Denim (7 oz)',
+    fit: 'Slim Fit',
+    pattern: 'Selvedge Twill',
+    occasion: 'Casual & Layering',
+    season: 'All-Season',
+    careInstructions: ['Wash inside out cold', 'Do not tumble dry'],
+    countryOfOrigin: 'Crafted in Japan',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: 'M' },
+    compatibility: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    outfitPairings: ['aurelia-m-chino-pants-01', 'aurelia-m-sneakers-01'],
+    features: [
+      { title: 'Okayama Selvedge Denim', description: 'Woven on vintage shuttle looms for authentic depth and fading.' }
+    ],
+    specifications: [
+      {
+        group: 'Fabric & Origin',
+        items: [{ label: 'Denim Weight', value: '7 oz Lightweight Japanese Denim' }]
+      }
+    ],
+    whatsInTheBox: ['1x Denim Shirt', '1x Garment Box'],
+    warranty: '2-Year Craftsmanship Guarantee',
+    shippingTime: 'Dispatched within 24-48 hours.',
+    reviews: [
+      {
+        id: 'rev-dnm-1',
+        author: 'Liam P.',
+        rating: 5,
+        date: '2026-02-09',
+        title: 'Incredible texture',
+        comment: 'The Japanese denim weight is phenomenal. Perfect layer.',
+        verified: true,
+        helpfulCount: 15
+      }
+    ],
+    sku: 'AUR-M-DNM-04'
+  },
+  {
+    id: 'aurelia-m-chino-pants-01',
+    name: 'Chino Pants',
+    slug: 'aurelia-chino-pants',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: 'Slim-tapered cotton twill chino trousers with natural stretch and clean front pleats.',
+    description: 'The foundation of modern sartorial casualwear. Tailored from premium combed cotton twill with 2% elastane for flexibility and shape retention. Finished with custom horn buttons and clean interior bias binding.',
+    category: 'denim-trousers',
+    gender: 'men',
+    subCategory: 'Trousers',
+    price: 2999,
+    originalPrice: 3999,
+    discountPercent: 25,
+    rating: 4.9,
+    reviewCount: 62,
+    inStock: true,
+    stockCount: 40,
+    badge: 'BESTSELLER',
+    images: [
+      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1200&q=85'
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'Beige', hex: '#E6D7C3', image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Navy', hex: '#1A2530', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Black', hex: '#111111', image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1200&q=85', inStock: true }
+    ],
+    sizes: ['30', '32', '34', '36', '38'],
+    fabric: '98% Combed Cotton, 2% Elastane (280 GSM)',
+    fit: 'Tailored Fit',
+    pattern: 'Twill Weave',
+    occasion: 'Smart Casual & Business Casual',
+    season: 'All-Season',
+    careInstructions: ['Machine wash cold at 30°C', 'Warm iron'],
+    countryOfOrigin: 'Tailored in Italy',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: '32' },
+    compatibility: ['aurelia-m-linen-shirt-01', 'aurelia-m-sneakers-01'],
+    outfitPairings: ['aurelia-m-linen-shirt-01', 'aurelia-m-sneakers-01'],
+    features: [
+      { title: 'Tapered Ankle Cut', description: 'Clean break above the shoe line for contemporary proportions.' },
+      { title: 'Comfort Stretch Twill', description: 'Maintains crisp drape with natural flexibility during movement.' }
+    ],
+    specifications: [
+      {
+        group: 'Material & Construction',
+        items: [
+          { label: 'Fabric Composition', value: '98% Combed Cotton, 2% Elastane' },
+          { label: 'Weight', value: '280 GSM' }
+        ]
+      }
+    ],
+    whatsInTheBox: ['1x Tailored Chino Trousers', '1x Garment Cover'],
+    warranty: '2-Year Craftsmanship Guarantee',
+    shippingTime: 'Dispatched within 24-48 hours.',
+    reviews: [
+      {
+        id: 'rev-chn-1',
+        author: 'Alexander R.',
+        rating: 5,
+        date: '2026-02-15',
+        title: 'Superb tailoring',
+        comment: 'The beige chinos pair seamlessly with the black linen shirt. Clean drape and comfortable fit.',
+        verified: true,
+        helpfulCount: 24
+      }
+    ],
+    sku: 'AUR-M-CHN-01',
+    isFeatured: true
+  },
+  {
+    id: 'aurelia-m-sneakers-01',
+    name: 'Sneakers',
+    slug: 'aurelia-minimalist-leather-sneakers',
+    brand: 'AURELIA HAUTE COUTURE',
+    tagline: 'Full-grain Italian calfskin court sneaker with stitched Margom rubber soles.',
+    description: 'Crafted in Civitanova Marche, Italy. Featuring buttery nappa leather uppers, padded calfskin lining, waxed cotton laces, and authentic stitched Margom cup soles.',
+    category: 'footwear',
+    gender: 'unisex',
+    subCategory: 'Sneakers',
+    price: 2999,
+    originalPrice: 4499,
+    discountPercent: 33,
+    rating: 5.0,
+    reviewCount: 78,
+    inStock: true,
+    stockCount: 30,
+    badge: 'BESTSELLER',
+    images: [
+      'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=85'
+    ],
+    hoverImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=85',
+    colors: [
+      { name: 'White', hex: '#FFFFFF', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Off-White', hex: '#F0ECE1', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1200&q=85', inStock: true },
+      { name: 'Black', hex: '#111111', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=85', inStock: true }
+    ],
+    sizes: ['UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11'],
+    fabric: '100% Italian Nappa Calfskin',
+    fit: 'Regular Fit',
+    pattern: 'Minimalist Court',
+    occasion: 'Casual & Smart Casual',
+    season: 'All-Season',
+    careInstructions: ['Wipe with damp cloth', 'Use neutral leather balm'],
+    countryOfOrigin: 'Handcrafted in Italy',
+    modelStats: { height: "6'1\" (185 cm)", chest: '39 in', waist: '31 in', wearingSize: 'UK 9' },
+    compatibility: ['aurelia-m-linen-shirt-01', 'aurelia-m-chino-pants-01'],
+    outfitPairings: ['aurelia-m-linen-shirt-01', 'aurelia-m-chino-pants-01'],
+    features: [
+      { title: 'Full-Grain Italian Calfskin', description: 'Supple nappa leather that conforms to your foot for custom comfort.' },
+      { title: 'Stitched Margom Cup Sole', description: 'Legendary Italian rubber outsoles with 360° side wall stitching.' }
+    ],
+    specifications: [
+      {
+        group: 'Materials',
+        items: [
+          { label: 'Upper', value: '100% Italian Full-Grain Calfskin' },
+          { label: 'Sole', value: 'Stitched Italian Margom Rubber Sole' }
+        ]
+      }
+    ],
+    whatsInTheBox: ['1x Pair of Italian Sneakers', '2x Dust Bags', '1x Luxury Shoe Box'],
+    warranty: '2-Year Craftsmanship Guarantee',
+    shippingTime: 'Dispatched within 24-48 hours.',
+    reviews: [
+      {
+        id: 'rev-snk-1',
+        author: 'Christian E.',
+        rating: 5,
+        date: '2026-02-20',
+        title: 'Unrivaled comfort and clean aesthetic',
+        comment: 'Leather quality matches luxury fashion houses. The silhouette is sleek and pristine.',
+        verified: true,
+        helpfulCount: 31
+      }
+    ],
+    sku: 'AUR-M-SNK-01',
+    isFeatured: true
+  },
+
   // 1. MEN'S APPAREL - Bespoke Oxford Shirt
   {
     id: 'nov-m-oxford-01',

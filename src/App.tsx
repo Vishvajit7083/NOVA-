@@ -11,6 +11,9 @@ import { Product360Viewer } from './components/common/Product360Viewer';
 import { ToastContainer } from './components/common/ToastContainer';
 import { AccessibilityControls } from './components/common/AccessibilityControls';
 import { CartDrawer } from './components/cart/CartDrawer';
+import { FashionCanvasDrawer } from './components/canvas/FashionCanvasDrawer';
+import { LiveWardrobePanel } from './components/common/LiveWardrobePanel';
+import { ContextualCursor } from './components/common/ContextualCursor';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -40,9 +43,13 @@ const AppContent: React.FC = () => {
   const [viewParams, setViewParams] = useState<any>({});
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const { comparisonItems } = useShop();
+  const { comparisonItems, setIsCanvasOpen } = useShop();
 
   const handleNavigate = (view: string, params: any = {}) => {
+    if (view === 'canvas' || view === 'wardrobe' || view === 'fashion-canvas') {
+      setIsCanvasOpen(true);
+      return;
+    }
     setCurrentView(view);
     setViewParams(params);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -205,7 +212,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#000000] flex flex-col selection:bg-[#9A7B38] selection:text-white font-sans antialiased">
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F2EB] flex flex-col selection:bg-[#C5A880] selection:text-black font-sans antialiased">
       {/* Intro Overlay */}
       <CinematicWelcome />
 
@@ -231,12 +238,15 @@ const AppContent: React.FC = () => {
       {/* Global Modals and Portals */}
       <AuthModal onNavigate={handleNavigate} />
       <CartDrawer onNavigate={handleNavigate} />
+      <FashionCanvasDrawer onNavigate={handleNavigate} />
       <SearchModal onNavigate={handleNavigate} />
       <QuickViewModal onNavigate={handleNavigate} />
       <ImageViewerModal />
       <Product360Viewer />
       <AccessibilityControls />
       <ToastContainer />
+      <ContextualCursor />
+      <LiveWardrobePanel onNavigate={handleNavigate} />
 
       {/* Floating Quick Action Badge Hub */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-2.5">
@@ -244,11 +254,11 @@ const AppContent: React.FC = () => {
         {comparisonItems.length > 0 && (
           <button
             onClick={() => handleNavigate('compare')}
-            className="px-4 py-2.5 rounded-full bg-[#111111] text-white hover:bg-[#9A7B38] border border-[#333333] shadow-xl text-xs font-bold uppercase tracking-widest flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
+            className="px-4 py-2.5 rounded-full bg-[#111111] text-white hover:bg-[#C5A880] hover:text-black border border-[#2B2B2B] shadow-xl text-xs font-serif font-bold uppercase tracking-widest flex items-center space-x-2 transition-all hover:scale-105 cursor-pointer"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#9A7B38]" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C5A880]" />
             <span>Compare</span>
-            <span className="w-5 h-5 rounded-full bg-[#9A7B38] text-white text-[10px] flex items-center justify-center font-bold">
+            <span className="w-5 h-5 rounded-full bg-[#C5A880] text-black text-[10px] flex items-center justify-center font-bold">
               {comparisonItems.length}
             </span>
           </button>
@@ -258,7 +268,7 @@ const AppContent: React.FC = () => {
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="p-3 rounded-full bg-white text-stone-900 hover:bg-[#111111] hover:text-white border border-[#E0D8C8] shadow-xl transition-all hover:scale-105 cursor-pointer"
+            className="p-3 rounded-full bg-[#181818] text-[#F5F2EB] hover:bg-[#C5A880] hover:text-black border border-[#2B2B2B] shadow-xl transition-all hover:scale-105 cursor-pointer"
             aria-label="Back to top"
           >
             <ArrowUp className="w-4 h-4" />

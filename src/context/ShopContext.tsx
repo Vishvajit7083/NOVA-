@@ -4,6 +4,7 @@ import {
   CartItem,
   SavedForLaterItem,
   WishlistItem,
+  FashionCanvasItem,
   Order,
   Address,
   Coupon,
@@ -127,6 +128,19 @@ interface ShopContextType {
   isInComparison: (productId: string) => boolean;
   removeFromComparison: (productId: string) => void;
   clearComparison: () => void;
+
+  // Fashion Canvas (Digital Wardrobe)
+  fashionCanvas: FashionCanvasItem[];
+  isCanvasOpen: boolean;
+  setIsCanvasOpen: (open: boolean) => void;
+  isWardrobeOpen: boolean;
+  setIsWardrobeOpen: (open: boolean) => void;
+  addToCanvas: (product: Product, selectedColor?: ColorOption, selectedSize?: string) => void;
+  removeFromCanvas: (itemId: string) => void;
+  reorderCanvas: (startIndex: number, endIndex: number) => void;
+  clearCanvas: () => void;
+  moveCanvasToCart: () => void;
+  isInCanvas: (productId: string) => boolean;
 
   // Coupons
   applyCoupon: (code: string) => { success: boolean; message: string };
@@ -258,6 +272,26 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [comparisonItems, setComparisonItems] = useState<Product[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+
+  // Fashion Canvas (Personal Digital Wardrobe)
+  const [fashionCanvas, setFashionCanvas] = useState<FashionCanvasItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('aurelia_fashion_canvas');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [isCanvasOpen, setIsCanvasOpen] = useState(false);
+  const [isWardrobeOpen, setIsWardrobeOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('aurelia_fashion_canvas', JSON.stringify(fashionCanvas));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [fashionCanvas]);
 
   // User & Auth
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -671,6 +705,76 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearComparison = () => {
     setComparisonItems([]);
+  };
+
+  // ---------------- FASHION CANVAS (DIGITAL WARDROBE) ----------------
+  const addToCanvas = (product: Product, selectedColor?: ColorOption, selectedSize?: string) => {
+    const exists = fashionCanvas.some((item) => item.product.id === product.id);
+    if (exists) {
+      showToast('Already on Canvas', `${product.name} is already in your personal look.`, 'info');
+      setIsCanvasOpen(true);
+      return;
+    }
+
+    let slot: FashionCanvasItem['categorySlot'] = 'other';
+    const cat = (product.category || '').toLowerCase();
+    const sub = (product.subCategory || '').toLowerCase();
+    if (cat.includes('outerwear') || sub.includes('jacket') || sub.includes('coat')) {
+      slot = 'outerwear';
+    } else if (sub.includes('shirt') || sub.includes('top') || sub.includes('tee') || sub.includes('blouse') || sub.includes('knit') || sub.includes('hoodie')) {
+      slot = 'top';
+    } else if (sub.includes('pant') || sub.includes('trouser') || sub.includes('chino') || sub.includes('denim') || sub.includes('skirt') || sub.includes('cargo')) {
+      slot = 'bottom';
+    } else if (cat.includes('footwear') || sub.includes('shoe') || sub.includes('boot') || sub.includes('sneaker') || sub.includes('loafer')) {
+      slot = 'footwear';
+    } else if (cat.includes('bag') || cat.includes('watch') || cat.includes('jewellery') || cat.includes('accessories')) {
+      slot = 'accessory';
+    }
+
+    const newItem: FashionCanvasItem = {
+      id: `canvas-${product.id}-${Date.now()}`,
+      product,
+      selectedColor: selectedColor || product.colors[0],
+      selectedSize: selectedSize || (product.sizes ? product.sizes[0] : undefined),
+      addedAt: new Date().toISOString(),
+      categorySlot: slot,
+    };
+
+    setFashionCanvas((prev) => [newItem, ...prev]);
+    showToast('Collected to Canvas', `Added ${product.name} to your evolving look.`, 'success');
+  };
+
+  const removeFromCanvas = (itemId: string) => {
+    setFashionCanvas((prev) => prev.filter((i) => i.id !== itemId && i.product.id !== itemId));
+    showToast('Removed from Canvas', 'Piece removed from your look.', 'info');
+  };
+
+  const reorderCanvas = (startIndex: number, endIndex: number) => {
+    setFashionCanvas((prev) => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    });
+  };
+
+  const clearCanvas = () => {
+    setFashionCanvas([]);
+    showToast('Canvas Cleared', 'Your look canvas is now empty.', 'info');
+  };
+
+  const moveCanvasToCart = () => {
+    if (fashionCanvas.length === 0) return;
+    fashionCanvas.forEach((item) => {
+      addToCart(item.product, item.selectedColor, undefined, 1, item.selectedSize);
+    });
+    showToast('Look Added to Bag', `All ${fashionCanvas.length} ensemble pieces added to your shopping bag.`, 'success');
+    setIsCanvasOpen(false);
+    setIsCartOpen(true);
+  };
+
+  const isInCanvas = (productId: string) => {
+    return fashionCanvas.some((item) => item.product.id === productId);
   };
 
   // ---------------- COUPONS ----------------
@@ -1235,6 +1339,19 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isInComparison,
         removeFromComparison,
         clearComparison,
+
+        // Fashion Canvas
+        fashionCanvas,
+        isCanvasOpen,
+        setIsCanvasOpen,
+        isWardrobeOpen,
+        setIsWardrobeOpen,
+        addToCanvas,
+        removeFromCanvas,
+        reorderCanvas,
+        clearCanvas,
+        moveCanvasToCart,
+        isInCanvas,
 
         applyCoupon,
         removeCoupon,
