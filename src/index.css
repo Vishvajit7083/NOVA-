@@ -70,3 +70,61 @@ body {
   box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08);
   border-color: #000000;
 }
+
+/* Haute Couture Stage 2 Fashion Campaign Studio Lighting Sweep */
+@keyframes studio-light-sweep {
+  0% {
+    transform: translate(-35%, -25%) rotate(-5deg);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(25%, 20%) rotate(5deg);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(-35%, -25%) rotate(-5deg);
+    opacity: 0.35;
+  }
+}
+
+.animate-studio-light-sweep {
+  animation: studio-light-sweep 9s ease-in-out infinite alternate;
+}
+
+/* Explore Collection CTA Sophisticated Micro-Shimmer Glint */
+@keyframes cta-glint {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  30%, 100% {
+    transform: translateX(250%) skewX(-25deg);
+  }
+}
+
+.animate-cta-glint {
+  animation: cta-glint 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Continuous Atmospheric Light Breathing */
+@keyframes atmosphere-breathe {
+  0%, 100% {
+    opacity: 0.12;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(1.08);
+  }
+}
+
+.animate-atmosphere-breathe {
+  animation: atmosphere-breathe 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-studio-light-sweep,
+  .animate-cta-glint,
+  .animate-atmosphere-breathe {
+    animation: none !important;
+  }
+}

@@ -119,8 +119,27 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
     if (hasFinishedRef.current) return;
     hasFinishedRef.current = true;
 
+    setBrandOpacity(0);
+    setOverlayOpacity(0);
+
+    // Notify listeners that cloth stage is complete so Stage 2 seamlessly takes over
+    try {
+      window.dispatchEvent(new CustomEvent('aurelia:cloth-complete'));
+    } catch {}
+
+    setTimeout(() => {
+      setIsVisible(false);
+      if (onComplete) onComplete();
+    }, 450);
+  }, [onComplete]);
+
+  const handleSkip = useCallback(() => {
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+
     try {
       sessionStorage.setItem('aurelia_intro_shown', 'true');
+      window.dispatchEvent(new CustomEvent('aurelia:skip-trailer'));
     } catch {}
 
     setBrandOpacity(0);
@@ -129,7 +148,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
     setTimeout(() => {
       setIsVisible(false);
       if (onComplete) onComplete();
-    }, 450);
+    }, 250);
   }, [onComplete]);
 
   // Audio setup
@@ -641,7 +660,7 @@ export const LuxuryClothIntro: React.FC<LuxuryClothIntroProps> = ({
       <div className="absolute top-6 right-6 z-20 pointer-events-auto">
         <button
           id="skip-cloth-intro-top-btn"
-          onClick={handleFinish}
+          onClick={handleSkip}
           type="button"
           className="group flex items-center space-x-1.5 px-4 py-2 rounded-full bg-[#121110]/80 hover:bg-[#C5A880] text-[#D4CEBF] hover:text-black border border-[#C5A880]/40 hover:border-[#C5A880] text-[11px] font-mono tracking-[0.2em] uppercase transition-all duration-200 cursor-pointer backdrop-blur-md shadow-lg active:scale-95"
         >
